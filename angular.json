@@ -27,11 +27,7 @@
               "src/styles.scss"
             ],
             "scripts": [
-              {
-                "input": "src/poc-audio.js",
-                "inject": false,
-                "bundleName": "poc-audio"
-              }
+              
             ]
           },
           "configurations": {

@@ -88,7 +88,7 @@ export class AuthService {
       next: res => {
         console.log('Login Authorized');
         this.setSession(res),
-        this.startSessionCounter();
+        //this.startSessionCounter();
         this.isLoggedIn = true;
         this.setHomePage(`/home/${this.userRole}`);
         this.router.navigate([this.redirectUrl]);

@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { Observable, observable } from 'rxjs';
 import { tap } from 'rxjs/operators';
-import { CategoryService } from 'src/app/teams/category.service';
+// import { CategoryService } from 'src/app/teams/category.service';
 import { TeamService } from 'src/app/teams/team.service';
 import { Team } from 'src/app/teams/interfaces/team';
 import { User } from 'src/app/users/interfaces/user';
@@ -17,7 +17,7 @@ export class HomeAdminComponent implements OnInit {
   constructor(
     public userService: UserService,
     public teamService: TeamService,
-    public categoryService: CategoryService
+    // public categoryService: CategoryService
   ) { }
 
   totalUsers: number;
@@ -41,9 +41,9 @@ export class HomeAdminComponent implements OnInit {
       teams => this.totalTeams = teams.length
     );
 
-    this.categoryService.getCategories().subscribe(
-      categories => this.totalCategories = categories.length
-    );
+    // this.categoryService.getCategories().subscribe(
+    //   categories => this.totalCategories = categories.length
+    // );
 
   }
 
