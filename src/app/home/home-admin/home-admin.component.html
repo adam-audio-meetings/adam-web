@@ -1,0 +1,79 @@
+<h2 class="ml-3 pt-4">Painel do Administrador</h2>
+<div class="container-admin">
+
+  <div class="container-item">
+    <h3>Usuários</h3>
+    <button type="button" routerLink="/users" routerLinkActive="active" class="btn btn-primary btn-lg mb-2">
+      Gerenciar Usuários
+    </button>
+    <table class="table">
+      <thead>
+        <tr>
+          <th>Perfil</th>
+          <th class="quantity">Quantidade</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>Administradores</td>
+          <td class="quantity">{{totalUsersAdmin}}</td>
+        </tr>
+        <tr>
+          <td>Coordenadores</td>
+          <td class="quantity">{{totalUsersCoordinator}}</td>
+        </tr>
+        <tr>
+          <td>Membros</td>
+          <td class="quantity">{{totalUsersMember}}</td>
+        </tr>
+        <tr>
+          <td><strong>TOTAL</strong></td>
+          <td class="quantity"><strong>{{totalUsers}}</strong></td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="container-item">
+    <h3>Times</h3>
+    <button type="button" routerLink="/teams" routerLinkActive="active" class="btn btn-primary btn-lg mb-2">
+      Gerenciar Times
+    </button>
+    <table class="table">
+      <thead>
+        <tr>
+          <th>Categoria</th>
+          <th class="quantity">Quantidade</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><strong>TOTAL</strong></td>
+          <td class="quantity"><strong>{{totalTeams}}</strong></td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="container-item">
+    <h3>Categorias</h3>
+    <button type="button" routerLink="/teams/categories" routerLinkActive="active" class="btn btn-primary btn-lg mb-2">
+      Gerenciar Categorias
+    </button>
+    <table class="table">
+      <thead>
+        <tr>
+          <th>Categoria</th>
+          <th class="quantity">Quantidade</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><strong>TOTAL</strong></td>
+          <td class="quantity"><strong>{{totalCategories}}</strong></td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+</div>

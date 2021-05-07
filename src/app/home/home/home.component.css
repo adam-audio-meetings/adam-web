@@ -1,0 +1,29 @@
+.container-hero-header {
+  background-image: 
+  /* radial-gradient(circle,rgba(255,255,255,0.2),rgba(0,0,0,0.6)), */
+                    url('../../../assets/img/hero.png');
+  background-repeat: no-repeat;
+  background-attachment: fixed;
+  background-size: cover;
+  background-position: 30%;
+  height: 100vh;
+  display: grid;
+  grid-template-columns: auto;
+  grid-template-rows: auto; /*Também impede nav bar empurrar para baixo itens desta section*/
+  grid-template-areas: 
+    "."
+    "."
+    "."
+    "."
+    "jumbotronarea";
+}
+
+.jumbotron {
+  padding: 1rem 1rem;
+  border-radius: 0;
+  background-color: #e9ecef52;
+}
+
+.container-item {
+  grid-area: jumbotronarea
+}

@@ -1,0 +1,158 @@
+<div class="d-flex justify-content-center">
+  <div class="ngComponentItem">
+    <h2>{{title}}</h2>
+    <div class="my-2">
+      <input type="text" id="searchBox" #searchBox [(ngModel)]="teamFilterTerm" placeholder="Pesquisar pelo nome">
+      <!-- <button  class="btn btn-primary m-1" (click)="search(searchBox.value)">Procurar</button> -->
+    </div>
+    <div>
+      <p class="count">Total de times: {{((teams$ | async) | teamFilter:teamFilterTerm)?.length}}</p>
+    </div>
+    <div *ngIf="!this.authService.isLoggedIn; else elseBlock">
+
+      <div *ngIf="((teams$ | async) | teamFilter:teamFilterTerm)?.length > 0">
+        <table class="table">
+          <thead>
+            <tr>
+              <th>Time</th>
+              <th>Coordenador(a)</th>
+              <th>Categoria</th>
+              <th>Descrição</th>
+              <th></th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngFor="let team of (teams$ | async) | teamFilter:teamFilterTerm">
+              <td>{{team.name}}</td>
+              <td>{{team.coordinator.name}}</td>
+              <td>{{team.category}}</td>
+              <td>{{team.description}}</td>
+              <!-- TODO: create logic on TS to unauth users - Register or Login -->
+              <td>
+                <button class="btn btn-success" routerLink="subscribe/">Inscrever-se</button>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <ng-template #elseBlock>
+      <container [ngSwitch]="userRole">
+        <div *ngSwitchCase="'admin'">
+          <div>
+            <button class="btn btn-success my-1 mr-1" routerLink="form/">Novo</button>
+            <button class="btn btn-secondary" routerLink="random/">(+ aleatorio)</button>
+          </div>
+          <div *ngIf="((teams$ | async) | teamFilter:teamFilterTerm)?.length > 0">
+            <table class="table">
+              <thead>
+                <tr>
+                  <th>ID</th>
+                  <th>Time</th>
+                  <th>Coordenador(a)</th>
+                  <th>Categoria</th>
+                  <th>Descrição</th>
+                  <th>Ações</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr *ngFor="let team of (teams$ | async) | teamFilter:teamFilterTerm">
+                  <td>{{team._id}}</td>
+                  <td>{{team.name}}</td>
+                  <td>{{team.coordinator.name}}</td>
+                  <td>{{team.category}}</td>
+                  <td>{{team.description}}</td>
+                  <td>
+                    <button class="btn btn-primary btn-sm mr-1 mb-1" routerLink="edit/{{team._id}}">Editar</button>
+                    <button class="btn btn-danger btn-sm mr-1 mb-1" (click)="deleteTeam(team._id)">Excluir</button>
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+        <div *ngSwitchCase="'coordinator'">
+          <div *ngIf="isOwnTeams">
+            <button class="btn btn-success my-1 mr-1" routerLink="form/">Novo</button>
+            <button class="btn btn-primary" routerLink="random/">(+ aleatorio)</button>
+          </div>
+          <div *ngIf="((teams$ | async) | teamFilter:teamFilterTerm)?.length > 0">
+            <table class="table">
+              <thead>
+                <tr>
+                  <th>Time</th>
+                  <th>Categoria</th>
+                  <th>Descrição</th>
+                  <th *ngIf="isOwnTeams">Membros</th>
+                  <th *ngIf="isOwnTeams">Ações</th>
+                </tr>
+              </thead>
+              <tr *ngFor="let team of (teams$ | async) | teamFilter:teamFilterTerm">
+                <td>{{team.name}}</td>
+                <td>{{team.category}}</td>
+                <td>{{team.description}}</td>
+                <td *ngIf="isOwnTeams">
+                  <ol>
+                    <li *ngFor="let member of team.members">
+                      {{member.name}}
+                    </li>
+                  </ol>
+                <td *ngIf="isOwnTeams">
+                  <button class="btn btn-primary btn-sm mr-1 mb-1" *ngIf="isOwnTeams"
+                    routerLink="edit/{{team._id}}">Editar info
+                  </button>
+                  <button class="btn btn-danger btn-sm mr-1 mb-1" (click)="deleteTeam(team._id)">Excluir</button>
+                </td>
+              </tr>
+            </table>
+          </div>
+        </div>
+
+        <div *ngSwitchCase="'member'">
+          <div *ngIf="((teams$ | async) | teamFilter:teamFilterTerm)?.length > 0">
+            <table class="table">
+              <thead>
+                <tr>
+                  <th>Time</th>
+                  <th>Coordenador(a)</th>
+                  <th>Categoria</th>
+                  <th>Descrição</th>
+                  <th>Instrutor(a)</th>
+                  <th>Ações</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr *ngFor="let team of (teams$ | async) | teamFilter:teamFilterTerm">
+                  <td>{{team.name}}</td>
+                  <td>{{team.coordinator.name}}</td>
+                  <td>{{team.category}}</td>
+                  <td>{{team.description}}</td>
+                  <td>{{team.coordinator.name}}</td>
+                  <td>
+                    <button class="btn btn-danger btn-sm mr-1 mb-1" *ngIf="isOwnTeams"
+                      (click)="unsubscribe(team._id)">Cancelar inscrição
+                    </button>
+                    <button class="btn btn-success btn-sm mr-1 mb-1" *ngIf="!isOwnTeams"
+                      (click)="subscribe(team._id)">Inscrever-se
+                    </button>
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+        <div *ngSwitchDefault>
+          <p>Error</p>
+        </div>
+
+      </container>
+    </ng-template>
+
+    <div *ngIf="((teams$ | async) | teamFilter:teamFilterTerm)?.length == 0">
+      <p>Nenhum resultado encontrado.</p>
+    </div>
+  </div>
+</div>

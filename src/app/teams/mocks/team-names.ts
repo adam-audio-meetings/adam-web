@@ -1,0 +1,1 @@
+export const MOCK_TEAM_NAMES = ['Desenvolvimento', 'Infra', 'Testes'];

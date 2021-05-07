@@ -1,0 +1,11 @@
+{
+  "targets": {
+    "adam-65287": {
+      "hosting": {
+        "adam-web": [
+          "adam-65287"
+        ]
+      }
+    }
+  }
+}

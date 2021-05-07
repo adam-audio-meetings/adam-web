@@ -1,0 +1,27 @@
+<div class="d-flex justify-content-center">
+  <div class="ngComponentItem">
+<h3>Cadastro de Categorias</h3>
+
+<form [formGroup]="categoryForm" (ngSubmit)="onSubmit()" class="categoryForm">
+    <!-- <div class="form-group">
+      <label for="_id">ID</label>
+      <input type="text" formControlName="_id" class="form-control">
+    </div> -->
+
+    <div class="form-group">
+      <label for="name">Nome</label>
+      <input type="text" formControlName="name" class="form-control" required minlength="3" maxlength="20">
+    </div>
+
+    <div class="form-group">
+      <label for="description">Descrição</label>
+      <textarea formControlName="description" class="form-control" required minlength="3" rows="3"></textarea>
+    </div>
+    
+    <input type="submit" class="btn btn-success my-2 mr-1" [disabled]="!categoryForm.valid" value="Salvar">
+</form>
+
+<button  class="btn btn-warning mr-1" (click)="onReset()">{{resetButtonText}}</button>
+<button  class="btn btn-secondary" (click)="goBack()">{{backButtonText}}</button>
+</div>
+</div>

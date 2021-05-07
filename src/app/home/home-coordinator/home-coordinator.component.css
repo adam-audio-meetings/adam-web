@@ -1,0 +1,22 @@
+.container-coordinator {
+  display: flex;
+  width: 100%;
+}
+
+.container-item {
+  margin-top: 2.5rem;
+  margin-left: 2rem;
+  padding: 1rem;
+  background-color: rgb(245, 245, 245);
+  box-shadow: 3px 3px 5px rgb(170, 170, 170);
+  width: 50%;
+}
+
+.table {
+  background-color: white;
+  /* max-width: 50%; */
+}
+
+table .quantity {
+  text-align: right;
+}

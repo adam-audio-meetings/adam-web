@@ -1,0 +1,50 @@
+<div class="d-flex justify-content-center">
+  <div class="ngComponentItem">
+<h2>Usuários</h2>
+<div>
+  <fieldset>FILTROS
+    <br>
+    <label>Categoria:
+      <select [(ngModel)]="roleFilter">
+        <option value="" selected>Todos</option>
+        <option *ngFor="let role of roles">{{ role | titlecase }}</option>
+      </select>
+    </label> 
+  </fieldset>
+</div>
+<div>
+  <button  class="btn btn-success  my-1 mr-1" routerLink="form/">Novo</button>
+  <button  class="btn btn-secondary" routerLink="random/">(+ aleatorio)</button>
+</div>
+<!-- <div *ngIf="users$"> -->
+  <table class="table" >
+    <thead>
+      <tr>
+        <th>ID</th>
+        <th>Categoria</th>
+        <th>Nome</th>
+        <th>Username</th>
+        <th>e-mail</th>
+        <th>Ações</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr *ngFor="let user of (users$ | async) | userFilter:roleFilter">
+        <td>{{user._id}}</td>
+        <td>{{user.role | titlecase}}</td>
+        <td>{{user.name}}</td>
+        <td>{{user.username}}</td>
+        <td>{{user.email}}</td>
+        <td>
+          <button  class="btn btn-primary btn-sm mr-1 mb-1" routerLink="edit/{{user._id}}">Editar</button>
+          <button  class="btn btn-danger btn-sm mr-1 mb-1" (click)="deleteUser(user._id)">Excluir</button>
+        </td>
+      </tr>
+    </tbody>
+  </table>
+<!-- </div> -->
+
+<app-user-search></app-user-search>
+
+</div>
+</div>

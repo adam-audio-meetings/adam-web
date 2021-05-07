@@ -1,0 +1,74 @@
+<nav class="navbar navbar-expand-lg navbar-light bg-light">
+  <a class="navbar-brand" routerLink="/" routerLinkActive="active">adam</a>
+  <button class="navbar-toggler" type="button" data-toggle="collapse" (click)="isMenuCollapsed = !isMenuCollapsed">
+    <span class="navbar-toggler-icon"></span>
+  </button>
+  <div [ngbCollapse]="isMenuCollapsed" class="collapse navbar-collapse">
+    <ul ngbNav #nav="ngbNav" class="navbar-nav mr-auto">
+
+      <!-- ALLWAYS -->
+      <li ngbNavItem (click)="isMenuCollapsed=true"><a ngbNavLink routerLink={{this.authService.redirectUrl}}>Home</a>
+      </li>
+      <li ngbNavItem (click)="isMenuCollapsed=true"><a ngbNavLink routerLink="/poc-audio"
+          routerLinkActive="active">poc-audio</a></li>
+
+      <!-- NO AUTH -->
+      <li ngbNavItem *ngIf="!this.authService.isLoggedIn">
+        <a ngbNavLink routerLink="/teams-noauth" routerLinkActive="active" (click)="isMenuCollapsed=true">Times</a>
+      </li>
+
+      <!-- ADMIN -->
+      <li *ngIf="this.authService.userRole == 'admin'" ngbNavItem ngbDropdown>
+        <a ngbDropdownToggle class="nav-link dropdown-toggle" id="navbarDropdown" role="button" data-toggle="dropdown">
+          Gerenciar
+        </a>
+        <div ngbDropdownMenu>
+          <a ngbDropdownItem routerLink="/users" routerLinkActive="active" (click)="isMenuCollapsed=true">Usuários</a>
+          <a ngbDropdownItem routerLink="/teams" routerLinkActive="active" (click)="isMenuCollapsed=true">Times</a>
+        </div>
+      </li>
+      <li ngbNavItem></li>
+
+      <!-- MEMBER / COORDINATOR -->
+      <li ngbNavItem *ngIf="this.authService.isLoggedIn && this.authService.userRole != 'admin'">
+        <a ngbNavLink routerLink="/teams" routerLinkActive="active" (click)="isMenuCollapsed=true">Meus times</a>
+      </li>
+      <li ngbNavItem *ngIf="this.authService.isLoggedIn && this.authService.userRole != 'admin'">
+        <a ngbNavLink routerLink="/teams/available" routerLinkActive="active" (click)="isMenuCollapsed=true">Times
+          disponíveis</a>
+      </li>
+
+    </ul>
+    <div class="my-2 my-lg-0">
+      <!-- LOGIN/LOGOUT / SIGNIN -->
+      <div *ngIf="!this.authService.isLoggedIn">
+        <button class="btn btn-primary ml-1 mb-1" ngbNavLink routerLink="/login" routerLinkActive="active"
+          (click)="isMenuCollapsed=true">Entrar</button>
+        <button class="btn btn-outline-primary ml-1 mb-1" ngbNavLink routerLink="/signin" routerLinkActive="active"
+          (click)="isMenuCollapsed=true">Criar conta</button>
+      </div>
+      <div *ngIf="this.authService.isLoggedIn">
+        <button class="btn btn-danger" ngbNavLink routerLink="/logout" routerLinkActive="active"
+          (click)="isMenuCollapsed=true">Sair</button>
+      </div>
+    </div>
+  </div>
+</nav>
+
+<div id="sessionCounter" class="d-flex flex-row justify-content-end m-1">
+  <span class="badge badge-secondary" *ngIf="this.authService.isLoggedIn">
+    Sessão finaliza em: {{authService.getRemainingSessionTime() | sessionCounter }}
+  </span>
+</div>
+
+
+<router-outlet></router-outlet>
+
+<app-messages></app-messages>
+<!-- <ul>
+  <li class="text" *ngFor="let role of roles$ | async">
+    {{role._id}} - {{role.name}} - {{role.description}}
+  </li>
+</ul>
+
+<img [src]="imageUrl | async" alt="GitHub"> -->
