@@ -1,5 +1,6 @@
 import { toBase64String } from '@angular/compiler/src/output/source_map';
 import { Component, OnInit } from '@angular/core';
+import getBlobDuration from 'get-blob-duration';
 import { AudioService } from '../audio.service';
 
 @Component({
@@ -22,6 +23,7 @@ export class PocAudioComponent implements OnInit {
     let downloadButton = document.querySelector('#downloadButton') as HTMLElement;
     let uploadButton = document.querySelector('#uploadButton') as HTMLElement;
     let testPlayback = document.querySelector('#testPlayback') as HTMLElement;
+    let testPlayback2 = document.querySelector('#testPlayback2') as HTMLElement;
 
     let audioTypeWebm = { 'type': 'audio/webm' };
     let audioTypeWebmOpus = { 'type': 'audio/webm; codecs=opus' };
@@ -63,9 +65,59 @@ export class PocAudioComponent implements OnInit {
       });
     }
 
+    let speechRecognitionEnabled = true;
     //console.log(SpeechRecognition);
     if (!SpeechRecognition) {
+      speechRecognitionEnabled = false;
       console.log('SpeechRecognition não suportado.')
+    } else {
+      var recognition = new SpeechRecognition();
+      //var speechRecognitionList = new SpeechGrammarList();
+      var recognitionTamanho = 0; // SPEECH
+
+      //recognition.grammars = speechRecognitionList;
+      recognition.continuous = true;
+      recognition.lang = 'pt-BR';
+      recognition.interimResults = false;
+      recognition.maxAlternatives = 1;
+      let recognitionStarted = false;
+      let recognitionStopped = false;
+
+      // executado quando começa a gravação
+      // recognition.onaudiostart = () => {
+      //   // altera a variável de estado de gravação para indicar que começou a gravar o áudio
+      //   recognitionStarted = true;
+      //   console.log('SPEECH: onaudiostart');
+      // }
+
+      // executado quando termina a gravação
+      // recognition.onend = () => {
+      //   // altera a variável de estado de gravação para indicar que parou de gravar o áudio
+      //   recognitionStarted = false;
+      //   console.log('SPEECH: onaudioend');
+      // }
+
+      recognition.onresult = (event) => {
+        // The SpeechRecognitionEvent results property returns a SpeechRecognitionResultList object
+        // The SpeechRecognitionResultList object contains SpeechRecognitionResult objects.
+        // It has a getter so it can be accessed like an array
+        // The first [0] returns the SpeechRecognitionResult at position 0.
+        // Each SpeechRecognitionResult object contains SpeechRecognitionAlternative objects that contain individual results.
+        // These also have getters so they can be accessed like arrays.
+        // The second [0] returns the SpeechRecognitionAlternative at position 0.
+        // We then return the transcript property of the SpeechRecognitionAlternative object
+        // let { transcript } = event.results[0][0];
+        // teste de resultado
+        // console.log(event.results);
+        // document.getElementById("transcript_result").innerHTML += transcript + '<hr>';
+        //let recognitionTamanho = 0;
+
+        console.log('SPEECH detectado', event.results);
+        let { transcript } = event.results[recognitionTamanho][0]
+        document.getElementById("transcript_result").innerHTML += transcript + '<hr>';
+        recognitionTamanho += 1;
+      }
+
     }
     if (!SpeechGrammarList) {
       console.log('SpeechGrammarList não suportado.')
@@ -74,52 +126,9 @@ export class PocAudioComponent implements OnInit {
       console.log('SpeechRecognitionEvent não suportado.')
     }
 
-    var recognition = new SpeechRecognition();
-    //var speechRecognitionList = new SpeechGrammarList();
-    let tamanho = 0; // SPEECH
 
-    //recognition.grammars = speechRecognitionList;
-    recognition.continuous = true;
-    recognition.lang = 'pt-BR';
-    recognition.interimResults = false;
-    recognition.maxAlternatives = 1;
-    let recognitionStarted = false;
-    let recognitionStopped = false;
 
-    // executado quando começa a gravação
-    // recognition.onaudiostart = () => {
-    //   // altera a variável de estado de gravação para indicar que começou a gravar o áudio
-    //   recognitionStarted = true;
-    //   console.log('SPEECH: onaudiostart');
-    // }
 
-    // executado quando termina a gravação
-    // recognition.onend = () => {
-    //   // altera a variável de estado de gravação para indicar que parou de gravar o áudio
-    //   recognitionStarted = false;
-    //   console.log('SPEECH: onaudioend');
-    // }
-
-    recognition.onresult = (event) => {
-      // The SpeechRecognitionEvent results property returns a SpeechRecognitionResultList object
-      // The SpeechRecognitionResultList object contains SpeechRecognitionResult objects.
-      // It has a getter so it can be accessed like an array
-      // The first [0] returns the SpeechRecognitionResult at position 0.
-      // Each SpeechRecognitionResult object contains SpeechRecognitionAlternative objects that contain individual results.
-      // These also have getters so they can be accessed like arrays.
-      // The second [0] returns the SpeechRecognitionAlternative at position 0.
-      // We then return the transcript property of the SpeechRecognitionAlternative object
-      // let { transcript } = event.results[0][0];
-      // teste de resultado
-      // console.log(event.results);
-      // document.getElementById("transcript_result").innerHTML += transcript + '<hr>';
-      //let tamanho = 0;
-
-      console.log('SPEECH detectado', event.results);
-      let { transcript } = event.results[tamanho][0]
-      document.getElementById("transcript_result").innerHTML += transcript + '<hr>';
-      tamanho += 1;
-    }
 
 
 
@@ -163,8 +172,10 @@ export class PocAudioComponent implements OnInit {
           console.log("Gravação iniciada");
           record.style.background = "red";
           record.style.color = "black";
-          recognition.start(); // SPEECH
-          tamanho = 0; // SPEECH
+          if (speechRecognitionEnabled) {
+            recognition.start(); // SPEECH
+            recognitionTamanho = 0; // SPEECH
+          }
 
         }
 
@@ -174,7 +185,9 @@ export class PocAudioComponent implements OnInit {
           console.log("Gravação finalizada");
           record.style.background = "";
           record.style.color = "";
-          recognition.stop(); // SPEECH
+          if (speechRecognitionEnabled) {
+            recognition.stop(); // SPEECH
+          }
         }
 
         mediaRecorder.ondataavailable = (e) => {
@@ -186,6 +199,12 @@ export class PocAudioComponent implements OnInit {
           let clipName = 'clipNameTest';
           // TODO: audio element aqui?
           let blob = new Blob(data, audioType);  // media stream
+
+          // se necessário saber a duração do aúdio (bug Chrome) 
+          //getBlobDuration(blob).then(function (duration) {
+          //   console.log(duration + ' seconds');
+          // });
+
           let reader = new FileReader();
           reader.readAsDataURL(blob);  // funciona
           // reader.readAsArrayBuffer(blob); // nao funciona
@@ -200,8 +219,10 @@ export class PocAudioComponent implements OnInit {
           let blob = new Blob(data, audioType);
           //let fileInput = document.querySelector('#file') as HTMLInputElement;
           //let file = fileInput.files[0]
-          let file = new File([blob],"testeAudioBlobToFile")
-          console.log('File: ',file)
+          // let file = new File([blob], "testeAudioBlobToFile", audioType) // tag audio não reconhece duration
+          let file = new File([blob], "testeAudioBlobToFile.weba", audioType) // tag audio reconhece duração
+          // let file = new File([blob], "testeAudioBlobToFile.weba") // tag audio não reconhece duração
+          console.log('File: ', file)
           this.audioService.uploadAudio(
             file
             // {
@@ -211,7 +232,7 @@ export class PocAudioComponent implements OnInit {
             // "file": base64data
             // // "file": base64String
             // }
-          
+
           ).subscribe({
             next: (res) => {
               console.log('Upload concluído.');
@@ -227,6 +248,13 @@ export class PocAudioComponent implements OnInit {
             error: () => alert('Erro ao enviar áudio.')
           });
         }
+        testPlayback2.onclick = () => {
+          let audioURL = "http://localhost:3000/audio-in-folder";
+          audio.src = audioURL;
+          audio.controls = true;
+          audio.preload = 'metadata'
+          audio.load();
+        }
 
         testPlayback.onclick = () => {
 
@@ -236,16 +264,16 @@ export class PocAudioComponent implements OnInit {
                 console.log('Teste Playback');
 
 
-//                 https://stackoverflow.com/questions/11410170/export-text-stored-as-bindata-in-mongodb
-// https://stackoverflow.com/questions/48428385/convert-binary-data-image-in-mongoose-mongodb-to-base64-and-display-in-html
-// /**When you got your photo you can get rid of new Buffer(data.photo.toString(), 'base64'); I assume photo is already a buffer so: var base64OfPhoto = data.photo.toString('base64') is enough. – Roland Starke Jan 24 '18 at 17:47  */
-// https://stackoverflow.com/questions/31245140/using-binary-data-from-mongo-collection-as-image-source
+                //                 https://stackoverflow.com/questions/11410170/export-text-stored-as-bindata-in-mongodb
+                // https://stackoverflow.com/questions/48428385/convert-binary-data-image-in-mongoose-mongodb-to-base64-and-display-in-html
+                // /**When you got your photo you can get rid of new Buffer(data.photo.toString(), 'base64'); I assume photo is already a buffer so: var base64OfPhoto = data.photo.toString('base64') is enough. – Roland Starke Jan 24 '18 at 17:47  */
+                // https://stackoverflow.com/questions/31245140/using-binary-data-from-mongo-collection-as-image-source
 
-// https://stackoverflow.com/questions/45106141/error-while-reading-blob-binary-data-from-mongodb-using-java
+                // https://stackoverflow.com/questions/45106141/error-while-reading-blob-binary-data-from-mongodb-using-java
 
-// console.log('res: ', res)
-                
-// console.log('res.file testes: ', res.file.toString('base64'))
+                // console.log('res: ', res)
+
+                // console.log('res.file testes: ', res.file.toString('base64'))
                 // console.log('res.file.data testes: ', res.file.data)
 
 
@@ -261,16 +289,16 @@ export class PocAudioComponent implements OnInit {
                 // let base64String2 = btoa(String.fromCharCode(...new Uint8Array(arrayBuffer2)));
                 // console.log('arrayBuffer2:', arrayBuffer2);
                 // console.log('base64String2:', base64String2);
-                
-                  var binary = '';
-                  let bytes = new Uint8Array( res.file );
-                  let len = bytes.byteLength;
-                  for (var i = 0; i < len; i++) {
-                    binary += String.fromCharCode( bytes[ i ] );
-                  }
+
+                var binary = '';
+                let bytes = new Uint8Array(res.file);
+                let len = bytes.byteLength;
+                for (var i = 0; i < len; i++) {
+                  binary += String.fromCharCode(bytes[i]);
+                }
                 let novo = window.btoa(binary);
                 console.log('Novo:', novo)
-                
+
 
 
                 let reader2 = new FileReader();
@@ -305,7 +333,7 @@ export class PocAudioComponent implements OnInit {
 
         }
 
-        
+
 
 
       }
@@ -320,97 +348,6 @@ export class PocAudioComponent implements OnInit {
       console.log('Suporte para getUserMedia não detectado.');
     }
 
-    // FIXME: Nova tentativa https://webrtc.org/getting-started/media-devices#using-asyncawait
-
-    // const openMediaDevices = async (constraints) => {
-    //   return await navigator.mediaDevices.getUserMedia(constraints);
-    // }
-
-    // // try {
-    // //   //let constraints = { audio: true }; //retrição: somente áudio
-    // //   //const stream = openMediaDevices(constraints);
-    // //   console.log('Got MediaStream:', stream);
-    // //   playAudio();
-
-    // // } catch (error) {
-    // //   console.error('Error accessing media devices.', error);
-    // // }
-
-    // async function playAudio() {
-    //   try {
-    //     let constraints = { audio: true }; //retrição: somente áudio
-    //     const stream = await navigator.mediaDevices.getUserMedia(constraints);
-    //     audio.srcObject = stream;
-    //   } catch (error) {
-
-    //   }
-    // }
-
-
-
-
-
-    /*   
-         // https://developer.mozilla.org/en-US/docs/Web/API/MediaStream_Recording_API/Using_the_MediaStream_Recording_API#basic_app_setup
-       if (navigator.mediaDevices.getUserMedia) {
-         console.log('Suporte para getUserMedia detectado.');
-   
-         
-         let data = [];
-         navigator.mediaDevices.getUserMedia(constraints).then
-   
-         
-   
-           record.onclick = () => {
-             mediaRecorder.start();
-             console.log(mediaRecorder.state);
-             console.log("Gravação iniciada");
-             record.style.background = "red";
-             record.style.color = "black";
-             recognition.start(); // SPEECH
-             tamanho = 0; // SPEECH
-   
-           }
-   
-           stop.onclick = () => {
-             mediaRecorder.stop();
-             console.log(mediaRecorder.state);
-             console.log("Gravação finalizada");
-             record.style.background = "";
-             record.style.color = "";
-             recognition.stop(); // SPEECH
-           }
-   
-           mediaRecorder.ondataavailable = (e) => {
-             data.push(e.data);
-             console.log('Event handler: Dados de audio coletados')
-           }
-   
-           mediaRecorder.onstop = () => {
-             let clipName = 'clipNameTest';
-             // TODO: audio element aqui?
-             //let blob = new Blob(data, audioType);  // media stream
-             //data = [];
-             // const audioURL = window.URL.createObjectURL(blob);
-             audio.srcObject = mediaStream;
-             //audio.src = audioURL;
-             // audio.controls = true;
-             // audio.preload = 'metadata';
-             // audio.load();
-   
-             //donwloadButton.href = audioURL;
-           }
-         }
-   
-         let onError = (err) => {
-           console.log('Erros do getUserMedia ocorridos: ' + err);
-         }
-   
-         
-   
-       } else {
-         console.log('Suporte para getUserMedia não detectado.');
-       }
-   */
+    
   }
 }
