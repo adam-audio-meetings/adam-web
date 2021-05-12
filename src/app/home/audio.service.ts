@@ -23,7 +23,7 @@ export class AudioService {
     private messageService: MessageService,
     ) { }
 
-  private audiosUrl = environment.apiUrl + "audios";
+  private audiosUrl = environment.apiUrl + 'audio-noauth'; // FIXME: alterar para "audios";
 
   getAudios(): Observable<Audio[]> {
     return this.http.get<Audio[]>(this.audiosUrl)
@@ -68,15 +68,19 @@ export class AudioService {
       );
   }
 
-  createAudio(audio: Audio): Observable<Audio> {
-
-    // api login route - sigin function
-    const url =  environment.apiUrl + 'register/'
-    return this.http.post<Audio>(url, audio, this.httpOptions)
-      .pipe(
-        tap((newAudio: Audio) => this.log(`added audio id=${newAudio._id}`)),
-        catchError(this.handleError<Audio>(`createAudio`))
-      );
+  uploadAudio(file: File) {
+  // uploadAudio(file: Audio): Observable<Audio> {
+    const formData = new FormData();
+    
+    // files.forEach(file => formData.append('file', file, file.name));
+    // file => formData.append('file', file, file.name);
+    formData.append('file',file, file.name);
+    const url = this.audiosUrl + '/upload';
+    return this.http.post(url, formData)
+    //   .pipe(
+    //     tap((newAudio: Audio) => this.log(`added audio id=${newAudio._id}`)),
+    //     catchError(this.handleError<Audio>(`createAudio`))
+    //   );
   }
 
 

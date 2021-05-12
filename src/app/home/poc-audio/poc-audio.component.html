@@ -10,8 +10,18 @@
 
 <section class="sound-clips">
   <audio></audio>
-  <a id="downloadButton" class="button">Salvar</a>
+  <br>
+  <button id="downloadButton" class="button">Download</button>
+  <button id="uploadButton" class="button">Enviar</button>
+  <button id="testPlayback" class="button">Teste Playback</button>
+  <button id="testPlayback2" class="button">Teste Playback2</button>
 </section>
+
+<input type="file" id="file"/>
+
+<audio id="audioPlayer" controls load>
+  <source src="http://localhost:3000/audio" type="audio/webm" />
+</audio>
 
 <h2>Transcrição</h2>
 <h3 id="transcript_result"></h3>
