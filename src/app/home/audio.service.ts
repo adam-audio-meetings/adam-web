@@ -68,7 +68,7 @@ export class AudioService {
       );
   }
 
-  uploadAudio(file: File) {
+  uploadAudio(file: File): Observable<Audio> {
   // uploadAudio(file: Audio): Observable<Audio> {
     const formData = new FormData();
     
@@ -77,11 +77,19 @@ export class AudioService {
     formData.append('file',file, file.name);
     const url = this.audiosUrl + '/upload';
     return this.http.post(url, formData)
-    //   .pipe(
-    //     tap((newAudio: Audio) => this.log(`added audio id=${newAudio._id}`)),
-    //     catchError(this.handleError<Audio>(`createAudio`))
-    //   );
+      .pipe(
+        tap((newAudio: Audio) => this.log(`added audio id=${newAudio._id}`)),
+        catchError(this.handleError<Audio>(`createAudio`))
+      );
   }
+
+  // sem observable de Audio
+  // uploadAudio(file: File) {
+  //   const formData = new FormData();
+  //   formData.append('file',file, file.name);
+  //   const url = this.audiosUrl + '/upload';
+  //   return this.http.post(url, formData)
+  // }
 
 
   deleteAudio(id: string): Observable<{}> {

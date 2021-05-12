@@ -3,25 +3,22 @@
 <section class="main-controls">
   <canvas class="visualizer" height="60px"></canvas>
   <div id="buttons">
-    <button class="record">Record</button>
-    <button class="stop">Stop</button>
+    <button id="record" class="btn btn-danger record">Gravar</button>
+    <button id="stop" class="btn btn-outline-secondary stop">Parar</button>
   </div>
 </section>
 
 <section class="sound-clips">
   <audio></audio>
   <br>
-  <button id="downloadButton" class="button">Download</button>
-  <button id="uploadButton" class="button">Enviar</button>
-  <button id="testPlayback" class="button">Teste Playback</button>
-  <button id="testPlayback2" class="button">Teste Playback2</button>
+  <button id="uploadButton" class="btn btn-outline-success">Enviar</button>
+  <button id="discardButton" class="btn btn-outline-danger">Descartar</button>
+  <!-- <button id="testPlayback" class="button">Teste Playback</button> -->
 </section>
 
-<input type="file" id="file"/>
-
-<audio id="audioPlayer" controls load>
+<!-- <audio id="audioPlayer" controls load>
   <source src="http://localhost:3000/audio" type="audio/webm" />
-</audio>
+</audio> -->
 
 <h2>Transcrição</h2>
 <h3 id="transcript_result"></h3>
