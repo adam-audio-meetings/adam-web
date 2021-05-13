@@ -4,8 +4,9 @@ import { fileURLToPath } from 'url';
 import { AudioService } from '../audio.service';
 import { User } from '../../users/interfaces/user';
 import { UserService } from '../../users/user.service';
-import { Observable } from 'rxjs';
+import { Observable, Subscription } from 'rxjs';
 import { ROLES } from '../../users/mocks/user-roles';
+import { DataService } from 'src/app/socket/data.service';
 
 @Component({
   selector: 'app-poc-audio',
@@ -19,9 +20,14 @@ export class PocAudioComponent implements OnInit {
   roles = ROLES;
   roleFilter = "";
 
+  // testes socket.io-client
+  stockQuote: number;
+  sub: Subscription;
+
   constructor(
     public audioService: AudioService,
-    private userService: UserService,) { }
+    private userService: UserService,
+  private dataService: DataService) { }
 
   getUsers(): void {
     this.users$ = this.userService.getUsers();
@@ -29,6 +35,12 @@ export class PocAudioComponent implements OnInit {
 
   ngOnInit(): void {
     this.getUsers();
+
+    // testes socket.io-client
+    this.sub = this.dataService.getQuotes()
+      .subscribe(quote => {
+        this.stockQuote = quote;
+      });
 
     // variáveis RECORD/PLAY
     let record = document.querySelector('#record') as HTMLElement;
@@ -278,5 +290,9 @@ export class PocAudioComponent implements OnInit {
     }
 
 
+  }
+
+  ngOnDestroy() {
+    this.sub.unsubscribe();
   }
 }

@@ -1,13 +1,15 @@
 <!-- <div class="d-flex justify-content-center"> -->
+  <p>{{ stockQuote }}</p>
 <div class="grid-container">
   <div class="sidebar">
     <div>
       <h3>Equipe de TI - Devs</h3>
+      <p>{{ stockQuote }}</p><br>
 
     </div>
     <div>
       <ul class="list-group">
-        <li class="list-group-item" *ngFor="let user of (users$ | async)">
+        <li class="list-group-item" *ngFor="let user of users$ | async">
           <!-- | userFilter:roleFilter"> -->
           <!-- <p>{{user._id}}</p> -->
           <p>{{user.role | titlecase}}</p>
