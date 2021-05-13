@@ -1,24 +1,47 @@
-<select name="inputDevices" id="inputDevices"></select>
+<!-- <div class="d-flex justify-content-center"> -->
+<div class="grid-container">
+  <div class="sidebar">
+    <div>
+      <h3>Equipe de TI - Devs</h3>
 
-<section class="main-controls">
-  <canvas class="visualizer" height="60px"></canvas>
-  <div id="buttons">
-    <button id="record" class="btn btn-danger record">Gravar</button>
-    <button id="stop" class="btn btn-outline-secondary stop">Parar</button>
+    </div>
+    <div>
+      <ul class="list-group">
+        <li class="list-group-item" *ngFor="let user of (users$ | async)">
+          <!-- | userFilter:roleFilter"> -->
+          <!-- <p>{{user._id}}</p> -->
+          <p>{{user.role | titlecase}}</p>
+          <p>{{user.name}}</p>
+          <!-- <p>{{user.username}}</p> -->
+          <!-- <p>{{user.email}}</p> -->
+          <!-- <button class="btn btn-primary btn-sm mr-1 mb-1" routerLink="edit/{{user._id}}">Editar</button> -->
+          <!-- <button class="btn btn-danger btn-sm mr-1 mb-1" (click)="deleteUser(user._id)">Excluir</button> -->
+        </li>
+      </ul>
+    </div>
   </div>
-</section>
 
-<section class="sound-clips">
-  <audio></audio>
-  <br>
-  <button id="uploadButton" class="btn btn-outline-success">Enviar</button>
-  <button id="discardButton" class="btn btn-outline-danger">Descartar</button>
-  <!-- <button id="testPlayback" class="button">Teste Playback</button> -->
-</section>
+  <div class="main">
 
-<!-- <audio id="audioPlayer" controls load>
-  <source src="http://localhost:3000/audio" type="audio/webm" />
-</audio> -->
+    <div class="container-item main-controls">
+      <audio></audio>
+      <div id="buttons">
+        <button id="record" class="btn btn-danger record">Gravar</button>
+        <button id="stop" class="btn btn-secondary stop">Parar</button>
+        <button id="uploadButton" class="btn btn-success">Enviar</button>
+        <button id="discardButton" class="btn btn-outline-danger">Descartar</button>
+        <!-- <button id="testPlayback" class="button">Teste Playback</button> -->
+      </div>
+    </div>
 
-<h2>Transcrição</h2>
-<h3 id="transcript_result"></h3>
+    <div class="container-item">
+      <h4>Transcrição</h4>
+      <h5 id="transcript_result"></h5>
+    </div>
+
+    <div class="container-item">
+      <select name="inputDevices" id="inputDevices"></select>
+    </div>
+
+  </div>
+</div>

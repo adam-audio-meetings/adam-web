@@ -2,6 +2,10 @@ import { Component, OnInit } from '@angular/core';
 import getBlobDuration from 'get-blob-duration';
 import { fileURLToPath } from 'url';
 import { AudioService } from '../audio.service';
+import { User } from '../../users/interfaces/user';
+import { UserService } from '../../users/user.service';
+import { Observable } from 'rxjs';
+import { ROLES } from '../../users/mocks/user-roles';
 
 @Component({
   selector: 'app-poc-audio',
@@ -10,10 +14,21 @@ import { AudioService } from '../audio.service';
 })
 export class PocAudioComponent implements OnInit {
 
+  users$: Observable<User[]>;
+  selectedId: string;
+  roles = ROLES;
+  roleFilter = "";
+
   constructor(
-    public audioService: AudioService) { }
+    public audioService: AudioService,
+    private userService: UserService,) { }
+
+  getUsers(): void {
+    this.users$ = this.userService.getUsers();
+  }
 
   ngOnInit(): void {
+    this.getUsers();
 
     // variáveis RECORD/PLAY
     let record = document.querySelector('#record') as HTMLElement;
@@ -164,9 +179,9 @@ export class PocAudioComponent implements OnInit {
           mediaRecorder.start();
           console.log(mediaRecorder.state);
           console.log("Gravação iniciada");
-          record.style.background = "red";
+          record.style.background = "#bd2130";
           record.innerHTML = "Gravando";
-          record.style.color = "black";
+          record.style.fontWeight = "bold";
           stop.removeAttribute('disabled');
           if (speechRecognitionEnabled) {
             recognition.start(); // SPEECH
@@ -180,7 +195,7 @@ export class PocAudioComponent implements OnInit {
           console.log(mediaRecorder.state);
           console.log("Gravação finalizada");
           record.style.background = "";
-          record.style.color = "";
+          record.style.fontWeight = "";
           record.innerHTML = "Gravar";
           stop.setAttribute('disabled', 'true');
           uploadButton.removeAttribute('disabled');
