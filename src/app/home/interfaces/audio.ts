@@ -6,7 +6,6 @@ export interface Audio {
     _id?: string,
     name: string,
     created_at: Date
-    file: any | Binary,
     team?: Team,
     member?: User,
 }

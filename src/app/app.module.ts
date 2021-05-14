@@ -15,7 +15,8 @@ import { AuthModule } from './auth/auth.module';
 import { httpInterceptorProviders } from './http-interceptors';
 import { SessionCounterPipe } from './session-counter.pipe';
 import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
-import { DataService } from './socket/data.service';
+import { WebsocketService } from './socket/websocket.service';
+// import { DataService } from './socket/data.service';
 
 // import { AngularFireModule } from '@angular/fire';
 // import { AngularFireAnalyticsModule } from '@angular/fire/analytics';
@@ -49,7 +50,8 @@ import { DataService } from './socket/data.service';
   providers: [
     httpInterceptorProviders,
     // { provide: BUCKET, useValue: environment.firebase.storageBucket },
-    DataService
+    // DataService
+    WebsocketService
   ],
   bootstrap: [AppComponent]
 })

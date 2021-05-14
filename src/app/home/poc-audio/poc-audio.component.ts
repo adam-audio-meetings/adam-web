@@ -6,7 +6,8 @@ import { User } from '../../users/interfaces/user';
 import { UserService } from '../../users/user.service';
 import { Observable, Subscription } from 'rxjs';
 import { ROLES } from '../../users/mocks/user-roles';
-import { DataService } from 'src/app/socket/data.service';
+import { WebsocketService } from 'src/app/socket/websocket.service';
+// import { DataService } from 'src/app/socket/data.service';
 
 @Component({
   selector: 'app-poc-audio',
@@ -21,26 +22,33 @@ export class PocAudioComponent implements OnInit {
   roleFilter = "";
 
   // testes socket.io-client
-  stockQuote: number;
-  sub: Subscription;
+  // stockQuote: number;
+  // sub: Subscription;
+  msgInput: string = 'teste de cliente';
 
   constructor(
     public audioService: AudioService,
     private userService: UserService,
-  private dataService: DataService) { }
+    private websocketService: WebsocketService
+  ) { }
 
   getUsers(): void {
     this.users$ = this.userService.getUsers();
+  }
+
+  sendButtonClick() {
+    console.log('clicou para enviar');
+    this.websocketService.sendMessage(this.msgInput)
   }
 
   ngOnInit(): void {
     this.getUsers();
 
     // testes socket.io-client
-    this.sub = this.dataService.getQuotes()
-      .subscribe(quote => {
-        this.stockQuote = quote;
-      });
+    this.websocketService.onNewMessage().subscribe(msg => { 
+      console.log('Recebido do servidor: ', msg);
+      this.getUsers();
+    });
 
     // variáveis RECORD/PLAY
     let record = document.querySelector('#record') as HTMLElement;
@@ -288,11 +296,5 @@ export class PocAudioComponent implements OnInit {
     } else {
       console.log('Suporte para getUserMedia não detectado.');
     }
-
-
-  }
-
-  ngOnDestroy() {
-    this.sub.unsubscribe();
   }
 }
