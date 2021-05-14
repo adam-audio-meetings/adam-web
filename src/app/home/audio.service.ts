@@ -74,7 +74,9 @@ export class AudioService {
     
     // files.forEach(file => formData.append('file', file, file.name));
     // file => formData.append('file', file, file.name);
-    formData.append('file',file, file.name);
+    formData.append('file', file, file.name);
+    formData.append("idTeam", "12");
+    formData.append("idUser", "1236");
     const url = this.audiosUrl + '/upload';
     return this.http.post(url, formData)
       .pipe(

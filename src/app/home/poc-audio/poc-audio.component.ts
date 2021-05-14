@@ -52,6 +52,7 @@ export class PocAudioComponent implements OnInit {
 
     // variáveis RECORD/PLAY
     let record = document.querySelector('#record') as HTMLElement;
+    let iconRecord = document.querySelector('#iconRecord') as HTMLElement;
     let stop = document.querySelector('#stop') as HTMLElement;
     let soundClips = document.querySelector('.sound-clips') as HTMLElement;
     let audio = document.querySelector('audio');
@@ -199,9 +200,10 @@ export class PocAudioComponent implements OnInit {
           mediaRecorder.start();
           console.log(mediaRecorder.state);
           console.log("Gravação iniciada");
-          record.style.background = "#bd2130";
-          record.innerHTML = "Gravando";
-          record.style.fontWeight = "bold";
+          // record.style.background = "#bd2130";
+          // record.innerHTML = "Gravando";
+          // record.style.fontWeight = "bold";
+          iconRecord.classList.add("blink_me");
           stop.removeAttribute('disabled');
           if (speechRecognitionEnabled) {
             recognition.start(); // SPEECH
@@ -214,9 +216,10 @@ export class PocAudioComponent implements OnInit {
           mediaRecorder.stop();
           console.log(mediaRecorder.state);
           console.log("Gravação finalizada");
-          record.style.background = "";
-          record.style.fontWeight = "";
-          record.innerHTML = "Gravar";
+          // record.style.background = "";
+          // record.style.fontWeight = "";
+          // record.innerHTML = "Gravar";
+          iconRecord.classList.remove("blink_me");
           stop.setAttribute('disabled', 'true');
           uploadButton.removeAttribute('disabled');
           discardButton.removeAttribute('disabled');
