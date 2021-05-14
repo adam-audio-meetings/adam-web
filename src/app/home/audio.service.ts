@@ -21,7 +21,7 @@ export class AudioService {
   constructor(
     private http: HttpClient,
     private messageService: MessageService,
-    ) { }
+  ) { }
 
   private audiosUrl = environment.apiUrl + 'audio-noauth'; // FIXME: alterar para "audios";
 
@@ -30,11 +30,11 @@ export class AudioService {
       .pipe(
         tap(_ => this.log('fetched audios')),
         catchError(this.handleError<Audio[]>('getAudios', []))
-      )    
+      )
   }
 
   getAudio(id: string): Observable<Audio> {
-    const url =  `${this.audiosUrl}/${id}`;
+    const url = `${this.audiosUrl}/${id}`;
     return this.http.get<Audio>(url)
       .pipe(
         tap(_ => this.log(`fetched audio id=${id}`)),
@@ -43,15 +43,15 @@ export class AudioService {
   }
 
   searchAudios(term: string): Observable<Audio[]> {
-    if(!term.trim()){
+    if (!term.trim()) {
       return of([])
     }
     const url = `${this.audiosUrl}/search?role=${term}&name=${term}&audioname=${term}&email=${term}`;
     return this.http.get<Audio[]>(url)
       .pipe(
         tap(x => x.length ?
-            this.log('found audios') :
-            this.log('not found')),
+          this.log('found audios') :
+          this.log('not found')),
         catchError(this.handleError<Audio[]>('searchAudios', []))
       )
   }
@@ -60,7 +60,7 @@ export class AudioService {
     // httpOptions.headers =
     //   httpOptions.headers.set('Authorization', 'my-new-auth-token');
     const id = audio._id;
-    const url =  `${this.audiosUrl}/${id}`;
+    const url = `${this.audiosUrl}/${id}`;
     return this.http.put<Audio>(url, audio)
       .pipe(
         tap(_ => this.log(`updated audio id=${id}`)),
@@ -69,14 +69,14 @@ export class AudioService {
   }
 
   uploadAudio(file: File): Observable<Audio> {
-  // uploadAudio(file: Audio): Observable<Audio> {
+    // uploadAudio(file: Audio): Observable<Audio> {
     const formData = new FormData();
-    
+
     // files.forEach(file => formData.append('file', file, file.name));
     // file => formData.append('file', file, file.name);
     formData.append('file', file, file.name);
-    formData.append("idTeam", "12");
-    formData.append("idUser", "1236");
+    // formData.append("idTeam", "12");
+    // formData.append("idUser", "1236");
     const url = this.audiosUrl + '/upload';
     return this.http.post(url, formData)
       .pipe(
@@ -93,7 +93,19 @@ export class AudioService {
   //   return this.http.post(url, formData)
   // }
 
+  createAudio(audio: Audio): Observable<Audio> {
 
+    // FIXME: api login route - sigin function
+    // const url = environment.apiUrl + 'audio_info'
+    const url = this.audiosUrl + '/audio_info';
+    console.log('createAudio info');
+    return this.http.post<Audio>(url, audio, this.httpOptions)
+      .pipe(
+        tap((newAudio: Audio) => this.log(`added audio id=${newAudio._id}`)),
+        catchError(this.handleError<Audio>(`createAudio`))
+      );
+
+  }
   deleteAudio(id: string): Observable<{}> {
     /** TODO: confirm deletion */
     /** TODO: logic deletion */
@@ -118,17 +130,17 @@ export class AudioService {
   * @param result - optional value to return as the observable result
   */
   private handleError<T>(operation = 'operation', result?: T) {
-   return (error: any): Observable<T> => {
-    
-     // TODO: send the error to remote logging infrastructure
-     console.error(error); // log to console instead
-    
-     // TODO: better job of transforming error for audio consumption
-     this.log(`${operation} failed: ${error.message}`);
-    
-     // Let the app keep running by returning an empty result.
-     return of(result as T);
-   };
+    return (error: any): Observable<T> => {
+
+      // TODO: send the error to remote logging infrastructure
+      console.error(error); // log to console instead
+
+      // TODO: better job of transforming error for audio consumption
+      this.log(`${operation} failed: ${error.message}`);
+
+      // Let the app keep running by returning an empty result.
+      return of(result as T);
+    };
   }
 
 }

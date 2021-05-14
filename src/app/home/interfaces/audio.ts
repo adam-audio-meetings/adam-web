@@ -6,6 +6,6 @@ export interface Audio {
     _id?: string,
     name: string,
     created_at: Date
-    team?: Team,
-    member?: User,
+    team?: string,
+    member?: string,
 }

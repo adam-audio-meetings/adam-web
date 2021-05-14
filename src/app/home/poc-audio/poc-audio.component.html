@@ -7,11 +7,11 @@
     </div>
     <div>
       <ul class="list-group">
-        <li class="list-group-item" *ngFor="let user of users$ | async">
+        <li class="list-group-item" *ngFor="let audio of audios$ | async">
           <!-- | userFilter:roleFilter"> -->
           <!-- <p>{{user._id}}</p> -->
-          <p>{{user.role | titlecase}}</p>
-          <p>{{user.name}}</p>
+          <p>{{audio.name | titlecase}}</p>
+          <p>{{audio.created_at}}</p>
           <!-- <p>{{user.username}}</p> -->
           <!-- <p>{{user.email}}</p> -->
           <!-- <button class="btn btn-primary btn-sm mr-1 mb-1" routerLink="edit/{{user._id}}">Editar</button> -->
@@ -29,8 +29,7 @@
         <button id="record" class="btn btn-danger record m-1"><i id="iconRecord" class="bi bi-mic-fill"></i></button>
         <button id="stop" class="btn btn-secondary stop m-1"><i class="bi bi-stop-fill"></i></button>
         <button id="discardButton" class="btn btn-danger m-1"><i class="bi bi-trash"></i></button>
-        <button id="uploadButton" class="btn btn-success m-1">
-          <!-- (click)="sendButtonClick()"> -->
+        <button id="uploadButton" class="btn btn-success m-1" (click)="sendButtonClick()">
           <i class="bi bi-upload"></i>
         </button>
         <!-- <button id="testPlayback" class="button">Teste Playback</button> -->

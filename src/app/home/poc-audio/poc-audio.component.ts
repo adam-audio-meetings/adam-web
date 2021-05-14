@@ -3,6 +3,8 @@ import getBlobDuration from 'get-blob-duration';
 import { fileURLToPath } from 'url';
 import { AudioService } from '../audio.service';
 import { User } from '../../users/interfaces/user';
+import { Team } from '../../teams/interfaces/team';
+import { Audio } from '../../home/interfaces/audio';
 import { UserService } from '../../users/user.service';
 import { Observable, Subscription } from 'rxjs';
 import { ROLES } from '../../users/mocks/user-roles';
@@ -17,6 +19,7 @@ import { WebsocketService } from 'src/app/socket/websocket.service';
 export class PocAudioComponent implements OnInit {
 
   users$: Observable<User[]>;
+  audios$: Observable<Audio[]>;
   selectedId: string;
   roles = ROLES;
   roleFilter = "";
@@ -36,18 +39,25 @@ export class PocAudioComponent implements OnInit {
     this.users$ = this.userService.getUsers();
   }
 
+  getAudios(): void {
+    this.audios$ = this.audioService.getAudios();
+  }
+
   sendButtonClick() {
     console.log('clicou para enviar');
     this.websocketService.sendMessage(this.msgInput)
   }
 
   ngOnInit(): void {
-    this.getUsers();
+    // this.getUsers();
+    this.getAudios();
 
     // testes socket.io-client
-    this.websocketService.onNewMessage().subscribe(msg => { 
+    this.websocketService.onNewMessage().subscribe(msg => {
       console.log('Recebido do servidor: ', msg);
-      this.getUsers();
+      // servidor envia mensagem para atualizar lista de audios no cliente
+      // this.getUsers();
+      this.getAudios();
     });
 
     // variáveis RECORD/PLAY
@@ -270,6 +280,24 @@ export class PocAudioComponent implements OnInit {
           let blob = new Blob(data, audioType);
           let file = new File([blob], "testeAudioBlobToFile.weba", audioType)
           // console.log('File: ', file)
+
+
+          // mock user e audio info
+          let user = {
+            _id: "6094c5934f2d2e146c5b0a06",
+            //   name: "User test",
+            // email: "usertest@mail.com",
+            // role: "member",
+            // username: "usertest",
+          }
+
+          let audio_info = {
+            name: "test1",
+            created_at: new Date(),
+            member: "6094c5934f2d2e146c5b0a06",
+            // team: "2"
+
+          }
           this.audioService.uploadAudio(
             file
           ).subscribe({
@@ -280,6 +308,15 @@ export class PocAudioComponent implements OnInit {
             },
             error: () => alert('Erro ao enviar áudio.')
           });
+
+          this.audioService.createAudio(audio_info)
+            .subscribe({
+              next: (res) => {
+                console.log('Dados do áudio gravados no servidor.');
+              },
+              error: () => alert('Erro ao enviar dados do áudio.')
+            });
+
         }
         // testPlayback.onclick = () => {
         //   let audioURL = "http://localhost:3000/audio-in-folder";
