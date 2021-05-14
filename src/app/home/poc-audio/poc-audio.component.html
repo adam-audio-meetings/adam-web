@@ -3,7 +3,7 @@
 <div class="grid-container">
   <div class="sidebar">
     <div>
-      <h3>Equipe de TI - Devs</h3>
+      <h3 id="teamName">Equipe de TI - Devs</h3>
     </div>
     <div>
       <ul class="list-group">
@@ -11,7 +11,7 @@
           <!-- | userFilter:roleFilter"> -->
           <!-- <p>{{user._id}}</p> -->
           <p>{{audio.name | titlecase}}</p>
-          <p>{{audio.created_at}}</p>
+          <p>{{audio.created_at | date : 'd/MM HH:mm' }}</p>
           <!-- <p>{{user.username}}</p> -->
           <!-- <p>{{user.email}}</p> -->
           <!-- <button class="btn btn-primary btn-sm mr-1 mb-1" routerLink="edit/{{user._id}}">Editar</button> -->

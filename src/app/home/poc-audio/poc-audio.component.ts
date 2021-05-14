@@ -282,22 +282,8 @@ export class PocAudioComponent implements OnInit {
           // console.log('File: ', file)
 
 
-          // mock user e audio info
-          let user = {
-            _id: "6094c5934f2d2e146c5b0a06",
-            //   name: "User test",
-            // email: "usertest@mail.com",
-            // role: "member",
-            // username: "usertest",
-          }
 
-          let audio_info = {
-            name: "test1",
-            created_at: new Date(),
-            member: "6094c5934f2d2e146c5b0a06",
-            // team: "2"
 
-          }
           this.audioService.uploadAudio(
             file
           ).subscribe({
@@ -309,13 +295,29 @@ export class PocAudioComponent implements OnInit {
             error: () => alert('Erro ao enviar áudio.')
           });
 
-          this.audioService.createAudio(audio_info)
-            .subscribe({
-              next: (res) => {
-                console.log('Dados do áudio gravados no servidor.');
-              },
-              error: () => alert('Erro ao enviar dados do áudio.')
-            });
+          // responabilidade passada para o servidor
+          // // mock user e audio info
+          // let user = {
+          //   _id: "6094c5934f2d2e146c5b0a06",
+          //   //   name: "User test",
+          //   // email: "usertest@mail.com",
+          //   // role: "member",
+          //   // username: "usertest",
+          // }
+
+          // let audio_info = {
+          //   name: "test1",
+          //   created_at: new Date(),
+          //   member: "6094c5934f2d2e146c5b0a06",
+          //   // team: "2"
+          // }
+          // this.audioService.createAudio(audio_info)
+          //   .subscribe({
+          //     next: (res) => {
+          //       console.log('Dados do áudio gravados no servidor.');
+          //     },
+          //     error: () => alert('Erro ao enviar dados do áudio.')
+          //   });
 
         }
         // testPlayback.onclick = () => {

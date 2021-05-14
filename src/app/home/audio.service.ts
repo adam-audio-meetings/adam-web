@@ -75,8 +75,10 @@ export class AudioService {
     // files.forEach(file => formData.append('file', file, file.name));
     // file => formData.append('file', file, file.name);
     formData.append('file', file, file.name);
-    // formData.append("idTeam", "12");
-    // formData.append("idUser", "1236");
+    formData.append("idUser", "6094c5934f2d2e146c5b0a06");
+    //formData.append("idTeam", "12");
+    formData.append("name", "teste2");
+    formData.append("transcription", "teste transcript");
     const url = this.audiosUrl + '/upload';
     return this.http.post(url, formData)
       .pipe(
