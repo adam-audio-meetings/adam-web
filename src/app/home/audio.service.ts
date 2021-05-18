@@ -4,6 +4,7 @@ import { Observable, of } from 'rxjs';
 import { tap, catchError } from 'rxjs/operators';
 import { MessageService } from '../message.service';
 import { Audio } from './interfaces/audio';
+import { AudioListened } from './interfaces/audioListened';
 import { environment } from 'src/environments/environment';
 
 @Injectable({
@@ -106,8 +107,8 @@ export class AudioService {
         tap((newAudio: Audio) => this.log(`added audio id=${newAudio._id}`)),
         catchError(this.handleError<Audio>(`createAudio`))
       );
-
   }
+
   deleteAudio(id: string): Observable<{}> {
     /** TODO: confirm deletion */
     /** TODO: logic deletion */
@@ -117,6 +118,20 @@ export class AudioService {
         tap(_ => this.log(`deleted audio id=${id}`)),
         catchError(this.handleError(`deleteAudio id=${id}`))
       );
+  }
+
+  createAudioListened(audioListened: AudioListened): Observable<AudioListened> {
+
+    // FIXME: api login route - sigin function
+    // const url = environment.apiUrl + 'audio_listened'
+    const url = this.audiosUrl + '/audio_listened';
+    console.log('createAudioListened info');
+    return this.http.post<AudioListened>(url, audioListened, this.httpOptions)
+      .pipe(
+        tap((newAudioListened: AudioListened) => this.log(`added audioListened id=${newAudioListened._id}`)),
+        catchError(this.handleError<AudioListened>(`createAudioListened`))
+      );
+
   }
 
   /** Log a message with the service */

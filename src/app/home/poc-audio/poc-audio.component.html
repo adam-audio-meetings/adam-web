@@ -13,7 +13,7 @@
             <div class="audio-member-info">
               <!-- | userFilter:roleFilter"> -->
               <p class="audio-member-name">{{audio.name | titlecase}}</p>
-              <p class="audio-member-date">{{audio.fileId }}</p>
+              <!-- <p class="audio-member-date">{{audio.fileId }}</p> -->
               <p class="audio-member-date">{{audio.created_at | date : 'd/MM HH:mm' }}</p>
             </div>
 
@@ -22,8 +22,9 @@
             <!-- TODO: buscar link api por environment -->
             <!-- TODO: type dinâmico -->
             <div class="audio-member-player">
-              <audio id="{{ audio._id}}" controls="audio.fileId" class="audio-member" type="audio/webm; codecs=opus"
-                src="http://localhost:3000/audio-in-db/{{ audio.fileId }}"></audio>
+              <audio id="{{ audio._id}}" controls="true" class="audio-member" type="audio/webm; codecs=opus"
+                src="http://localhost:3000/audio-in-db/{{ audio.fileId }}"
+                (ended)="listenAudioEnded(audio._id)"></audio>
 
             </div>
           </div>

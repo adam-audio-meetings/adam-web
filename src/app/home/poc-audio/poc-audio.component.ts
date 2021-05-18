@@ -5,6 +5,7 @@ import { AudioService } from '../audio.service';
 import { User } from '../../users/interfaces/user';
 import { Team } from '../../teams/interfaces/team';
 import { Audio } from '../../home/interfaces/audio';
+import { AudioListened } from '../../home/interfaces/audioListened';
 import { UserService } from '../../users/user.service';
 import { Observable, Subscription } from 'rxjs';
 import { ROLES } from '../../users/mocks/user-roles';
@@ -24,10 +25,8 @@ export class PocAudioComponent implements OnInit {
   roles = ROLES;
   roleFilter = "";
 
-  // testes socket.io-client
-  // stockQuote: number;
-  // sub: Subscription;
-  msgInput: string = 'teste de cliente';
+  // socket.io-client
+  msgInput: string = 'upload de audio no servidor';
 
   constructor(
     public audioService: AudioService,
@@ -44,11 +43,28 @@ export class PocAudioComponent implements OnInit {
   }
 
   sendButtonClick() {
-    console.log('clicou para enviar');
+    // console.log('Usuário enviou áudio');
     this.websocketService.sendMessage(this.msgInput)
   }
 
+  listenAudioEnded(audioId) {
+    // console.log('Usuário reproduziu áudio', audioId);
+    let audioListened = {
+      fileId: audioId,
+      // team ,  // TODO: utilizar ids logados
+      // member: ,
+    }
+    this.audioService.createAudioListened(audioListened)
+      .subscribe({
+        next: (res) => {
+          console.log('Áudio reproduzido pelo usuário.');
+        },
+        error: () => alert('Erro ao enviar status de áudio reproduzido.')
+      });;
+  }
+
   ngOnInit(): void {
+
     // this.getUsers();
     this.getAudios();
 
