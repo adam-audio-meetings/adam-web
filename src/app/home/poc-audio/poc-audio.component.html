@@ -8,14 +8,26 @@
     <div>
       <ul class="list-group">
         <li class="list-group-item" *ngFor="let audio of audios$ | async">
-          <!-- | userFilter:roleFilter"> -->
-          <!-- <p>{{user._id}}</p> -->
-          <p>{{audio.name | titlecase}}</p>
-          <p>{{audio.created_at | date : 'd/MM HH:mm' }}</p>
-          <!-- <p>{{user.username}}</p> -->
-          <!-- <p>{{user.email}}</p> -->
-          <!-- <button class="btn btn-primary btn-sm mr-1 mb-1" routerLink="edit/{{user._id}}">Editar</button> -->
-          <!-- <button class="btn btn-danger btn-sm mr-1 mb-1" (click)="deleteUser(user._id)">Excluir</button> -->
+          <div class="audio-member-container">
+
+            <div class="audio-member-info">
+              <!-- | userFilter:roleFilter"> -->
+              <p class="audio-member-name">{{audio.name | titlecase}}</p>
+              <p class="audio-member-date">{{audio.fileId }}</p>
+              <p class="audio-member-date">{{audio.created_at | date : 'd/MM HH:mm' }}</p>
+            </div>
+
+            <!-- <button class="btn btn-primary btn-sm mr-1 mb-1" routerLink="edit/{{user._id}}">Editar</button> -->
+            <!-- <button class="btn btn-danger btn-sm mr-1 mb-1" (click)="deleteUser(user._id)">Excluir</button> -->
+            <!-- TODO: buscar link api por environment -->
+            <!-- TODO: type dinâmico -->
+            <div class="audio-member-player">
+              <audio id="{{ audio._id}}" controls="audio.fileId" class="audio-member" type="audio/webm; codecs=opus"
+                src="http://localhost:3000/audio-in-db/{{ audio.fileId }}"></audio>
+
+            </div>
+          </div>
+
         </li>
       </ul>
     </div>
@@ -24,7 +36,7 @@
   <div class="main">
 
     <div class="container-item main-controls">
-      <audio></audio>
+      <audio id="audio-main"></audio>
       <div id="buttons">
         <button id="record" class="btn btn-danger record m-1"><i id="iconRecord" class="bi bi-mic-fill"></i></button>
         <button id="stop" class="btn btn-secondary stop m-1"><i class="bi bi-stop-fill"></i></button>

@@ -65,11 +65,11 @@ export class PocAudioComponent implements OnInit {
     let iconRecord = document.querySelector('#iconRecord') as HTMLElement;
     let stop = document.querySelector('#stop') as HTMLElement;
     let soundClips = document.querySelector('.sound-clips') as HTMLElement;
-    let audio = document.querySelector('audio');
+    let audio = document.querySelector('#audio-main') as HTMLAudioElement;
     let discardButton = document.querySelector('#discardButton') as HTMLElement;
     let uploadButton = document.querySelector('#uploadButton') as HTMLElement;
     let testPlayback = document.querySelector('#testPlayback') as HTMLElement;
-    let testPlayback2 = document.querySelector('#testPlayback2') as HTMLElement;
+    // let testPlayback2 = document.querySelector('#testPlayback2') as HTMLElement;
 
     let audioTypeWebm = { 'type': 'audio/webm' };
     let audioTypeWebmOpus = { 'type': 'audio/webm; codecs=opus' };
@@ -240,7 +240,7 @@ export class PocAudioComponent implements OnInit {
 
         mediaRecorder.ondataavailable = (e) => {
           data.push(e.data);
-          console.log('Event handler: Dados de audio coletados')
+          console.log('Event handler: Dados de áudio coletados')
         }
 
         mediaRecorder.onstop = () => {
@@ -260,8 +260,6 @@ export class PocAudioComponent implements OnInit {
           audio.controls = true;
           audio.preload = 'metadata'
           audio.load();
-          data = [];
-
         }
 
         discardButton.onclick = () => {
@@ -281,9 +279,6 @@ export class PocAudioComponent implements OnInit {
           let file = new File([blob], "testeAudioBlobToFile.weba", audioType)
           // console.log('File: ', file)
 
-
-
-
           this.audioService.uploadAudio(
             file
           ).subscribe({
@@ -294,34 +289,16 @@ export class PocAudioComponent implements OnInit {
             },
             error: () => alert('Erro ao enviar áudio.')
           });
-
-          // responabilidade passada para o servidor
-          // // mock user e audio info
-          // let user = {
-          //   _id: "6094c5934f2d2e146c5b0a06",
-          //   //   name: "User test",
-          //   // email: "usertest@mail.com",
-          //   // role: "member",
-          //   // username: "usertest",
-          // }
-
-          // let audio_info = {
-          //   name: "test1",
-          //   created_at: new Date(),
-          //   member: "6094c5934f2d2e146c5b0a06",
-          //   // team: "2"
-          // }
-          // this.audioService.createAudio(audio_info)
-          //   .subscribe({
-          //     next: (res) => {
-          //       console.log('Dados do áudio gravados no servidor.');
-          //     },
-          //     error: () => alert('Erro ao enviar dados do áudio.')
-          //   });
-
         }
         // testPlayback.onclick = () => {
         //   let audioURL = "http://localhost:3000/audio-in-folder";
+        //   audio.src = audioURL;
+        //   audio.controls = true;
+        //   audio.preload = 'metadata'
+        //   audio.load();
+        // }
+        // testPlayback.onclick = () => {
+        //   let audioURL = "http://localhost:3000/audio-in-db/609b007829740040f84d59af";
         //   audio.src = audioURL;
         //   audio.controls = true;
         //   audio.preload = 'metadata'
