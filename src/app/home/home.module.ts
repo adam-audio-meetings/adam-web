@@ -7,11 +7,10 @@ import { HomeComponent } from './home/home.component';
 import { HomeCoordinatorComponent } from './home-coordinator/home-coordinator.component';
 import { HomeMemberComponent } from './home-member/home-member.component';
 import { PocAudioComponent } from './poc-audio/poc-audio.component';
-import { AudiolistenedDirective } from './audiolistened.directive';
 
 
 @NgModule({
-  declarations: [HomeComponent, HomeAdminComponent, HomeCoordinatorComponent, HomeMemberComponent, PocAudioComponent, AudiolistenedDirective],
+  declarations: [HomeComponent, HomeAdminComponent, HomeCoordinatorComponent, HomeMemberComponent, PocAudioComponent],
   imports: [
     CommonModule,
     HomeRoutingModule
