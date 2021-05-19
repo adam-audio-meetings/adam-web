@@ -1,4 +1,4 @@
-.grid-container {
+.page-container {
     height: 100vh;
     display: grid;
     grid-template-areas: '. .' 'sidebar main';
@@ -25,16 +25,17 @@
     padding-left: 15px;
 }
 
-.main {
+.main-container {
     grid-area: main;
     display: grid;
     /* grid-template-columns: 1fr; */
-    grid-template-rows: 1fr 1fr 100px;
+    grid-template-rows: 1fr 1fr 80px;
     background-color: rgb(238, 238, 238);
-    flex-direction: column;
-    justify-content: center;
+    /* flex-direction: column;*/
+    /* justify-content: center; */
     align-items: center;
     justify-items: center;
+    grid-template-areas: 'mainControls' 'transcript' 'inputDevices';
 }
 
 .list-group-item {
@@ -106,11 +107,25 @@
     font-size: 0.7rem;
 }
 
-.main-controls-buttons, button {
+.main-controls-button {
     font-size: 1.5rem;
     border-radius: 2rem;
 }
 
-/* #audio-main {
-    background-color: cadetblue;
-} */
+.mainControls {
+    display: grid;
+    grid-area: mainControls;
+    justify-items: center;
+    background-color: rgb(233, 233, 233);
+    border-radius: .25rem;
+    padding: 1rem;
+}
+
+.transcript {
+    grid-area: transcript;
+    align-self: start;
+}
+
+.main-audio-player-container {
+    margin: 1rem;
+}

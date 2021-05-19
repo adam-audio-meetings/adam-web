@@ -81,7 +81,7 @@ export class PocAudioComponent implements OnInit {
     let iconRecord = document.querySelector('#iconRecord') as HTMLElement;
     let stop = document.querySelector('#stop') as HTMLElement;
     let soundClips = document.querySelector('.sound-clips') as HTMLElement;
-    let audio = document.querySelector('#audio-main') as HTMLAudioElement;
+    let audio = document.querySelector('#main-audio-player') as HTMLAudioElement;
     let discardButton = document.querySelector('#discardButton') as HTMLElement;
     let uploadButton = document.querySelector('#uploadButton') as HTMLElement;
     let testPlayback = document.querySelector('#testPlayback') as HTMLElement;

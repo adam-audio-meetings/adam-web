@@ -1,6 +1,6 @@
 <!-- <div class="d-flex justify-content-center"> -->
 <!-- <button (click)="sendButtonClick()">Enviar</button> -->
-<div class="grid-container">
+<div class="page-container">
   <div class="sidebar">
     <div>
       <h3 id="teamName">Equipe de TI - Devs</h3>
@@ -34,27 +34,33 @@
     </div>
   </div>
 
-  <div class="main">
+  <div class="main-container">
+    <div class="mainControls">
 
-    <div class="container-item main-controls">
-      <audio id="audio-main"></audio>
-      <div id="main-controls-buttons">
-        <button id="record" class="btn btn-danger record m-1"><i id="iconRecord" class="bi bi-mic-fill"></i></button>
-        <button id="stop" class="btn btn-secondary stop m-1"><i class="bi bi-stop-fill"></i></button>
-        <button id="discardButton" class="btn btn-danger m-1"><i class="bi bi-trash"></i></button>
-        <button id="uploadButton" class="btn btn-success m-1" (click)="sendButtonClick()">
+      <div class="main-audio-player-container">
+        <audio id="main-audio-player"></audio>
+      </div>
+      <div>
+        <button id="record" class="btn btn-danger record main-controls-button m-1"><i id="iconRecord"
+            class="bi bi-mic-fill"></i></button>
+        <button id="stop" class="btn btn-secondary stop main-controls-button m-1"><i
+            class="bi bi-stop-fill"></i></button>
+        <button id="discardButton" class="btn btn-secondary main-controls-button m-1"><i
+            class="bi bi-trash"></i></button>
+        <button id="uploadButton" class="btn btn-success main-controls-button m-1" (click)="sendButtonClick()">
           <i class="bi bi-upload"></i>
         </button>
         <!-- <button id="testPlayback" class="button">Teste Playback</button> -->
       </div>
     </div>
 
-    <div class="container-item">
+    <div class="transcript">
       <h4>Transcrição</h4>
       <h5 id="transcript_result"></h5>
+
     </div>
 
-    <div class="container-item">
+    <div class="inputDevices">
       <select name="inputDevices" id="inputDevices"></select>
     </div>
 
