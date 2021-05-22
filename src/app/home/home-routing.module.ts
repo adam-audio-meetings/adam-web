@@ -5,11 +5,11 @@ import { HomeAdminComponent } from './home-admin/home-admin.component';
 import { HomeMemberComponent } from './home-member/home-member.component';
 import { HomeCoordinatorComponent } from './home-coordinator/home-coordinator.component';
 import { HomeComponent } from './home/home.component';
-import { PocAudioComponent } from './poc-audio/poc-audio.component';
+import { PocAudioComponent } from './audio-meeting/audio-meeting.component';
 
 const routes: Routes = [
   { path: '', pathMatch: 'full', component: HomeComponent },
-  { path: 'poc-audio', component: PocAudioComponent },
+  { path: 'audio-meeting', component: PocAudioComponent },
 
   {
     path: 'home',

@@ -9,8 +9,8 @@
       <!-- ALLWAYS -->
       <li ngbNavItem (click)="isMenuCollapsed=true"><a ngbNavLink routerLink={{this.authService.redirectUrl}}>Home</a>
       </li>
-      <li ngbNavItem (click)="isMenuCollapsed=true"><a ngbNavLink routerLink="/poc-audio"
-          routerLinkActive="active">poc-audio</a></li>
+      <li ngbNavItem (click)="isMenuCollapsed=true"><a ngbNavLink routerLink="/audio-meeting"
+          routerLinkActive="active">audio-meeting</a></li>
 
       <!-- NO AUTH -->
       <li ngbNavItem *ngIf="!this.authService.isLoggedIn">

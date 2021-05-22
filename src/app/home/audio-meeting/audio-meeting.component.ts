@@ -13,9 +13,9 @@ import { WebsocketService } from 'src/app/socket/websocket.service';
 // import { DataService } from 'src/app/socket/data.service';
 
 @Component({
-  selector: 'app-poc-audio',
-  templateUrl: './poc-audio.component.html',
-  styleUrls: ['./poc-audio.component.css']
+  selector: 'app-audio-meeting',
+  templateUrl: './audio-meeting.component.html',
+  styleUrls: ['./audio-meeting.component.css']
 })
 export class PocAudioComponent implements OnInit {
 
