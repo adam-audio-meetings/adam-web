@@ -1,7 +1,6 @@
 .container-hero-header {
-  background-image: 
-  /* radial-gradient(circle,rgba(255,255,255,0.2),rgba(0,0,0,0.6)), */
-                    url('../../../assets/img/hero.png');
+  background-image: /* radial-gradient(circle,rgba(255,255,255,0.2),rgba(0,0,0,0.6)), */
+  url('../../../assets/img/hero.png');
   background-repeat: no-repeat;
   background-attachment: fixed;
   background-size: cover;
@@ -9,13 +8,9 @@
   height: 100vh;
   display: grid;
   grid-template-columns: auto;
-  grid-template-rows: auto; /*Também impede nav bar empurrar para baixo itens desta section*/
-  grid-template-areas: 
-    "."
-    "."
-    "."
-    "."
-    "jumbotronarea";
+  grid-template-rows: auto;
+  /*Também impede nav bar empurrar para baixo itens desta section*/
+  grid-template-areas: "." "." "." "." "jumbotronarea";
 }
 
 .jumbotron {
@@ -26,4 +21,12 @@
 
 .container-item {
   grid-area: jumbotronarea
+}
+
+.display-4 {
+  font-weight: 400;
+}
+
+.lead {
+  font-weight: 400;
 }

@@ -2,6 +2,23 @@
 @import "node_modules/bootstrap/scss/bootstrap"; 
 @import "~bootstrap-icons/font/bootstrap-icons.css";
 
+.bg-light {
 
+    box-shadow: 5px 5px 5px #6c666733;
+}
 
+.btn-success.disabled, .btn-success:disabled {
+    // color: #fff;
+    background-color: #28a74670;
+    border-color: #28a74670;
+}
 
+.btn-secondary.disabled, .btn-secondary:disabled {
+    // color: #fff;
+    background-color: #6c757d70;
+    border-color: #6c757d70;
+}
+
+.btn-outline-primary {
+    background-color: #f0f8ff82;
+}
