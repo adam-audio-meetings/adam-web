@@ -1,4 +1,4 @@
-<nav class="navbar navbar-expand-lg navbar-light bg-light">
+<nav class="navbar fixed-top navbar-expand-lg navbar-light bg-light">
   <a class="navbar-brand" routerLink="/" routerLinkActive="active">adam</a>
   <button class="navbar-toggler" type="button" data-toggle="collapse" (click)="isMenuCollapsed = !isMenuCollapsed">
     <span class="navbar-toggler-icon"></span>
@@ -9,8 +9,8 @@
       <!-- ALLWAYS -->
       <li ngbNavItem (click)="isMenuCollapsed=true"><a ngbNavLink routerLink={{this.authService.redirectUrl}}>Home</a>
       </li>
-      <li ngbNavItem (click)="isMenuCollapsed=true"><a ngbNavLink routerLink="/poc-audio"
-          routerLinkActive="active">poc-audio</a></li>
+      <li ngbNavItem (click)="isMenuCollapsed=true"><a ngbNavLink routerLink="/audio-meeting"
+          routerLinkActive="active">audio-meeting</a></li>
 
       <!-- NO AUTH -->
       <li ngbNavItem *ngIf="!this.authService.isLoggedIn">
@@ -64,7 +64,7 @@
 
 <router-outlet></router-outlet>
 
-<app-messages></app-messages>
+<!-- <app-messages></app-messages> -->
 <!-- <ul>
   <li class="text" *ngFor="let role of roles$ | async">
     {{role._id}} - {{role.name}} - {{role.description}}

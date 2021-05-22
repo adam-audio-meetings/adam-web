@@ -1,6 +1,6 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 
-import { PocAudioComponent } from './poc-audio.component';
+import { PocAudioComponent } from './audio-meeting.component';
 
 describe('PocAudioComponent', () => {
   let component: PocAudioComponent;
@@ -8,9 +8,9 @@ describe('PocAudioComponent', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      declarations: [ PocAudioComponent ]
+      declarations: [PocAudioComponent]
     })
-    .compileComponents();
+      .compileComponents();
   });
 
   beforeEach(() => {

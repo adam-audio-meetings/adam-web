@@ -2,28 +2,90 @@ import { Component, OnInit } from '@angular/core';
 import getBlobDuration from 'get-blob-duration';
 import { fileURLToPath } from 'url';
 import { AudioService } from '../audio.service';
+import { User } from '../../users/interfaces/user';
+import { Team } from '../../teams/interfaces/team';
+import { Audio } from '../../home/interfaces/audio';
+import { AudioListened } from '../../home/interfaces/audioListened';
+import { UserService } from '../../users/user.service';
+import { Observable, Subscription } from 'rxjs';
+import { ROLES } from '../../users/mocks/user-roles';
+import { WebsocketService } from 'src/app/socket/websocket.service';
+// import { DataService } from 'src/app/socket/data.service';
 
 @Component({
-  selector: 'app-poc-audio',
-  templateUrl: './poc-audio.component.html',
-  styleUrls: ['./poc-audio.component.css']
+  selector: 'app-audio-meeting',
+  templateUrl: './audio-meeting.component.html',
+  styleUrls: ['./audio-meeting.component.css']
 })
 export class PocAudioComponent implements OnInit {
 
+  users$: Observable<User[]>;
+  audios$: Observable<Audio[]>;
+  selectedId: string;
+  roles = ROLES;
+  roleFilter = "";
+
+  // socket.io-client
+  msgInput: string = 'upload de audio no servidor';
+
   constructor(
-    public audioService: AudioService) { }
+    public audioService: AudioService,
+    private userService: UserService,
+    private websocketService: WebsocketService
+  ) { }
+
+  getUsers(): void {
+    this.users$ = this.userService.getUsers();
+  }
+
+  getAudios(): void {
+    this.audios$ = this.audioService.getAudios();
+  }
+
+  sendButtonClick() {
+    // console.log('Usuário enviou áudio');
+    this.websocketService.sendMessage(this.msgInput)
+  }
+
+  listenAudioEnded(audioId) {
+    // console.log('Usuário reproduziu áudio', audioId);
+    let audioListened = {
+      fileId: audioId,
+      // team ,  // TODO: utilizar ids logados
+      // member: ,
+    }
+    this.audioService.createAudioListened(audioListened)
+      .subscribe({
+        next: (res) => {
+          console.log('Áudio reproduzido pelo usuário.');
+        },
+        error: () => alert('Erro ao enviar status de áudio reproduzido.')
+      });;
+  }
 
   ngOnInit(): void {
 
+    // this.getUsers();
+    this.getAudios();
+
+    // testes socket.io-client
+    this.websocketService.onNewMessage().subscribe(msg => {
+      console.log('Recebido do servidor: ', msg);
+      // servidor envia mensagem para atualizar lista de audios no cliente
+      // this.getUsers();
+      this.getAudios();
+    });
+
     // variáveis RECORD/PLAY
     let record = document.querySelector('#record') as HTMLElement;
+    let iconRecord = document.querySelector('#iconRecord') as HTMLElement;
     let stop = document.querySelector('#stop') as HTMLElement;
     let soundClips = document.querySelector('.sound-clips') as HTMLElement;
-    let audio = document.querySelector('audio');
+    let audio = document.querySelector('#main-audio-player') as HTMLAudioElement;
     let discardButton = document.querySelector('#discardButton') as HTMLElement;
     let uploadButton = document.querySelector('#uploadButton') as HTMLElement;
     let testPlayback = document.querySelector('#testPlayback') as HTMLElement;
-    let testPlayback2 = document.querySelector('#testPlayback2') as HTMLElement;
+    // let testPlayback2 = document.querySelector('#testPlayback2') as HTMLElement;
 
     let audioTypeWebm = { 'type': 'audio/webm' };
     let audioTypeWebmOpus = { 'type': 'audio/webm; codecs=opus' };
@@ -164,9 +226,10 @@ export class PocAudioComponent implements OnInit {
           mediaRecorder.start();
           console.log(mediaRecorder.state);
           console.log("Gravação iniciada");
-          record.style.background = "red";
-          record.innerHTML = "Gravando";
-          record.style.color = "black";
+          // record.style.background = "#bd2130";
+          // record.innerHTML = "Gravando";
+          // record.style.fontWeight = "bold";
+          iconRecord.classList.add("blink_me");
           stop.removeAttribute('disabled');
           if (speechRecognitionEnabled) {
             recognition.start(); // SPEECH
@@ -179,9 +242,10 @@ export class PocAudioComponent implements OnInit {
           mediaRecorder.stop();
           console.log(mediaRecorder.state);
           console.log("Gravação finalizada");
-          record.style.background = "";
-          record.style.color = "";
-          record.innerHTML = "Gravar";
+          // record.style.background = "";
+          // record.style.fontWeight = "";
+          // record.innerHTML = "Gravar";
+          iconRecord.classList.remove("blink_me");
           stop.setAttribute('disabled', 'true');
           uploadButton.removeAttribute('disabled');
           discardButton.removeAttribute('disabled');
@@ -192,7 +256,7 @@ export class PocAudioComponent implements OnInit {
 
         mediaRecorder.ondataavailable = (e) => {
           data.push(e.data);
-          console.log('Event handler: Dados de audio coletados')
+          console.log('Event handler: Dados de áudio coletados')
         }
 
         mediaRecorder.onstop = () => {
@@ -212,8 +276,6 @@ export class PocAudioComponent implements OnInit {
           audio.controls = true;
           audio.preload = 'metadata'
           audio.load();
-          data = [];
-
         }
 
         discardButton.onclick = () => {
@@ -232,6 +294,7 @@ export class PocAudioComponent implements OnInit {
           let blob = new Blob(data, audioType);
           let file = new File([blob], "testeAudioBlobToFile.weba", audioType)
           // console.log('File: ', file)
+
           this.audioService.uploadAudio(
             file
           ).subscribe({
@@ -250,6 +313,13 @@ export class PocAudioComponent implements OnInit {
         //   audio.preload = 'metadata'
         //   audio.load();
         // }
+        // testPlayback.onclick = () => {
+        //   let audioURL = "http://localhost:3000/audio-in-db/609b007829740040f84d59af";
+        //   audio.src = audioURL;
+        //   audio.controls = true;
+        //   audio.preload = 'metadata'
+        //   audio.load();
+        // }
       }
 
       let onError = (err) => {
@@ -261,7 +331,5 @@ export class PocAudioComponent implements OnInit {
     } else {
       console.log('Suporte para getUserMedia não detectado.');
     }
-
-
   }
 }

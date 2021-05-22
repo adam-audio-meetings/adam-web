@@ -1,0 +1,68 @@
+<!-- <div class="d-flex justify-content-center"> -->
+<!-- <button (click)="sendButtonClick()">Enviar</button> -->
+<div class="page-container">
+  <div class="sidebar">
+    <div>
+      <h3 id="teamName">Equipe de TI - Devs</h3>
+    </div>
+    <div>
+      <ul class="list-group">
+        <li class="list-group-item" *ngFor="let audio of audios$ | async">
+          <div class="audio-member-container">
+
+            <div class="audio-member-info">
+              <!-- | userFilter:roleFilter"> -->
+              <p class="audio-member-name">{{audio.name | titlecase}}</p>
+              <!-- <p class="audio-member-date">{{audio.fileId }}</p> -->
+              <p class="audio-member-date">{{audio.created_at | date : 'd/MM HH:mm' }}</p>
+            </div>
+
+            <!-- <button class="btn btn-primary btn-sm mr-1 mb-1" routerLink="edit/{{user._id}}">Editar</button> -->
+            <!-- <button class="btn btn-danger btn-sm mr-1 mb-1" (click)="deleteUser(user._id)">Excluir</button> -->
+            <!-- TODO: buscar link api por environment -->
+            <!-- TODO: type dinâmico -->
+            <div class="audio-member-player">
+              <audio id="{{ audio._id}}" controls="true" class="audio-member" type="audio/webm; codecs=opus"
+                src="http://localhost:3000/audio-in-db/{{ audio.fileId }}"
+                (ended)="listenAudioEnded(audio._id)"></audio>
+
+            </div>
+          </div>
+
+        </li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="main-container">
+    <div class="mainControls">
+
+      <div class="main-audio-player-container">
+        <audio id="main-audio-player"></audio>
+      </div>
+      <div>
+        <button id="record" class="btn btn-danger record main-controls-button m-1"><i id="iconRecord"
+            class="bi bi-mic-fill"></i></button>
+        <button id="stop" class="btn btn-secondary stop main-controls-button m-1"><i
+            class="bi bi-stop-fill"></i></button>
+        <button id="discardButton" class="btn btn-secondary main-controls-button m-1"><i
+            class="bi bi-trash"></i></button>
+        <button id="uploadButton" class="btn btn-success main-controls-button m-1" (click)="sendButtonClick()">
+          <i class="bi bi-upload"></i>
+        </button>
+        <!-- <button id="testPlayback" class="button">Teste Playback</button> -->
+      </div>
+    </div>
+
+    <div class="transcript">
+      <h4>Transcrição</h4>
+      <h5 id="transcript_result"></h5>
+
+    </div>
+
+    <div class="inputDevices">
+      <select name="inputDevices" id="inputDevices"></select>
+    </div>
+
+  </div>
+</div>

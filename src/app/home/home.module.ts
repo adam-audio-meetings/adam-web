@@ -6,7 +6,7 @@ import { HomeAdminComponent } from './home-admin/home-admin.component';
 import { HomeComponent } from './home/home.component';
 import { HomeCoordinatorComponent } from './home-coordinator/home-coordinator.component';
 import { HomeMemberComponent } from './home-member/home-member.component';
-import { PocAudioComponent } from './poc-audio/poc-audio.component';
+import { PocAudioComponent } from './audio-meeting/audio-meeting.component';
 
 
 @NgModule({
