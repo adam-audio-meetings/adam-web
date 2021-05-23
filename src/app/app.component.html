@@ -7,14 +7,22 @@
     <ul ngbNav #nav="ngbNav" class="navbar-nav mr-auto">
 
       <!-- ALLWAYS -->
-      <li ngbNavItem (click)="isMenuCollapsed=true"><a ngbNavLink routerLink={{this.authService.redirectUrl}}>Home</a>
-      </li>
+
       <li ngbNavItem (click)="isMenuCollapsed=true"><a ngbNavLink routerLink="/audio-meeting"
-          routerLinkActive="active">audio-meeting</a></li>
+          routerLinkActive="active">Daily Meeting</a></li>
 
       <!-- NO AUTH -->
-      <li ngbNavItem *ngIf="!this.authService.isLoggedIn">
-        <a ngbNavLink routerLink="/teams-noauth" routerLinkActive="active" (click)="isMenuCollapsed=true">Times</a>
+      <!-- <li ngbNavItem *ngIf="!this.authService.isLoggedIn">
+        <a ngbNavLink routerLink="/teams-noauth" routerLinkActive="active" (click)="isMenuCollapsed=true">Equipes</a>
+      </li> -->
+
+      <!-- ADMIN/COORDINATOR - DASHBOARD (redirecionamento Home) -->
+      <li *ngIf="this.authService.isLoggedIn && this.authService.userRole != 'member'" ngbNavItem
+        (click)="isMenuCollapsed=true"><a ngbNavLink routerLink={{this.authService.redirectUrl}}>Dashboard</a>
+      </li>
+      <!-- MEMBER - CONTA -->
+      <li *ngIf="this.authService.userRole == 'member'" ngbNavItem (click)="isMenuCollapsed=true"><a ngbNavLink
+          routerLink={{this.authService.redirectUrl}}>Conta</a>
       </li>
 
       <!-- ADMIN -->
@@ -24,19 +32,19 @@
         </a>
         <div ngbDropdownMenu>
           <a ngbDropdownItem routerLink="/users" routerLinkActive="active" (click)="isMenuCollapsed=true">Usuários</a>
-          <a ngbDropdownItem routerLink="/teams" routerLinkActive="active" (click)="isMenuCollapsed=true">Times</a>
+          <a ngbDropdownItem routerLink="/teams" routerLinkActive="active" (click)="isMenuCollapsed=true">Equipes</a>
         </div>
       </li>
       <li ngbNavItem></li>
 
       <!-- MEMBER / COORDINATOR -->
       <li ngbNavItem *ngIf="this.authService.isLoggedIn && this.authService.userRole != 'admin'">
-        <a ngbNavLink routerLink="/teams" routerLinkActive="active" (click)="isMenuCollapsed=true">Meus times</a>
+        <a ngbNavLink routerLink="/teams" routerLinkActive="active" (click)="isMenuCollapsed=true">Equipes</a>
       </li>
-      <li ngbNavItem *ngIf="this.authService.isLoggedIn && this.authService.userRole != 'admin'">
-        <a ngbNavLink routerLink="/teams/available" routerLinkActive="active" (click)="isMenuCollapsed=true">Times
+      <!-- <li ngbNavItem *ngIf="this.authService.isLoggedIn && this.authService.userRole != 'admin'">
+        <a ngbNavLink routerLink="/teams/available" routerLinkActive="active" (click)="isMenuCollapsed=true">Equipes
           disponíveis</a>
-      </li>
+      </li> -->
 
     </ul>
     <div class="my-2 my-lg-0">

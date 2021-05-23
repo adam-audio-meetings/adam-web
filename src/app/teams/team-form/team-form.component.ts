@@ -4,7 +4,6 @@ import { ActivatedRoute } from "@angular/router";
 import { Location } from "@angular/common";
 import { TeamService } from "../team.service";
 import { Team } from '../interfaces/team';
-import { CategoryService } from '../category.service';
 import { Observable } from 'rxjs';
 import { MOCK_TEAM_NAMES } from '../mocks/team-names';
 
@@ -20,18 +19,17 @@ export class TeamFormComponent implements OnInit {
     private fb: FormBuilder,
     private route: ActivatedRoute,
     private teamService: TeamService,
-    private categoryService: CategoryService,
     private location: Location
   ) { }
 
   team: Team;
 
-  categories$: Observable<any>;
+  categories: null;
 
   teamForm = this.fb.group({
     _id: [null],
     name: ['', Validators.required],
-    category: ['', Validators.required],
+    // category: ['', Validators.required],
     description: ['', Validators.required],
   });
 
@@ -42,7 +40,7 @@ export class TeamFormComponent implements OnInit {
 
 
   ngOnInit(): void {
-    this.categories$ = this.categoryService.getCategories();
+    // this.categories = ;
     /** ONLY FOR DEVELOPMENT/TESTS */
     // console.warn("Rota: ",this.route.snapshot.routeConfig.path);
     if (this.route.snapshot.routeConfig.path == "random") {
@@ -74,8 +72,8 @@ export class TeamFormComponent implements OnInit {
     } else {
       this.teamService.createTeam(this.teamForm.value)
         .subscribe({
-          next: () => alert('Novo time criado com sucesso.'),
-          error: () => alert('Erro ao criar o time.'),
+          next: () => alert('Nova equipe criada com sucesso.'),
+          error: () => alert('Erro ao criar a equipe.'),
           complete: () => this.goBack()
         })
     }

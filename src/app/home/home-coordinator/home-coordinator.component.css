@@ -1,3 +1,8 @@
+.page-container-item {
+  justify-self: unset;
+  align-self: unset;
+}
+
 .container-coordinator {
   display: flex;
   width: 100%;

@@ -36,10 +36,10 @@ export class TeamListComponent implements OnInit {
     if (!this.authService.isLoggedIn ||
       this.currentRoute == 'available' ||
       this.userRole == 'admin') {
-      this.title = 'Times';
+      this.title = 'Equipes';
       this.isOwnTeams = false;
     } else {
-      this.title = 'Meus Times';
+      this.title = 'Minhas equipes';
       this.isOwnTeams = true;
     }
   }

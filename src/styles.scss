@@ -2,23 +2,37 @@
 @import "node_modules/bootstrap/scss/bootstrap"; 
 @import "~bootstrap-icons/font/bootstrap-icons.css";
 
+
 .bg-light {
-
     box-shadow: 5px 5px 5px #6c666733;
-}
-
-.btn-success.disabled, .btn-success:disabled {
-    // color: #fff;
+  }
+  
+  .btn-success.disabled, .btn-success:disabled {
+    /* color: #fff; */
     background-color: #28a74670;
-    border-color: #28a74670;
-}
-
-.btn-secondary.disabled, .btn-secondary:disabled {
-    // color: #fff;
+    border-color: #d4d4d4;
+  }
+  
+  .btn-secondary.disabled, .btn-secondary:disabled {
+    /* color: #fff; */
     background-color: #6c757d70;
-    border-color: #6c757d70;
-}
-
-.btn-outline-primary {
+    border-color: #d4d4d4;
+  }
+  
+  .btn-outline-primary {
     background-color: #f0f8ff82;
+  }
+  
+//   pode ser especializado para cada componente
+  .page-container {
+    height: 100vh;
+    display: grid;
+    grid-template-rows: 56px auto; // conforme navbar fixed-top
+    grid-template-areas: "." "containerItem";
+  }
+
+  .page-container-item {
+    grid-area: containerItem;
+    align-self: center;
+    justify-self: center;
 }

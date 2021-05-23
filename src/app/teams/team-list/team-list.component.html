@@ -1,12 +1,12 @@
-<div class="d-flex justify-content-center">
-  <div class="ngComponentItem">
+<div class="page-container">
+  <div class="page-container-item">
     <h2>{{title}}</h2>
     <div class="my-2">
       <input type="text" id="searchBox" #searchBox [(ngModel)]="teamFilterTerm" placeholder="Pesquisar pelo nome">
       <!-- <button  class="btn btn-primary m-1" (click)="search(searchBox.value)">Procurar</button> -->
     </div>
     <div>
-      <p class="count">Total de times: {{((teams$ | async) | teamFilter:teamFilterTerm)?.length}}</p>
+      <p class="count">Total de equipes: {{((teams$ | async) | teamFilter:teamFilterTerm)?.length}}</p>
     </div>
     <div *ngIf="!this.authService.isLoggedIn; else elseBlock">
 
@@ -16,7 +16,7 @@
             <tr>
               <th>Time</th>
               <th>Coordenador(a)</th>
-              <th>Categoria</th>
+              <!-- <th>Categoria</th> -->
               <th>Descrição</th>
               <th></th>
             </tr>
@@ -25,7 +25,7 @@
             <tr *ngFor="let team of (teams$ | async) | teamFilter:teamFilterTerm">
               <td>{{team.name}}</td>
               <td>{{team.coordinator.name}}</td>
-              <td>{{team.category}}</td>
+              <!-- <td>{{team.category}}</td> -->
               <td>{{team.description}}</td>
               <!-- TODO: create logic on TS to unauth users - Register or Login -->
               <td>
@@ -51,7 +51,7 @@
                   <th>ID</th>
                   <th>Time</th>
                   <th>Coordenador(a)</th>
-                  <th>Categoria</th>
+                  <!-- <th>Categoria</th> -->
                   <th>Descrição</th>
                   <th>Ações</th>
                 </tr>
@@ -61,7 +61,7 @@
                   <td>{{team._id}}</td>
                   <td>{{team.name}}</td>
                   <td>{{team.coordinator.name}}</td>
-                  <td>{{team.category}}</td>
+                  <!-- <td>{{team.category}}</td> -->
                   <td>{{team.description}}</td>
                   <td>
                     <button class="btn btn-primary btn-sm mr-1 mb-1" routerLink="edit/{{team._id}}">Editar</button>
@@ -83,7 +83,7 @@
               <thead>
                 <tr>
                   <th>Time</th>
-                  <th>Categoria</th>
+                  <!-- <th>Categoria</th> -->
                   <th>Descrição</th>
                   <th *ngIf="isOwnTeams">Membros</th>
                   <th *ngIf="isOwnTeams">Ações</th>
@@ -91,7 +91,7 @@
               </thead>
               <tr *ngFor="let team of (teams$ | async) | teamFilter:teamFilterTerm">
                 <td>{{team.name}}</td>
-                <td>{{team.category}}</td>
+                <!-- <td>{{team.category}}</td> -->
                 <td>{{team.description}}</td>
                 <td *ngIf="isOwnTeams">
                   <ol>

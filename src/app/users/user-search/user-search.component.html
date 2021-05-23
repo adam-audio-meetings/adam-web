@@ -1,10 +1,8 @@
 <div>
-  <h2>Buscar usuários</h2>
-  <input type="text" id="search-box" #searchBox placeholder="Buscar usuário"
-      (input)="search(searchBox.value)">
-    <ul class="search-result">
-      <li *ngFor="let user of users$ | async">
-        {{user.role}} - {{user.name}} - {{user.username}} - {{user.email}}
-      </li>
-    </ul>
+  <input type="text" id="search-box" #searchBox placeholder="Buscar usuário" (input)="search(searchBox.value)">
+  <ul class="search-result">
+    <li *ngFor="let user of users$ | async">
+      {{user.role}} - {{user.name}} - {{user.username}} - {{user.email}}
+    </li>
+  </ul>
 </div>
