@@ -16,6 +16,8 @@ export class AuthService {
   redirectUrl: string;
 
   userRole: string;
+  userId: string;
+  currentTeamId: string;
   expiresIn: string; // milisseconds
   expiresInSeconds: string;
   expiresInDatetime: Date;
@@ -43,6 +45,7 @@ export class AuthService {
     localStorage.setItem('expiresIn', authResult.expiresIn)
 
     this.userRole = authResult.role;
+    this.userId = authResult.userId;
     this.expiresIn = authResult.expiresIn;
     this.expiresInSeconds = (+this.expiresIn / 1000).toString();
     this.expiresInDatetime = this.getExpiresInDatetime(this.expiresIn);

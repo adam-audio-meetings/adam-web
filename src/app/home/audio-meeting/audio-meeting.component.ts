@@ -10,32 +10,48 @@ import { UserService } from '../../users/user.service';
 import { Observable, Subscription } from 'rxjs';
 import { ROLES } from '../../users/mocks/user-roles';
 import { WebsocketService } from 'src/app/socket/websocket.service';
-// import { DataService } from 'src/app/socket/data.service';
+import { ActivatedRoute } from '@angular/router';
+import { AuthService } from 'src/app/auth/auth.service';
+import { TeamService } from 'src/app/teams/team.service';
 
 @Component({
   selector: 'app-audio-meeting',
   templateUrl: './audio-meeting.component.html',
   styleUrls: ['./audio-meeting.component.css', './audio-meeting.component.scss']
 })
-export class PocAudioComponent implements OnInit {
+export class AudioMeetingComponent implements OnInit {
 
-  users$: Observable<User[]>;
+  ownTeams$: Observable<Team[]>;
   audios$: Observable<Audio[]>;
   selectedId: string;
   roles = ROLES;
   roleFilter = "";
+  selectedTeamId: string;
+  loggedUserId = "";
+  currentRoute: string;
+  defaultTeam: string;
 
   // socket.io-client
   msgInput: string = 'upload de audio no servidor';
 
   constructor(
+    private teamService: TeamService,
     public audioService: AudioService,
     private userService: UserService,
-    private websocketService: WebsocketService
+    private websocketService: WebsocketService,
+    private route: ActivatedRoute,
+    private authService: AuthService,
   ) { }
 
-  getUsers(): void {
-    this.users$ = this.userService.getUsers();
+
+  getOwnTeams(): void {
+    this.ownTeams$ = this.teamService.getOwnTeams();
+    this.ownTeams$.subscribe(team =>
+      this.defaultTeam = team[0].name);
+  }
+
+  getLoggedUser(): void {
+    this.loggedUserId = this.authService.userId;
   }
 
   getAudios(): void {
@@ -65,7 +81,8 @@ export class PocAudioComponent implements OnInit {
 
   ngOnInit(): void {
 
-    // this.getUsers();
+    this.getLoggedUser();
+    this.getOwnTeams();
     this.getAudios();
 
     // testes socket.io-client

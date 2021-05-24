@@ -41,10 +41,10 @@
       <li ngbNavItem *ngIf="this.authService.isLoggedIn && this.authService.userRole != 'admin'">
         <a ngbNavLink routerLink="/teams" routerLinkActive="active" (click)="isMenuCollapsed=true">Equipes</a>
       </li>
-      <!-- <li ngbNavItem *ngIf="this.authService.isLoggedIn && this.authService.userRole != 'admin'">
+      <li ngbNavItem *ngIf="this.authService.isLoggedIn && this.authService.userRole != 'admin'">
         <a ngbNavLink routerLink="/teams/available" routerLinkActive="active" (click)="isMenuCollapsed=true">Equipes
           disponíveis</a>
-      </li> -->
+      </li>
 
     </ul>
     <div class="my-2 my-lg-0">

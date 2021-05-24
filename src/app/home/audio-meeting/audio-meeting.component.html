@@ -2,8 +2,14 @@
 <!-- <button (click)="sendButtonClick()">Enviar</button> -->
 <div class="page-container">
   <div class="sidebar">
-    <div>
-      <h3 class="mt-2" id="teamName">Equipe de TI - Devs</h3>
+    <div class="mt-3">
+      <span id="teamName">Equipe: </span>
+      <div ngbDropdown class="d-inline-block">
+        <button class="btn btn-outline-primary" id="dropdownBasic1" ngbDropdownToggle>{{ defaultTeam }}</button>
+        <div ngbDropdownMenu aria-labelledby="dropdownBasic1">
+          <button ngbDropdownItem *ngFor="let team of ownTeams$ | async">{{ team.name }}</button>
+        </div>
+      </div>
       <hr class="team-name-division">
     </div>
     <div>
