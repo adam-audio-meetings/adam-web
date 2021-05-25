@@ -13,6 +13,7 @@ import { WebsocketService } from 'src/app/socket/websocket.service';
 import { ActivatedRoute } from '@angular/router';
 import { AuthService } from 'src/app/auth/auth.service';
 import { TeamService } from 'src/app/teams/team.service';
+import { NgbCalendar, NgbDate, NgbDateAdapter, NgbDateNativeAdapter, NgbDateParserFormatter, NgbDateStruct } from '@ng-bootstrap/ng-bootstrap';
 
 @Component({
   selector: 'app-audio-meeting',
@@ -26,13 +27,16 @@ export class AudioMeetingComponent implements OnInit {
   selectedId: string;
   roles = ROLES;
   roleFilter = "";
-  selectedTeamId: string;
   loggedUserId = "";
-  currentRoute: string;
-  defaultTeam: string;
+  // currentRoute: string;
+  selectedTeamId: string;
+  selectedTeamName: string;
 
   // socket.io-client
   msgInput: string = 'upload de audio no servidor';
+
+  // datePicker
+  selectedDateModel: NgbDateStruct;
 
   constructor(
     private teamService: TeamService,
@@ -41,21 +45,48 @@ export class AudioMeetingComponent implements OnInit {
     private websocketService: WebsocketService,
     private route: ActivatedRoute,
     private authService: AuthService,
-  ) { }
+    private calendar: NgbCalendar,
+    public formatter: NgbDateParserFormatter,
+    private dateAdapter: NgbDateAdapter<Date>,
+  ) {
+  }
 
 
   getOwnTeams(): void {
     this.ownTeams$ = this.teamService.getOwnTeams();
-    this.ownTeams$.subscribe(team =>
-      this.defaultTeam = team[0].name);
+    this.ownTeams$.subscribe(
+      (team) => {
+        this.selectedTeamName = team[0].name;
+        this.selectedTeamId = team[0]._id;
+        this.getAudios();
+      }
+    );
   }
 
   getLoggedUser(): void {
     this.loggedUserId = this.authService.userId;
   }
 
-  getAudios(): void {
-    this.audios$ = this.audioService.getAudios();
+  changeTeam(): void {
+    console.log('Team changed: ', this.selectedTeamId, this.selectedTeamName);
+    this.getAudios();
+  }
+
+  getAudios($event?): void {
+    // if (this.selectedDateModel!) {
+    //   this.selectedDateModel = this.calendar.getToday();
+    // }
+    console.log(this.selectedDateModel);
+    let date = this.selectedDateModel;
+    //let javaDateModel: Date = this.dateAdapter.toModel(this.selectedDateModel);
+    let jsDateStringStart = date.month + "-" + date.day + "-" + date.year;
+    let jsDateStart = new Date(jsDateStringStart);
+    console.log(jsDateStart);
+    var jsDateEnd = new Date(jsDateStart.getTime() + 86400000); // + 1 day in ms
+    console.log(jsDateEnd.toDateString());
+    // Date em js: mês começa do 0
+    let jsDateStringEnd = (jsDateEnd.getMonth() + 1) + "-" + jsDateEnd.getDate() + "-" + jsDateEnd.getFullYear();
+    this.audios$ = this.audioService.searchAudios(this.selectedTeamId, jsDateStringStart, jsDateStringEnd);
   }
 
   sendButtonClick() {
@@ -79,11 +110,15 @@ export class AudioMeetingComponent implements OnInit {
       });;
   }
 
+  selectToday() {
+    this.selectedDateModel = this.calendar.getToday();
+  }
+
   ngOnInit(): void {
 
     this.getLoggedUser();
     this.getOwnTeams();
-    this.getAudios();
+    this.selectToday();
 
     // testes socket.io-client
     this.websocketService.onNewMessage().subscribe(msg => {
@@ -313,7 +348,9 @@ export class AudioMeetingComponent implements OnInit {
           // console.log('File: ', file)
 
           this.audioService.uploadAudio(
-            file
+            file,
+            this.loggedUserId,
+            this.selectedTeamId
           ).subscribe({
             next: (res) => {
               console.log('Upload concluído.');

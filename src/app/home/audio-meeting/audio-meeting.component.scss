@@ -18,12 +18,40 @@
     background-color: rgb(200, 200, 200);
     background-color: #6c6667;
     align-content: start;
-    overflow: auto;
+    overflow-x: hidden;
+    overflow-y: auto;
 }
 
-.sidebar #teamName {
+.team-date-container  {
+    
+    display: flex;
+    margin: 0.5rem 0.5rem 0 0.5rem;
+    align-items: start;
+    flex-direction: row;
+    // background-color: #808080;
+    justify-content: space-between;
+}
+
+#teamName,  #meetingAudiosDate {
     color: #dadada;
-    padding-left: 15px;
+    
+}
+
+.team-date-item {
+    display: flex;
+    padding: 0.5rem;
+    flex-direction: row;
+    // width: 100%;
+    justify-content: space-between;
+}
+
+.team-date-item input {
+    max-width: 7rem;
+}
+
+.team-date-item #dropdownTeams{
+    min-width: 130px;
+    max-width: 180px;
 }
 
 .main-container {

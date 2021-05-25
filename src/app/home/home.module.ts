@@ -8,6 +8,7 @@ import { HomeCoordinatorComponent } from './home-coordinator/home-coordinator.co
 import { HomeMemberComponent } from './home-member/home-member.component';
 import { AudioMeetingComponent } from './audio-meeting/audio-meeting.component';
 import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
+import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 
 
 @NgModule({
@@ -15,6 +16,8 @@ import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
   imports: [
     CommonModule,
     HomeRoutingModule,
+    FormsModule,
+    ReactiveFormsModule,
     NgbModule
   ]
 })

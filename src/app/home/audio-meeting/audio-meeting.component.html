@@ -2,16 +2,44 @@
 <!-- <button (click)="sendButtonClick()">Enviar</button> -->
 <div class="page-container">
   <div class="sidebar">
-    <div class="mt-3">
-      <span id="teamName">Equipe: </span>
-      <div ngbDropdown class="d-inline-block">
-        <button class="btn btn-outline-primary" id="dropdownBasic1" ngbDropdownToggle>{{ defaultTeam }}</button>
-        <div ngbDropdownMenu aria-labelledby="dropdownBasic1">
-          <button ngbDropdownItem *ngFor="let team of ownTeams$ | async">{{ team.name }}</button>
+    <div class="team-date-container">
+
+      <div class="team-date-item">
+
+        <!-- <span id="meetingAudiosDate">Data</span> -->
+        <form class="form-inline">
+          <div class="form-group">
+            <div class="input-group">
+              <input class="form-control" placeholder="yyyy-mm-dd" [(ngModel)]="selectedDateModel" name="dp"
+                (dateSelect)="getAudios($event)" ngbDatepicker #d="ngbDatepicker">
+              <div class="input-group-append">
+                <button class="btn btn-secondary calendar" (click)="d.toggle()" type="button">
+                  <i class="bi bi-calendar-event"></i>
+                </button>
+              </div>
+            </div>
+          </div>
+        </form>
+
+      </div>
+
+      <div class="team-date-item">
+
+        <!-- <span id="teamName">Equipe</span> -->
+        <div ngbDropdown class="d-inline-block">
+          <button class="btn btn-secondary" id="dropdownTeams" ngbDropdownToggle>{{ selectedTeamName }}</button>
+          <div ngbDropdownMenu aria-labelledby="dropdownTeams">
+            <button ngbDropdownItem *ngFor="let team of ownTeams$ | async" (click)="selectedTeamName = team.name;
+                      selectedTeamId = team._id;
+                      changeTeam()">
+              {{ team.name }}</button>
+          </div>
         </div>
       </div>
-      <hr class="team-name-division">
+
+
     </div>
+    <hr class="team-name-division">
     <div>
       <ul class="list-group">
         <li class="list-group-item" *ngFor="let audio of audios$ | async">
