@@ -51,7 +51,7 @@
 
             <div class="audio-member-info">
               <!-- | userFilter:roleFilter"> -->
-              <p class="audio-member-name">{{ audio.name | titlecase }}</p>
+              <p class="audio-member-name">{{ audio.member.name | titlecase }}</p>
               <!-- <p class="audio-member-date">{{audio.fileId }}</p> -->
               <p class="audio-member-date">{{ audio.created_at | date : 'd/MM HH:mm' }}</p>
             </div>
