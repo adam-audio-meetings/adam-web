@@ -1,30 +1,31 @@
-<div class="d-flex justify-content-center">
-  <div class="ngComponentItem">
-<div class="" *ngIf="!this.authService.isLoggedIn">
-  <h2>Login</h2>
-  <form [formGroup]="loginForm" (ngSubmit)="onSubmit()">
-    <div class="form-group">
-      <!-- <label for="username">Usuário</label> -->
-      <input type="text" class="form-control" formControlName="username" placeholder="Usuário" required minlength="3" maxlength="15">
+<div class="page-container">
+  <div class="page-container-item">
+    <div class="" *ngIf="!this.authService.isLoggedIn">
+      <h2>Login</h2>
+      <form [formGroup]="loginForm" (ngSubmit)="onSubmit()">
+        <div class="form-group">
+          <!-- <label for="username">Usuário</label> -->
+          <input type="text" class="form-control" formControlName="username" placeholder="Usuário" required
+            minlength="3" maxlength="15">
+        </div>
+        <div class="form-group">
+          <!-- <label for="password">Senha</label> -->
+          <input type="password" class="form-control" formControlName="password" placeholder="Senha" required
+            minlength="3" maxlength="150">
+        </div>
+
+        <div class="form-group">
+          <input type="submit" class="btn btn-primary" [disabled]="!loginForm.valid" value="Entrar">
+        </div>
+
+      </form>
     </div>
-    <div class="form-group">
-      <!-- <label for="password">Senha</label> -->
-      <input type="password" class="form-control" formControlName="password" placeholder="Senha" required minlength="3" maxlength="150">
+
+    <div *ngIf="this.authService.isLoggedIn">
+      <h2>Logout</h2>
+      <p>Confirma encerrar a sessão?</p>
+      <button class="btn btn-danger mr-1" (click)="logout()">Sim</button>
+      <button class="btn btn-secondary" (click)="goBack()">Cancelar</button>
     </div>
-
-    <div class="form-group">
-      <input type="submit" class="btn btn-primary" [disabled]="!loginForm.valid" value="Entrar">
-    </div>
-
-  </form>
+  </div>
 </div>
-
-<div *ngIf="this.authService.isLoggedIn">
-  <h2>Logout</h2>
-  <p>Confirma encerrar a sessão?</p>
-  <button  class="btn btn-danger mr-1" (click)="logout()">Sim</button>
-  <button  class="btn btn-secondary" (click)="goBack()">Cancelar</button>
-</div>
-</div>
-</div>
-

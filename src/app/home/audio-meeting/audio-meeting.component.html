@@ -2,19 +2,58 @@
 <!-- <button (click)="sendButtonClick()">Enviar</button> -->
 <div class="page-container">
   <div class="sidebar">
-    <div>
-      <h3 id="teamName">Equipe de TI - Devs</h3>
+    <div class="team-date-container">
+
+      <div class="team-date-item">
+
+        <!-- <span id="meetingAudiosDate">Data</span> -->
+        <form class="form-inline">
+          <div class="form-group">
+            <div class="input-group">
+              <input class="form-control" placeholder="yyyy-mm-dd" [(ngModel)]="selectedDateModel" name="dp"
+                (dateSelect)="getAudios($event)" ngbDatepicker #d="ngbDatepicker">
+              <div class="input-group-append">
+                <button class="btn btn-secondary calendar" (click)="d.toggle()" type="button">
+                  <i class="bi bi-calendar-event"></i>
+                </button>
+              </div>
+            </div>
+          </div>
+        </form>
+
+      </div>
+
+      <div class="team-date-item">
+
+        <!-- <span id="teamName">Equipe</span> -->
+        <div ngbDropdown class="d-inline-block">
+          <button class="btn btn-secondary" id="dropdownTeams" ngbDropdownToggle>{{ selectedTeamName }}</button>
+          <div ngbDropdownMenu aria-labelledby="dropdownTeams">
+            <button ngbDropdownItem *ngFor="let team of ownTeams$ | async" (click)="selectedTeamName = team.name;
+                      selectedTeamId = team._id;
+                      changeTeam()">
+              {{ team.name }}</button>
+          </div>
+        </div>
+      </div>
+
+
     </div>
+    <hr class="team-name-division">
     <div>
       <ul class="list-group">
         <li class="list-group-item" *ngFor="let audio of audios$ | async">
           <div class="audio-member-container">
 
+            <div class="audio-member-avatar">
+              <img src="../../../assets/img/avatar/member0.png" alt="">
+            </div>
+
             <div class="audio-member-info">
               <!-- | userFilter:roleFilter"> -->
-              <p class="audio-member-name">{{audio.name | titlecase}}</p>
+              <p class="audio-member-name">{{ audio.name | titlecase }}</p>
               <!-- <p class="audio-member-date">{{audio.fileId }}</p> -->
-              <p class="audio-member-date">{{audio.created_at | date : 'd/MM HH:mm' }}</p>
+              <p class="audio-member-date">{{ audio.created_at | date : 'd/MM HH:mm' }}</p>
             </div>
 
             <!-- <button class="btn btn-primary btn-sm mr-1 mb-1" routerLink="edit/{{user._id}}">Editar</button> -->
@@ -22,7 +61,7 @@
             <!-- TODO: buscar link api por environment -->
             <!-- TODO: type dinâmico -->
             <div class="audio-member-player">
-              <audio id="{{ audio._id}}" controls="true" class="audio-member" type="audio/webm; codecs=opus"
+              <audio id="{{ audio._id }}" controls="true" class="audio-member" type="audio/webm; codecs=opus"
                 src="http://localhost:3000/audio-in-db/{{ audio.fileId }}"
                 (ended)="listenAudioEnded(audio._id)"></audio>
 

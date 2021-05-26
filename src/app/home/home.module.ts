@@ -6,14 +6,19 @@ import { HomeAdminComponent } from './home-admin/home-admin.component';
 import { HomeComponent } from './home/home.component';
 import { HomeCoordinatorComponent } from './home-coordinator/home-coordinator.component';
 import { HomeMemberComponent } from './home-member/home-member.component';
-import { PocAudioComponent } from './audio-meeting/audio-meeting.component';
+import { AudioMeetingComponent } from './audio-meeting/audio-meeting.component';
+import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
+import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 
 
 @NgModule({
-  declarations: [HomeComponent, HomeAdminComponent, HomeCoordinatorComponent, HomeMemberComponent, PocAudioComponent],
+  declarations: [HomeComponent, HomeAdminComponent, HomeCoordinatorComponent, HomeMemberComponent, AudioMeetingComponent],
   imports: [
     CommonModule,
-    HomeRoutingModule
+    HomeRoutingModule,
+    FormsModule,
+    ReactiveFormsModule,
+    NgbModule
   ]
 })
 export class HomeModule { }

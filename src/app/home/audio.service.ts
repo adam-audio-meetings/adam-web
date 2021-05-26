@@ -43,11 +43,22 @@ export class AudioService {
       );
   }
 
-  searchAudios(term: string): Observable<Audio[]> {
-    if (!term.trim()) {
+  // getAudiosByTeamAndDate(idTeam: string): Observable<Audio[]> {
+  //   const url = `${this.audiosUrl}/${idTeam}`;
+  //   return this.http.get<Audio[]>(url)
+  //     .pipe(
+  //       tap(_ => this.log(`fetched audios by idTeam=${idTeam}`)),
+  //       catchError(this.handleError<Audio[]>(`getAudioByTeam idTeam=${idTeam}`))
+  //     );
+  // }
+
+  searchAudios(teamId: string, dateStringStart: string, dateStringEnd: string): Observable<Audio[]> {
+    // TODO: tratar 'date'
+    if (!teamId.trim()) {
       return of([])
     }
-    const url = `${this.audiosUrl}/search?role=${term}&name=${term}&audioname=${term}&email=${term}`;
+    // const url = `${this.audiosUrl}/search?role=${term}&name=${term}&audioname=${term}&email=${term}`;
+    const url = `${this.audiosUrl}/search?teamId=${teamId}&dateStringStart=${dateStringStart}&dateStringEnd=${dateStringEnd}`;
     return this.http.get<Audio[]>(url)
       .pipe(
         tap(x => x.length ?
@@ -69,15 +80,15 @@ export class AudioService {
       );
   }
 
-  uploadAudio(file: File): Observable<Audio> {
+  uploadAudio(file: File, userId: string, teamId: string): Observable<Audio> {
     // uploadAudio(file: Audio): Observable<Audio> {
     const formData = new FormData();
 
     // files.forEach(file => formData.append('file', file, file.name));
     // file => formData.append('file', file, file.name);
     formData.append('file', file, file.name);
-    formData.append("idUser", "6094c5934f2d2e146c5b0a06");
-    //formData.append("idTeam", "12");
+    formData.append("userId", userId);
+    formData.append("teamId", teamId);
     formData.append("name", "teste2");
     formData.append("transcription", "teste transcript");
     const url = this.audiosUrl + '/upload';

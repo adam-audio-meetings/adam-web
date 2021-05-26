@@ -1,29 +1,31 @@
-<h2 class="ml-3 pt-4">Painel do Membro</h2>
-<div class="container-member">
+<div class="page-container">
+  <div class="page-container-item">
+    <h2 class="ml-3 pt-4">Configurações da conta</h2>
+    <div class="container-member">
 
-  <div class="container-item">
-    <h3>Meus Times</h3>
-    <button type="button" routerLink="/teams" routerLinkActive="active" class="btn btn-primary btn-lg mb-2">
-      Gerenciar Meus Times
-    </button>
-    <table class="table">
-      <thead>
-        <tr>
-          <th>Assunto</th>
-          <th class="quantity">Quantidade</th>
-        </tr>
-      </thead>
-      <tbody>
-        <tr>
-          <td><strong>TOTAL</strong></td>
-          <td class="quantity"><strong>{{totalTeams}}</strong></td>
-        </tr>
-      </tbody>
-    </table>
-  </div>
+      <div class="container-item">
+        <h3>Minhas equipes</h3>
+        <button type="button" routerLink="/teams" routerLinkActive="active" class="btn btn-primary btn-lg mb-2">
+          Gerenciar Minhas equipes
+        </button>
+        <table class="table">
+          <thead>
+            <tr>
+              <th>Assunto</th>
+              <th class="quantity">Quantidade</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td><strong>TOTAL</strong></td>
+              <td class="quantity"><strong>{{totalTeams}}</strong></td>
+            </tr>
+          </tbody>
+        </table>
+        <button type="button" routerLink="/teams/available" routerLinkActive="active"
+          class="btn btn-secondary btn-lg m-5">
+          Ver Equipes disponíveis
+        </button>
+      </div>
 
-</div>
-
-<button type="button" routerLink="/teams/available" routerLinkActive="active" class="btn btn-secondary btn-lg m-5">
-  Ver Times disponíveis
-</button>
+    </div>

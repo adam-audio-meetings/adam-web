@@ -12,10 +12,12 @@ import { MessageService } from '../message.service';
 export class AuthService {
   isLoggedIn = false;
 
-  // redirect after logggin in
+  // redirect after login
   redirectUrl: string;
 
   userRole: string;
+  userId: string;
+  currentTeamId: string;
   expiresIn: string; // milisseconds
   expiresInSeconds: string;
   expiresInDatetime: Date;
@@ -42,27 +44,28 @@ export class AuthService {
     // expiration time
     localStorage.setItem('expiresIn', authResult.expiresIn)
 
-    this.userRole =  authResult.role;
+    this.userRole = authResult.role;
+    this.userId = authResult.userId;
     this.expiresIn = authResult.expiresIn;
-    this.expiresInSeconds = (+this.expiresIn/1000).toString();
+    this.expiresInSeconds = (+this.expiresIn / 1000).toString();
     this.expiresInDatetime = this.getExpiresInDatetime(this.expiresIn);
   }
 
   private getExpiresInDatetime(expiresIn: string) {
-    const actualTimeMs:number  = Date.now();
-    const expiresInDatetimeMs:number = actualTimeMs + +expiresIn;
+    const actualTimeMs: number = Date.now();
+    const expiresInDatetimeMs: number = actualTimeMs + +expiresIn;
     const expiresInDatetime = new Date(expiresInDatetimeMs);
     return expiresInDatetime;
   }
 
-  public isSessionValid():boolean {
+  public isSessionValid(): boolean {
     return Date.now() < Date.parse(this.expiresInDatetime.toString())
   }
 
-  startSessionCounter(){
+  startSessionCounter() {
     const secondsCounter = interval(1000);
     const result = secondsCounter.pipe(
-      takeWhile(n => n < +this.expiresInSeconds && this.isLoggedIn ),
+      takeWhile(n => n < +this.expiresInSeconds && this.isLoggedIn),
       // TODO: warn user to add another session time
       finalize(() => {
         if (this.isLoggedIn) { this.logout(); }
@@ -77,30 +80,38 @@ export class AuthService {
     return +this.expiresInSeconds - this.sessionTimeDurationSeconds;
   }
 
-  setHomePage(path: string):void {
-    this.redirectUrl =  `${path}`;
+  setHomePage(path: string): void {
+    this.redirectUrl = `${path}`;
   }
 
-  login(credentials: any): void{
+  login(credentials: any): void {
     this.sessionTimeDurationSeconds = 0;
     this.http.post<any>(this.url, credentials, this.httpOptions)
-    .subscribe({
-      next: res => {
-        console.log('Login Authorized');
-        this.setSession(res),
-        //this.startSessionCounter();
-        this.isLoggedIn = true;
-        this.setHomePage(`/home/${this.userRole}`);
-        this.router.navigate([this.redirectUrl]);
-      },
-      error: err => {
-        console.log('ERRO: ', err.message);
-        this.handleError<any>('login');
-        if(err.status == 401) { alert('Usuário e/ou Senha incorretos.')}
-        else {
-          alert('Erro no servidor.')
-        }        
-      }
+      .subscribe({
+        next: res => {
+          console.log('Login Authorized');
+          this.setSession(res),
+            //this.startSessionCounter();
+            this.isLoggedIn = true;
+          //Define rotas Home conforme user role
+          this.setHomePage(`/home/${this.userRole}`);
+
+          //Redirecionamento ao efetuar Login
+          if (this.userRole == 'member') {
+            this.router.navigate(['/audio-meeting/']);
+          } else {
+            this.router.navigate([this.redirectUrl]);
+          }
+
+        },
+        error: err => {
+          console.log('ERRO: ', err.message);
+          this.handleError<any>('login');
+          if (err.status == 401) { alert('Usuário e/ou Senha incorretos.') }
+          else {
+            alert('Erro no servidor.')
+          }
+        }
       })
   }
 
@@ -128,18 +139,18 @@ export class AuthService {
   * @param result - optional value to return as the observable result
   */
   private handleError<T>(operation = 'operation', result?: T) {
-   return (error: any): Observable<T> => {
-    
-     // TODO: send the error to remote logging infrastructure
-     console.error(error); // log to console instead
-    
-     // TODO: better job of transforming error for user consumption
-     this.log(`${operation} failed: ${error.message}`);
-    
-     // Let the app keep running by returning an empty result.
-     return of(result as T);
-   };
+    return (error: any): Observable<T> => {
+
+      // TODO: send the error to remote logging infrastructure
+      console.error(error); // log to console instead
+
+      // TODO: better job of transforming error for user consumption
+      this.log(`${operation} failed: ${error.message}`);
+
+      // Let the app keep running by returning an empty result.
+      return of(result as T);
+    };
   }
 
-  
+
 }

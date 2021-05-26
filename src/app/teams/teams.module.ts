@@ -6,8 +6,6 @@ import { TeamFormComponent } from './team-form/team-form.component';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { TeamListComponent } from './team-list/team-list.component';
 import { TeamFilterPipe } from './team-filter.pipe';
-import { CategoryListComponent } from './category-list/category-list.component';
-import { CategoryFormComponent } from './category-form/category-form.component';
 
 
 @NgModule({
@@ -15,8 +13,6 @@ import { CategoryFormComponent } from './category-form/category-form.component';
     TeamFormComponent,
     TeamListComponent,
     TeamFilterPipe,
-    CategoryListComponent,
-    CategoryFormComponent,
   ],
   imports: [
     CommonModule,
