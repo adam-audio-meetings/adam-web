@@ -41,7 +41,7 @@
       <container [ngSwitch]="userRole">
         <div *ngSwitchCase="'admin'">
           <div>
-            <button class="btn btn-success my-1 mr-1" routerLink="form/">Novo</button>
+            <button class="btn btn-info my-1 mr-1" routerLink="form/">Novo</button>
             <button class="btn btn-secondary" routerLink="random/">(+ aleatorio)</button>
           </div>
           <div *ngIf="((teams$ | async) | teamFilter:teamFilterTerm)?.length > 0">

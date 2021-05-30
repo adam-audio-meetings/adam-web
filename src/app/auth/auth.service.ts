@@ -59,6 +59,8 @@ export class AuthService {
   }
 
   public isSessionValid(): boolean {
+    if (!this.expiresInDatetime)
+      return false
     return Date.now() < Date.parse(this.expiresInDatetime.toString())
   }
 

@@ -283,6 +283,7 @@ export class AudioMeetingComponent implements OnInit {
           // record.style.fontWeight = "bold";
           iconRecord.classList.add("blink_me");
           stop.removeAttribute('disabled');
+          record.setAttribute('disabled', 'true');
           if (speechRecognitionEnabled) {
             recognition.start(); // SPEECH
             recognitionTamanho = 0; // SPEECH
@@ -298,6 +299,7 @@ export class AudioMeetingComponent implements OnInit {
           // record.style.fontWeight = "";
           // record.innerHTML = "Gravar";
           iconRecord.classList.remove("blink_me");
+          record.removeAttribute('disabled');
           stop.setAttribute('disabled', 'true');
           uploadButton.removeAttribute('disabled');
           discardButton.removeAttribute('disabled');

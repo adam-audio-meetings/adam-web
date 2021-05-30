@@ -29,9 +29,13 @@
     display: grid;
     grid-template-rows: 56px auto; // conforme navbar fixed-top
     grid-template-areas: "." "containerItem";
+    background-color: rgb(238, 238, 238);
+    color: #484848;
+    overflow-y: scroll;
   }
 
   .page-container-item {
+    padding: 2rem 0;
     grid-area: containerItem;
     align-self: center;
     justify-self: center;

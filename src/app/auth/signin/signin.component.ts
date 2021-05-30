@@ -26,33 +26,40 @@ export class SigninComponent implements OnInit {
 
   userForm = this.fb.group({
     _id: [null],
-    role: ['', Validators.required],
+    role: ['member', Validators.required],
     name: ['', Validators.required],
     username: ['', Validators.required],
     password: ['', Validators.required],
-    email: ['', [Validators.email, Validators.required] ],
+    email: ['', [Validators.email, Validators.required]],
   });
 
-  id:string = this.route.snapshot.paramMap.get('id');
+  id: string = this.route.snapshot.paramMap.get('id');
 
   resetButtonText: string = "Limpar";
   backButtonText: string = "Cancelar";
-  
+
 
   ngOnInit(): void {
   }
 
+  ngAfter(): void {
+    this.userForm.reset();
+  }
+
   onSubmit() {
-      this.userService.signinUser(this.userForm.value)
+    this.userService.signinUser(this.userForm.value)
   }
 
   onReset(): void {
     this.userForm.reset();
+    this.userForm.controls['role'].setValue('member');
   }
-  
+
   goBack(): void {
     this.onReset();
     this.location.back();
-  } 
+  }
+
+
 
 }

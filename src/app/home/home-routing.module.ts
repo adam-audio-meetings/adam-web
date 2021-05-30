@@ -9,11 +9,11 @@ import { AudioMeetingComponent } from './audio-meeting/audio-meeting.component';
 
 const routes: Routes = [
   { path: '', pathMatch: 'full', component: HomeComponent },
-  { path: 'audio-meeting', component: AudioMeetingComponent },
+  { path: 'audio-meeting', component: AudioMeetingComponent, canActivate: [AuthGuard] },
 
   {
     path: 'home',
-    //canActivate: [AuthGuard],
+    canActivate: [AuthGuard],
     children: [
       {
         path: '',
