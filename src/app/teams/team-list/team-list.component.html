@@ -41,7 +41,9 @@
       <container [ngSwitch]="userRole">
         <div *ngSwitchCase="'admin'">
           <div>
-            <button class="btn btn-info my-1 mr-1" routerLink="form/">Novo</button>
+            <button class="btn btn-info my-1 mr-1" routerLink="form/" ngbTooltip="Adicionar equipe" [openDelay]="1000">
+              <i class="bi bi-plus-lg"></i>
+            </button>
             <button class="btn btn-secondary" routerLink="random/">(+ aleatorio)</button>
           </div>
           <div *ngIf="((teams$ | async) | teamFilter:teamFilterTerm)?.length > 0">
@@ -64,8 +66,14 @@
                   <!-- <td>{{team.category}}</td> -->
                   <td>{{team.description}}</td>
                   <td>
-                    <button class="btn btn-primary btn-sm mr-1 mb-1" routerLink="edit/{{team._id}}">Editar</button>
-                    <button class="btn btn-danger btn-sm mr-1 mb-1" (click)="deleteTeam(team._id)">Excluir</button>
+                    <button class="btn btn-primary btn-sm mr-1 mb-1" routerLink="edit/{{team._id}}" ngbTooltip="Editar"
+                      [openDelay]="1000">
+                      <i class="bi bi-pencil-square"></i>
+                    </button>
+                    <button class="btn btn-danger btn-sm mr-1 mb-1" (click)="deleteTeam(team._id)" ngbTooltip="Excluir"
+                      [openDelay]="1000">
+                      <i class="bi bi-trash"></i>
+                    </button>
                   </td>
                 </tr>
               </tbody>
@@ -75,8 +83,10 @@
 
         <div *ngSwitchCase="'coordinator'">
           <div *ngIf="isOwnTeams">
-            <button class="btn btn-success my-1 mr-1" routerLink="form/">Novo</button>
-            <button class="btn btn-primary" routerLink="random/">(+ aleatorio)</button>
+            <button class="btn btn-info my-1 mr-1" routerLink="form/" ngbTooltip="Adicionar equipe" [openDelay]="1000">
+              <i class="bi bi-plus-lg"></i>
+            </button>
+            <button class="btn btn-secondary" routerLink="random/">(+ aleatorio)</button>
           </div>
           <div *ngIf="((teams$ | async) | teamFilter:teamFilterTerm)?.length > 0">
             <table class="table">
@@ -100,10 +110,13 @@
                     </li>
                   </ol>
                 <td *ngIf="isOwnTeams">
-                  <button class="btn btn-primary btn-sm mr-1 mb-1" *ngIf="isOwnTeams"
-                    routerLink="edit/{{team._id}}">Editar info
+                  <button class="btn btn-primary btn-sm mr-1 mb-1" *ngIf="isOwnTeams" routerLink="edit/{{team._id}}"
+                    ngbTooltip="Editar" [openDelay]="1000">
+                    <i class="bi bi-pencil-square"></i>
                   </button>
-                  <button class="btn btn-danger btn-sm mr-1 mb-1" (click)="deleteTeam(team._id)">Excluir</button>
+                  <button class="btn btn-danger btn-sm mr-1 mb-1" (click)="deleteTeam(team._id)" ngbTooltip="Excluir"
+                    [openDelay]="1000">
+                    <i class="bi bi-trash"></i></button>
                 </td>
               </tr>
             </table>

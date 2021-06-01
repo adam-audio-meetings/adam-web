@@ -5,9 +5,10 @@
     <div class="container-admin">
 
       <div class="container-item">
-        <h3>Usuários</h3>
-        <button type="button" routerLink="/users" routerLinkActive="active" class="btn btn-primary btn-lg mb-2">
-          Gerenciar Usuários
+        <!-- <h3>Usuários</h3> -->
+        <button type="button" routerLink="/users" routerLinkActive="active" class="btn btn-primary btn-lg mb-2"
+          ngbTooltip="Gerenciar Usuários" [openDelay]="1000">
+          <i class="bi bi-gear"></i> Usuários
         </button>
         <table class="table">
           <thead>
@@ -38,9 +39,10 @@
       </div>
 
       <div class="container-item">
-        <h3>Equipes</h3>
-        <button type="button" routerLink="/teams" routerLinkActive="active" class="btn btn-primary btn-lg mb-2">
-          Gerenciar Equipes
+        <!-- <h3>Equipes</h3> -->
+        <button type="button" routerLink="/teams" routerLinkActive="active" class="btn btn-primary btn-lg mb-2"
+          ngbTooltip="Gerenciar Equipes" [openDelay]="1000">
+          <i class="bi bi-gear"></i> Equipes
         </button>
         <table class="table">
           <thead>
@@ -58,7 +60,7 @@
         </table>
       </div>
 
-      <div class="container-item">
+      <!-- <div class="container-item">
         <h3>Categorias</h3>
         <button type="button" routerLink="/teams/categories" routerLinkActive="active"
           class="btn btn-primary btn-lg mb-2">
@@ -78,7 +80,7 @@
             </tr>
           </tbody>
         </table>
-      </div>
+      </div> -->
 
     </div>
   </div>
