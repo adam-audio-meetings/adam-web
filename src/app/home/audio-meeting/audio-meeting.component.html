@@ -26,7 +26,7 @@
       <div class="team-date-item">
 
         <!-- <span id="teamName">Equipe</span> -->
-        <div ngbDropdown class="d-inline-block">
+        <div ngbDropdown placement="bottom-right" class="d-inline-block">
           <button class="btn btn-secondary" id="dropdownTeams" ngbDropdownToggle>{{ selectedTeamName }}</button>
           <div ngbDropdownMenu aria-labelledby="dropdownTeams">
             <button ngbDropdownItem *ngFor="let team of ownTeams$ | async" (click)="selectedTeamName = team.name;
