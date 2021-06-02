@@ -38,6 +38,11 @@ export class AudioMeetingComponent implements OnInit {
   // datePicker
   selectedDateModel: NgbDateStruct;
 
+  //input devices
+  inputDevices: any[];
+  selectedInputDeviceLabel: string;
+  selectedInputDeviceValue: string;
+
   constructor(
     private teamService: TeamService,
     public audioService: AudioService,
@@ -250,16 +255,29 @@ export class AudioMeetingComponent implements OnInit {
     // TODO: mover options para pagina permanente
     navigator.mediaDevices.enumerateDevices()
       .then((devices) => {
+        let inputDevices = [];
         //console.log(devices);
         devices.forEach((device) => {
-          let menu = document.getElementById("inputDevices");
+
+          // versão options para HTML puro
+          // let menuInputDevices = document.getElementById("inputDevices");
+          // if (device.kind == "audioinput") {
+          // let item = document.createElement("option");
+          // item.innerHTML = device.label;
+          // item.value = device.deviceId;
+          // menuInputDevices.appendChild(item);
+          // }
+
+          // versão buttons para angular ngDropdown
+
           if (device.kind == "audioinput") {
-            let item = document.createElement("option");
-            item.innerHTML = device.label;
-            item.value = device.deviceId;
-            menu.appendChild(item);
+            let item = { label: device.label, value: device.deviceId };
+            inputDevices.push(item);
           }
+          this.inputDevices = inputDevices;
+          this.selectedInputDeviceLabel = this.inputDevices[0].label;
         })
+        // console.log('MENU INPUT DEVICES: ', this.inputDevices);
       });
 
     if (navigator.mediaDevices.getUserMedia) {

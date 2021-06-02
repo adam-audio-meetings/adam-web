@@ -99,8 +99,13 @@
 
     </div>
 
-    <div class="inputDevices">
-      <select name="inputDevices" id="inputDevices"></select>
+    <div ngbDropdown placement="top-center" class="inputDevices d-inline-block">
+      <button class="btn btn-light" id="inputDevices" ngbDropdownToggle>{{ selectedInputDeviceLabel }}</button>
+      <div ngbDropdownMenu aria-labelledby="dropdownInputDevices">
+        <button ngbDropdownItem *ngFor="let device of inputDevices" (click)="selectedInputDeviceLabel = device.label;
+                      selectedInputDeviceValue = device.value">
+          {{ device.label }}</button>
+      </div>
     </div>
 
   </div>

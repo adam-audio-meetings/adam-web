@@ -31,7 +31,7 @@
     grid-template-areas: "." "containerItem";
     background-color: rgb(238, 238, 238);
     color: #484848;
-    overflow-y: scroll;
+    // overflow-y: scroll; // se ativado, expande a página ao exibir dropDown de inputDevices em audio-meeting
   }
 
   .page-container-item {
