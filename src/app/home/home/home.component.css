@@ -1,6 +1,7 @@
 .container-hero-header {
   background-image: /* radial-gradient(circle,rgba(255,255,255,0.2),rgba(0,0,0,0.6)), */
   url('../../../assets/img/hero.png');
+  filter: grayscale(0.8);
   background-repeat: no-repeat;
   background-attachment: fixed;
   background-size: cover;

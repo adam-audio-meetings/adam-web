@@ -65,6 +65,7 @@
     align-items: center;
     justify-items: center;
     grid-template-areas: 'mainControls' 'transcript' 'inputDevices';
+    overflow-y: hidden; // evita expandir a página ao exibir dropDown de inputDevices
 }
 
 .list-group-item {
