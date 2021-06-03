@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, OnChanges, NgZone } from '@angular/core';
 import getBlobDuration from 'get-blob-duration';
 import { fileURLToPath } from 'url';
 import { AudioService } from '../audio.service';
@@ -38,10 +38,13 @@ export class AudioMeetingComponent implements OnInit {
   // datePicker
   selectedDateModel: NgbDateStruct;
 
-  //input devices
+  // input devices
   inputDevices: any[];
   selectedInputDeviceLabel: string;
   selectedInputDeviceValue: string;
+
+  // audio transcript
+  transcript: string = '';
 
   constructor(
     private teamService: TeamService,
@@ -53,6 +56,7 @@ export class AudioMeetingComponent implements OnInit {
     private calendar: NgbCalendar,
     public formatter: NgbDateParserFormatter,
     private dateAdapter: NgbDateAdapter<Date>,
+    private ngZone: NgZone
   ) {
   }
 
@@ -118,6 +122,17 @@ export class AudioMeetingComponent implements OnInit {
   selectToday() {
     this.selectedDateModel = this.calendar.getToday();
   }
+
+  ngOnChanges(): void {
+    console.log('changes');
+  }
+
+  updateTranscript(text: string): void {
+    let transcript = text.charAt(0).toLocaleUpperCase() + text.slice(1);
+    this.transcript += transcript + '.\n';
+    // console.log('Transcricao acumulada: ', this.transcript, transcript);
+  }
+
 
   ngOnInit(): void {
 
@@ -236,10 +251,12 @@ export class AudioMeetingComponent implements OnInit {
         // document.getElementById("transcript_result").innerHTML += transcript + '<hr>';
         //let recognitionTamanho = 0;
 
-        console.log('SPEECH detectado', event.results);
+        // console.log('SPEECH detectado', event.results);
         let { transcript } = event.results[recognitionTamanho][0]
-        document.getElementById("transcript_result").innerHTML += transcript + '<hr>';
+        // document.getElementById("transcript_result").innerHTML += transcript + '<hr>';
         recognitionTamanho += 1;
+        this.ngZone.run(() => this.updateTranscript(transcript));
+
       }
       if (!SpeechGrammarList) {
         console.log('SpeechGrammarList não suportado.')
@@ -249,26 +266,12 @@ export class AudioMeetingComponent implements OnInit {
       }
     }
 
-
-
     // https://developer.mozilla.org/en-US/docs/Web/API/MediaStream_Recording_API#examining_potential_input_sources
-    // TODO: mover options para pagina permanente
     navigator.mediaDevices.enumerateDevices()
       .then((devices) => {
         let inputDevices = [];
         //console.log(devices);
         devices.forEach((device) => {
-
-          // versão options para HTML puro
-          // let menuInputDevices = document.getElementById("inputDevices");
-          // if (device.kind == "audioinput") {
-          // let item = document.createElement("option");
-          // item.innerHTML = device.label;
-          // item.value = device.deviceId;
-          // menuInputDevices.appendChild(item);
-          // }
-
-          // versão buttons para angular ngDropdown
 
           if (device.kind == "audioinput") {
             let item = { label: device.label, value: device.deviceId };
@@ -305,6 +308,7 @@ export class AudioMeetingComponent implements OnInit {
           if (speechRecognitionEnabled) {
             recognition.start(); // SPEECH
             recognitionTamanho = 0; // SPEECH
+            this.transcript = '';
           }
 
         }
@@ -376,6 +380,7 @@ export class AudioMeetingComponent implements OnInit {
               console.log('Upload concluído.');
               cleanMainAudio();
               data = [];
+              this.transcript = '';
             },
             error: () => alert('Erro ao enviar áudio.')
           });
@@ -406,4 +411,5 @@ export class AudioMeetingComponent implements OnInit {
       console.log('Suporte para getUserMedia não detectado.');
     }
   }
+
 }

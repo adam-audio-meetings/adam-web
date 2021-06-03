@@ -94,10 +94,16 @@
     </div>
 
     <div class="transcript">
-      <h4>Transcrição</h4>
-      <h5 id="transcript_result"></h5>
+      <!-- <h4>Transcrição</h4> -->
+      <!-- <h5 id="transcript_result">{{ transcript }}</h5> -->
+
+      <textarea type="text" name="transcriptName" id="transcript-result" cols="100" rows="7" maxlength="1000"
+        placeholder="Veja aqui a transcrição do seu áudio e faça correções se necessário ou somente digite o texto sem enviar o áudio."
+        [(ngModel)]="transcript">
+        </textarea>
 
     </div>
+    <!-- <button (click)="updateTranscript('')">update</button> -->
 
     <div ngbDropdown placement="top-center" class="inputDevices d-inline-block">
       <button class="btn btn-light" id="inputDevices" ngbDropdownToggle>{{ selectedInputDeviceLabel }}</button>
