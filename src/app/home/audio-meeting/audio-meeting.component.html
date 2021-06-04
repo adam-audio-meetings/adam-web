@@ -96,14 +96,32 @@
     <div class="transcript">
       <!-- <h4>Transcrição</h4> -->
       <!-- <h5 id="transcript_result">{{ transcript }}</h5> -->
+      <div>
+        <button class="btn btn-secondary btn-sm mr-1 mb-1" ngbTooltip="Editar" [openDelay]="1000"
+          (click)="editTranscript()">
+          <i class="bi bi-pencil-square"></i>
+        </button>
+      </div>
+      <!-- <button class="btn btn-secondary btn-sm mr-1 mb-1" ngbTooltip="Enviar somente texto" [openDelay]="1000"
+          (click)="sendOnlyText()">
+          <i class="bi bi-pencil-square"></i>
+        </button> -->
+      <div class="btn-group btn-group-sm btn-group-toggle" ngbRadioGroup name="radioBasic" [(ngModel)]="textOnly">
+        <label ngbButtonLabel class="btn-outline-secondary">
+          <input ngbButton type="radio" [value]="1" (click)="sendOnlyText()">Texto
+        </label>
+        <label ngbButtonLabel class="btn-outline-secondary">
+          <input ngbButton type="radio" [value]="0">Áudio + Texto
+        </label>
+      </div>
+
 
       <textarea type="text" name="transcriptName" id="transcript-result" cols="100" rows="7" maxlength="1000"
-        placeholder="Veja aqui a transcrição do seu áudio e faça correções se necessário ou somente digite o texto sem enviar o áudio."
+        placeholder="Veja aqui a transcrição do seu áudio e faça correções se necessário ou somente digite o texto sem gravar áudio."
         [(ngModel)]="transcript">
-        </textarea>
+      </textarea>
 
     </div>
-    <!-- <button (click)="updateTranscript('')">update</button> -->
 
     <div ngbDropdown placement="top-center" class="inputDevices d-inline-block">
       <button class="btn btn-light" id="inputDevices" ngbDropdownToggle>{{ selectedInputDeviceLabel }}</button>

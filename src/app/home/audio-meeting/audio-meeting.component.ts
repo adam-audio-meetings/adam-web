@@ -1,4 +1,4 @@
-import { Component, OnInit, OnChanges, NgZone } from '@angular/core';
+import { Component, OnInit, NgZone } from '@angular/core';
 import getBlobDuration from 'get-blob-duration';
 import { fileURLToPath } from 'url';
 import { AudioService } from '../audio.service';
@@ -45,6 +45,10 @@ export class AudioMeetingComponent implements OnInit {
 
   // audio transcript
   transcript: string = '';
+  textOnly = 0;
+
+  // audio controls ???
+  uploadButton: HTMLElement;
 
   constructor(
     private teamService: TeamService,
@@ -123,16 +127,23 @@ export class AudioMeetingComponent implements OnInit {
     this.selectedDateModel = this.calendar.getToday();
   }
 
-  ngOnChanges(): void {
-    console.log('changes');
-  }
-
   updateTranscript(text: string): void {
-    let transcript = text.charAt(0).toLocaleUpperCase() + text.slice(1);
-    this.transcript += transcript + '.\n';
-    // console.log('Transcricao acumulada: ', this.transcript, transcript);
+    let text2 = text.trim()[0].toUpperCase() + text.trim().slice(1);
+    this.transcript += text2 + '.\n';
+    // console.log('Transcricao: ', this.transcript, text2[0]);
   }
 
+  editTranscript(): void {
+
+  }
+
+  readonlyTranscript(): void {
+
+  }
+
+  sendOnlyText(): void {
+    this.uploadButton.removeAttribute('disabled');
+  }
 
   ngOnInit(): void {
 
@@ -156,6 +167,7 @@ export class AudioMeetingComponent implements OnInit {
     let audio = document.querySelector('#main-audio-player') as HTMLAudioElement;
     let discardButton = document.querySelector('#discardButton') as HTMLElement;
     let uploadButton = document.querySelector('#uploadButton') as HTMLElement;
+    this.uploadButton = uploadButton; // TODO: confirmar atribuições iniciais e vínculo com variáveis de componente.
     let testPlayback = document.querySelector('#testPlayback') as HTMLElement;
     // let testPlayback2 = document.querySelector('#testPlayback2') as HTMLElement;
 
