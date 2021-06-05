@@ -115,20 +115,17 @@
       <!-- <h4>Transcrição</h4> -->
       <!-- <h5 id="transcript_result">{{ transcript }}</h5> -->
       <div class="transcriptControls">
-        <div>
-          <button class="btn btn-secondary btn-sm mr-1 mb-1" id="editTranscriptButton" ngbTooltip="Editar transcrição"
-            [openDelay]="800" (click)="editTranscript()">
-            <i class="bi bi-pencil-square"></i>
-          </button>
-        </div>
-        <div>
-
-        </div>
+        <h5 *ngIf="textOnly==0">Transcrição do seu áudio</h5>
+        <h5 *ngIf="textOnly==1">Envie somente o Texto</h5>
+        <button class="btn btn-secondary btn-sm mr-1 mb-1" id="editTranscriptButton" ngbTooltip="Editar transcrição"
+          [openDelay]="800" (click)="editTranscript()">
+          <i class="bi bi-pencil-square"></i>
+        </button>
       </div>
 
 
       <textarea type="text" name="transcriptName" id="transcriptTextarea" cols="100" rows="7" maxlength="1000"
-        placeholder="Veja aqui a transcrição do seu áudio e faça correções se necessário ou somente digite o texto sem gravar áudio."
+        placeholder="Veja aqui a transcrição do seu áudio e faça correções se necessário. Ou somente escreva e envie um texto."
         [(ngModel)]="transcript">
       </textarea>
 

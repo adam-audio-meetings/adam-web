@@ -171,6 +171,8 @@ export class AudioMeetingComponent implements OnInit {
     this.editTranscript();
     this.transcript = '';
     this.transcriptTextarea.focus();
+    // mode
+    this.modeSelectionInput.forEach((element) => element.removeAttribute('disabled'));
 
   }
 
@@ -450,6 +452,7 @@ export class AudioMeetingComponent implements OnInit {
         }
 
         function cleanMainAudio() {
+          // TODO: refatorar utilizando componente
           window.URL.revokeObjectURL(mainAudioURL);
           // console.log('mainAudioURL: ', mainAudioURL);
           audio.src = '';
@@ -465,11 +468,14 @@ export class AudioMeetingComponent implements OnInit {
           this.audioService.uploadAudio(
             file,
             this.loggedUserId,
-            this.selectedTeamId
+            this.selectedTeamId,
+            this.transcript
           ).subscribe({
             next: (res) => {
+              // TODO: refatorar utilizando componente
               console.log('Upload concluído.');
               cleanMainAudio();
+              this.initDiscardControls();
               data = [];
               this.transcript = '';
             },

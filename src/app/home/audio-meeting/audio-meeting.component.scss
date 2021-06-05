@@ -98,7 +98,7 @@
 }
 
 .sidebar::-webkit-scrollbar-thumb {
-    background-color: rgb(72, 153, 110);
+    background-color: $adam-light;
     outline: 1px solid rgb(63, 63, 63);
 }
 
@@ -180,8 +180,12 @@
 
 .transcriptControls {
     display: flex;
-    justify-content: flex-end;
-    
+    justify-content: space-between;
+    flex-wrap: nowrap;   
+}
+
+.transcriptControls h5 {
+    color: #808080
 }
 
 .inputDevicesArea {
