@@ -43,7 +43,8 @@
     <div>
       <ul class="list-group">
         <li class="list-group-item" *ngFor="let audio of audios$ | async">
-          <div class="audio-member-container">
+          <div class="audio-member-container"
+            (click)="getMemberTranscription(audio.member._id, audio.member.name, audio.transcription, audio.created_at)">
 
             <div class="audio-member-avatar">
               <img src="../../../assets/img/avatar/member0.png" alt="">
@@ -53,7 +54,7 @@
               <!-- | userFilter:roleFilter"> -->
               <p class="audio-member-name">{{ audio.member.name | titlecase }}</p>
               <!-- <p class="audio-member-date">{{audio.fileId }}</p> -->
-              <p class="audio-member-date">{{ audio.created_at | date : 'd/MM HH:mm' }}</p>
+              <p class="audio-member-date">{{ audio.created_at | date : 'dd/MM HH:mm' }}</p>
             </div>
 
             <!-- <button class="btn btn-primary btn-sm mr-1 mb-1" routerLink="edit/{{user._id}}">Editar</button> -->
@@ -62,8 +63,8 @@
             <!-- TODO: type dinâmico -->
             <div class="audio-member-player">
               <audio id="{{ audio._id }}" controls="true" class="audio-member" type="audio/webm; codecs=opus"
-                src="http://localhost:3000/audio-in-db/{{ audio.fileId }}"
-                (ended)="listenAudioEnded(audio._id)"></audio>
+                src="http://localhost:3000/audio-in-db/{{ audio.fileId }}" (ended)="listenAudioEnded(audio._id)"
+                (play)="getMemberTranscription(audio.member._id, audio.member.name, audio.transcription, audio.created_at)"></audio>
 
             </div>
           </div>
@@ -115,8 +116,12 @@
       <!-- <h4>Transcrição</h4> -->
       <!-- <h5 id="transcript_result">{{ transcript }}</h5> -->
       <div class="transcriptControls">
-        <h5 *ngIf="textOnly==0">Transcrição do seu áudio</h5>
-        <h5 *ngIf="textOnly==1">Envie somente o Texto</h5>
+        <div>
+          <h6>{{ transcriptionTitle }}</h6>
+          <span>{{ transcriptionDatetime | date : 'dd/MM HH:mm' }}</span>
+        </div>
+        <!-- <h5 *ngIf="textOnly==0">Transcrição do seu áudio</h5> -->
+        <!-- <h5 *ngIf="textOnly==1">Envie somente o Texto</h5> -->
         <button class="btn btn-secondary btn-sm mr-1 mb-1" id="editTranscriptButton" ngbTooltip="Editar transcrição"
           [openDelay]="800" (click)="editTranscript()">
           <i class="bi bi-pencil-square"></i>

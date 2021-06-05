@@ -45,6 +45,10 @@ export class AudioMeetingComponent implements OnInit {
   selectedInputDeviceValue: string;
 
   // audio transcript
+  transcriptionTitle: string = '';
+  transcriptionTitleAudioAndText: string = 'Transcrição do seu áudio';
+  transcriptionTitleTextOnly: string = 'Envie um texto';
+  transcriptionDatetime: string = '';
   transcript: string = '';
   textOnly = 0;
   transcriptTextarea: HTMLElement;
@@ -144,7 +148,25 @@ export class AudioMeetingComponent implements OnInit {
     this.transcriptTextarea.scrollTop = this.transcriptTextarea.scrollHeight;
   }
 
+  editTranscript() {
+    this.transcriptTextarea.removeAttribute('readonly');
+    this.transcriptTextarea.focus();
+  }
+
+  getMemberTranscription(memberId: string, memberName: string, transcription: string, created_at) {
+    this.transcriptionTitle = ((memberId == this.loggedUserId) ? 'Você' : memberName) + ' falou/escreveu:';
+    this.transcriptionDatetime = created_at;
+    this.transcript = transcription;
+    this.transcriptTextarea.setAttribute('readonly', 'true');
+    this.editTranscriptButton.setAttribute('disabled', 'true');
+    // audio/text
+    this.uploadButton.setAttribute('disabled', 'true');
+    this.discardButton.setAttribute('disabled', 'true');
+  }
+
   initAudioAndTextControls() {
+    this.transcriptionTitle = this.transcriptionTitleAudioAndText;
+    this.transcriptionDatetime = '';
     // audio
     this.audio.controls = true;
     this.record.removeAttribute('disabled');
@@ -162,6 +184,8 @@ export class AudioMeetingComponent implements OnInit {
   }
 
   initTextOnlyControls() {
+    this.transcriptionTitle = this.transcriptionTitleTextOnly;
+    this.transcriptionDatetime = '';
     // audio
     this.record.setAttribute('disabled', 'true');
     // audio/text
@@ -173,10 +197,11 @@ export class AudioMeetingComponent implements OnInit {
     this.transcriptTextarea.focus();
     // mode
     this.modeSelectionInput.forEach((element) => element.removeAttribute('disabled'));
-
   }
 
   initRecordControls() {
+    this.transcriptionTitle = this.transcriptionTitleAudioAndText;
+    this.transcriptionDatetime = '';
     // audio
     this.iconRecord.classList.add("blink_me");
     this.stop.removeAttribute('disabled');
@@ -190,7 +215,6 @@ export class AudioMeetingComponent implements OnInit {
     this.editTranscriptButton.setAttribute('disabled', 'true');
     // mode
     this.modeSelectionInput.forEach((element) => element.setAttribute('disabled', 'true'));
-
   }
 
   initStopControls() {
@@ -222,14 +246,6 @@ export class AudioMeetingComponent implements OnInit {
     }
   }
 
-  editTranscript() {
-    this.transcriptTextarea.removeAttribute('readonly');
-    this.transcriptTextarea.focus();
-  }
-
-  readonlyTranscript() {
-
-  }
 
   ngOnInit(): void {
 
