@@ -27,7 +27,7 @@
   .page-container {
     height: 100vh;
     display: grid;
-    grid-template-rows: 56px auto; // conforme navbar fixed-top
+    grid-template-rows: $navbar-height auto; // conforme navbar fixed-top
     grid-template-areas: "." "containerItem";
     background-color: rgb(238, 238, 238);
     color: #484848;

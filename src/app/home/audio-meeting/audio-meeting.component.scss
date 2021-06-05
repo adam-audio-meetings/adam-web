@@ -17,7 +17,7 @@
     display: grid;
     background-color: rgb(200, 200, 200);
     background-color: #6c6667;
-    align-content: start;
+    align-content: flex-start;
     overflow-x: hidden;
     overflow-y: auto;
 }
@@ -26,7 +26,7 @@
     
     display: flex;
     margin: 0.5rem 0.5rem 0 0.5rem;
-    align-items: start;
+    align-items: flex-start;
     flex-direction: row;
     // background-color: #808080;
     justify-content: space-between;
@@ -58,14 +58,14 @@
     grid-area: main;
     display: grid;
     /* grid-template-columns: 1fr; */
-    grid-template-rows: 1fr 1fr 80px;
+    grid-template-rows: max-content 1fr 1fr max-content;
     background-color: rgb(238, 238, 238);
     /* flex-direction: column;*/
     /* justify-content: center; */
     align-items: center;
     justify-items: center;
-    grid-template-areas: 'mainControls' 'transcript' 'inputDevices';
-    overflow-y: hidden; // evita expandir a página ao exibir dropDown de inputDevices
+    grid-template-areas: 'modeSelection' 'mainPlayer' 'transcriptArea' 'inputDevicesArea';
+    overflow-y: hidden; // evita expandir a página ao exibir dropDown de inputDevicesArea
 }
 
 .list-group-item {
@@ -154,9 +154,18 @@
     border-radius: 2rem;
 }
 
-.mainControls {
+.modeSelection {
+    grid-area: modeSelection;
+    display: flex;
+    padding-top: 0.5rem;
+    justify-self: flex-end;
+    align-self: flex-start;
+}
+
+
+.mainPlayer {
     display: grid;
-    grid-area: mainControls;
+    grid-area: mainPlayer;
     justify-items: center;
     background-color: rgb(233, 233, 233);
     border-radius: .25rem;
@@ -164,9 +173,20 @@
     box-shadow: 5px 5px 5px #d1d1d1;
 }
 
-.transcript {
-    grid-area: transcript;
-    align-self: start;
+.transcriptArea {
+    grid-area: transcriptArea;
+    align-self: flex-start;
+}
+
+.transcriptControls {
+    display: flex;
+    justify-content: flex-end;
+    
+}
+
+.inputDevicesArea {
+    grid-area: inputDevicesArea;
+    padding-bottom: 0.5rem;
 }
 
 .main-audio-player-container {

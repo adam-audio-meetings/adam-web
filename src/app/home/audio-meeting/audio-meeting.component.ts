@@ -46,8 +46,14 @@ export class AudioMeetingComponent implements OnInit {
   // audio transcript
   transcript: string = '';
   textOnly = 0;
+  transcriptTextarea: HTMLElement;
 
-  // audio controls ???
+  // audio controls
+  record: HTMLElement;
+  iconRecord: HTMLElement;
+  stop: HTMLElement;
+  audio: HTMLAudioElement;
+  discardButton: HTMLElement;
   uploadButton: HTMLElement;
 
   constructor(
@@ -133,6 +139,14 @@ export class AudioMeetingComponent implements OnInit {
     // console.log('Transcricao: ', this.transcript, text2[0]);
   }
 
+  initAudioControls(): void {
+    this.audio.controls = true;
+    this.uploadButton.setAttribute('disabled', 'true');
+    this.discardButton.setAttribute('disabled', 'true');
+    this.stop.setAttribute('disabled', 'true');
+    this.transcriptTextarea.setAttribute('readonly', 'true');
+  }
+
   editTranscript(): void {
 
   }
@@ -160,32 +174,34 @@ export class AudioMeetingComponent implements OnInit {
     });
 
     // variáveis RECORD/PLAY
-    let record = document.querySelector('#record') as HTMLElement;
-    let iconRecord = document.querySelector('#iconRecord') as HTMLElement;
-    let stop = document.querySelector('#stop') as HTMLElement;
-    let soundClips = document.querySelector('.sound-clips') as HTMLElement;
-    let audio = document.querySelector('#main-audio-player') as HTMLAudioElement;
-    let discardButton = document.querySelector('#discardButton') as HTMLElement;
-    let uploadButton = document.querySelector('#uploadButton') as HTMLElement;
-    this.uploadButton = uploadButton; // TODO: confirmar atribuições iniciais e vínculo com variáveis de componente.
-    let testPlayback = document.querySelector('#testPlayback') as HTMLElement;
-    // let testPlayback2 = document.querySelector('#testPlayback2') as HTMLElement;
+    let record: HTMLElement = document.querySelector('#record');
+    let iconRecord: HTMLElement = document.querySelector('#iconRecord');
+    let stop: HTMLElement = document.querySelector('#stop');
+    let audio: HTMLAudioElement = document.querySelector('#main-audio-player');
+    let discardButton: HTMLElement = document.querySelector('#discardButton');
+    let uploadButton: HTMLElement = document.querySelector('#uploadButton');
 
-    let audioTypeWebm = { 'type': 'audio/webm' };
+    // TODO: confirmar atribuições iniciais e vínculo com variáveis de componente.
+    this.record = record;
+    this.iconRecord = iconRecord;
+    this.stop = stop;
+    this.audio = audio;
+    this.discardButton = discardButton;
+    this.uploadButton = uploadButton;
+
+    // variáveis TRANSCRIPT
+    let transcriptTextarea: HTMLElement = document.querySelector('#transcriptTextarea');
+
+    this.transcriptTextarea = transcriptTextarea;
+
+
+    // let audioTypeWebm = { 'type': 'audio/webm' };
     let audioTypeWebmOpus = { 'type': 'audio/webm; codecs=opus' };
-    let audioTypeOgg = { 'type': 'audio/ogg; codecs=opus' };
-    let audioTypeMp3 = { 'type': 'audio/mpeg' };
+    // let audioTypeOgg = { 'type': 'audio/ogg; codecs=opus' };
+    // let audioTypeMp3 = { 'type': 'audio/mpeg' };
     let audioType = audioTypeWebmOpus;
 
-    // TODO: confirmar local de audio.setAttributes 
-    // audio.setAttribute('controls', '');
-    audio.controls = true;
-    // audio.preload = 'metadata';
-
-    // downloadButton.setAttribute('disabled', 'true');
-    uploadButton.setAttribute('disabled', 'true');
-    discardButton.setAttribute('disabled', 'true');
-    stop.setAttribute('disabled', 'true');
+    this.initAudioControls();
 
     // variáveis SPEECH RECOGNITION
 

@@ -74,7 +74,21 @@
   </div>
 
   <div class="main-container">
-    <div class="mainControls">
+
+    <div class="modeSelection">
+      <div class="btn-group btn-group-sm btn-group-toggle" ngbRadioGroup name="radioBasic" [(ngModel)]="textOnly">
+        <label ngbButtonLabel class="btn-outline-secondary" ngbTooltip="Selecione para digitar e enviar somente texto"
+          [openDelay]="800">
+          <input ngbButton type="radio" [value]="1" (click)="sendOnlyText()">Texto
+        </label>
+        <label ngbButtonLabel class="btn-outline-secondary"
+          ngbTooltip="Selecione para gravar áudio e enviar junto com a transcrição" [openDelay]="800">
+          <input ngbButton type="radio" [value]="0">Áudio + Texto
+        </label>
+      </div>
+    </div>
+
+    <div class="mainPlayer">
 
       <div class="main-audio-player-container">
         <audio id="main-audio-player"></audio>
@@ -93,44 +107,42 @@
       </div>
     </div>
 
-    <div class="transcript">
+
+
+    <div class="transcriptArea">
       <!-- <h4>Transcrição</h4> -->
       <!-- <h5 id="transcript_result">{{ transcript }}</h5> -->
-      <div>
-        <button class="btn btn-secondary btn-sm mr-1 mb-1" ngbTooltip="Editar" [openDelay]="1000"
-          (click)="editTranscript()">
-          <i class="bi bi-pencil-square"></i>
-        </button>
-      </div>
-      <!-- <button class="btn btn-secondary btn-sm mr-1 mb-1" ngbTooltip="Enviar somente texto" [openDelay]="1000"
-          (click)="sendOnlyText()">
-          <i class="bi bi-pencil-square"></i>
-        </button> -->
-      <div class="btn-group btn-group-sm btn-group-toggle" ngbRadioGroup name="radioBasic" [(ngModel)]="textOnly">
-        <label ngbButtonLabel class="btn-outline-secondary">
-          <input ngbButton type="radio" [value]="1" (click)="sendOnlyText()">Texto
-        </label>
-        <label ngbButtonLabel class="btn-outline-secondary">
-          <input ngbButton type="radio" [value]="0">Áudio + Texto
-        </label>
+      <div class="transcriptControls">
+        <div>
+          <button class="btn btn-secondary btn-sm mr-1 mb-1" ngbTooltip="Editar transcrição" [openDelay]="800"
+            (click)="editTranscript()">
+            <i class="bi bi-pencil-square"></i>
+          </button>
+        </div>
+        <div>
+
+        </div>
       </div>
 
 
-      <textarea type="text" name="transcriptName" id="transcript-result" cols="100" rows="7" maxlength="1000"
+      <textarea type="text" name="transcriptName" id="transcriptTextarea" cols="100" rows="7" maxlength="1000"
         placeholder="Veja aqui a transcrição do seu áudio e faça correções se necessário ou somente digite o texto sem gravar áudio."
         [(ngModel)]="transcript">
       </textarea>
 
     </div>
 
-    <div ngbDropdown placement="top-center" class="inputDevices d-inline-block">
-      <button class="btn btn-light" id="inputDevices" ngbDropdownToggle>{{ selectedInputDeviceLabel }}</button>
-      <div ngbDropdownMenu aria-labelledby="dropdownInputDevices">
-        <button ngbDropdownItem *ngFor="let device of inputDevices" (click)="selectedInputDeviceLabel = device.label;
-                      selectedInputDeviceValue = device.value">
-          {{ device.label }}</button>
-      </div>
-    </div>
+    <div class="inputDevicesArea">
 
+      <div ngbDropdown placement="top-center" class="d-inline-block">
+        <button class="btn btn-light" id="inputDevices" ngbDropdownToggle>{{ selectedInputDeviceLabel }}</button>
+        <div ngbDropdownMenu aria-labelledby="dropdownInputDevices">
+          <button ngbDropdownItem *ngFor="let device of inputDevices" (click)="selectedInputDeviceLabel = device.label;
+          selectedInputDeviceValue = device.value">
+            {{ device.label }}</button>
+        </div>
+      </div>
+
+    </div>
   </div>
 </div>
