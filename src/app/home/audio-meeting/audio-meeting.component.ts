@@ -14,6 +14,7 @@ import { ActivatedRoute } from '@angular/router';
 import { AuthService } from 'src/app/auth/auth.service';
 import { TeamService } from 'src/app/teams/team.service';
 import { NgbCalendar, NgbDate, NgbDateAdapter, NgbDateNativeAdapter, NgbDateParserFormatter, NgbDateStruct } from '@ng-bootstrap/ng-bootstrap';
+import { isThisTypeNode } from 'typescript';
 
 @Component({
   selector: 'app-audio-meeting',
@@ -47,6 +48,7 @@ export class AudioMeetingComponent implements OnInit {
   transcript: string = '';
   textOnly = 0;
   transcriptTextarea: HTMLElement;
+  editTranscriptButton: HTMLElement;
 
   // audio controls
   record: HTMLElement;
@@ -55,6 +57,9 @@ export class AudioMeetingComponent implements OnInit {
   audio: HTMLAudioElement;
   discardButton: HTMLElement;
   uploadButton: HTMLElement;
+
+  // mode selection
+  modeSelectionInput: NodeListOf<HTMLElement>;
 
   constructor(
     private teamService: TeamService,
@@ -133,30 +138,95 @@ export class AudioMeetingComponent implements OnInit {
     this.selectedDateModel = this.calendar.getToday();
   }
 
-  updateTranscript(text: string): void {
+  updateTranscript(text: string) {
     let text2 = text.trim()[0].toUpperCase() + text.trim().slice(1);
     this.transcript += text2 + '.\n';
-    // console.log('Transcricao: ', this.transcript, text2[0]);
+    this.transcriptTextarea.scrollTop = this.transcriptTextarea.scrollHeight;
   }
 
-  initAudioControls(): void {
+  initAudioAndTextControls() {
+    // audio
     this.audio.controls = true;
+    this.record.removeAttribute('disabled');
+    this.record.focus();
+    this.stop.setAttribute('disabled', 'true');
+    // audio/text
     this.uploadButton.setAttribute('disabled', 'true');
     this.discardButton.setAttribute('disabled', 'true');
-    this.stop.setAttribute('disabled', 'true');
+    // transcript
+    this.transcript = '';
     this.transcriptTextarea.setAttribute('readonly', 'true');
+    this.editTranscriptButton.setAttribute('disabled', 'true');
+    // mode
+    this.modeSelectionInput.forEach((element) => element.removeAttribute('disabled'));
   }
 
-  editTranscript(): void {
-
-  }
-
-  readonlyTranscript(): void {
-
-  }
-
-  sendOnlyText(): void {
+  initTextOnlyControls() {
+    // audio
+    this.record.setAttribute('disabled', 'true');
+    // audio/text
     this.uploadButton.removeAttribute('disabled');
+    this.discardButton.removeAttribute('disabled');
+    // transcript
+    this.editTranscript();
+    this.transcript = '';
+    this.transcriptTextarea.focus();
+
+  }
+
+  initRecordControls() {
+    // audio
+    this.iconRecord.classList.add("blink_me");
+    this.stop.removeAttribute('disabled');
+    this.stop.focus();
+    this.record.setAttribute('disabled', 'true');
+    // audio/text
+    this.uploadButton.setAttribute('disabled', 'true');
+    this.discardButton.setAttribute('disabled', 'true');
+    // transcript
+    this.transcriptTextarea.setAttribute('readonly', 'true');
+    this.editTranscriptButton.setAttribute('disabled', 'true');
+    // mode
+    this.modeSelectionInput.forEach((element) => element.setAttribute('disabled', 'true'));
+
+  }
+
+  initStopControls() {
+    // audio
+    this.iconRecord.classList.remove("blink_me");
+    this.record.removeAttribute('disabled');
+    this.stop.setAttribute('disabled', 'true');
+    // audio/text
+    this.uploadButton.removeAttribute('disabled');
+    this.uploadButton.focus();
+    this.discardButton.removeAttribute('disabled');
+    // transcript
+    this.editTranscriptButton.removeAttribute('disabled');
+  }
+
+  initDiscardControls() {
+    if (this.textOnly) {
+      this.initTextOnlyControls();
+    } else {
+      this.initAudioAndTextControls();
+    }
+  }
+
+  initUploadControls() {
+    if (this.textOnly) {
+      this.initTextOnlyControls();
+    } else {
+      this.initAudioAndTextControls();
+    }
+  }
+
+  editTranscript() {
+    this.transcriptTextarea.removeAttribute('readonly');
+    this.transcriptTextarea.focus();
+  }
+
+  readonlyTranscript() {
+
   }
 
   ngOnInit(): void {
@@ -191,8 +261,13 @@ export class AudioMeetingComponent implements OnInit {
 
     // variáveis TRANSCRIPT
     let transcriptTextarea: HTMLElement = document.querySelector('#transcriptTextarea');
-
+    let editTranscriptButton: HTMLElement = document.querySelector('#editTranscriptButton');
     this.transcriptTextarea = transcriptTextarea;
+    this.editTranscriptButton = editTranscriptButton;
+
+    // mode selection
+    let modeSelectionInput: NodeListOf<HTMLElement> = document.querySelectorAll('.modeSelectionInput');
+    this.modeSelectionInput = modeSelectionInput;
 
 
     // let audioTypeWebm = { 'type': 'audio/webm' };
@@ -201,7 +276,7 @@ export class AudioMeetingComponent implements OnInit {
     // let audioTypeMp3 = { 'type': 'audio/mpeg' };
     let audioType = audioTypeWebmOpus;
 
-    this.initAudioControls();
+    this.initAudioAndTextControls();
 
     // variáveis SPEECH RECOGNITION
 
@@ -325,14 +400,9 @@ export class AudioMeetingComponent implements OnInit {
 
         record.onclick = () => {
           mediaRecorder.start();
-          console.log(mediaRecorder.state);
-          console.log("Gravação iniciada");
-          // record.style.background = "#bd2130";
-          // record.innerHTML = "Gravando";
-          // record.style.fontWeight = "bold";
-          iconRecord.classList.add("blink_me");
-          stop.removeAttribute('disabled');
-          record.setAttribute('disabled', 'true');
+          this.initRecordControls();
+          // console.log(mediaRecorder.state);
+
           if (speechRecognitionEnabled) {
             recognition.start(); // SPEECH
             recognitionTamanho = 0; // SPEECH
@@ -343,16 +413,9 @@ export class AudioMeetingComponent implements OnInit {
 
         stop.onclick = () => {
           mediaRecorder.stop();
-          console.log(mediaRecorder.state);
-          console.log("Gravação finalizada");
-          // record.style.background = "";
-          // record.style.fontWeight = "";
-          // record.innerHTML = "Gravar";
-          iconRecord.classList.remove("blink_me");
-          record.removeAttribute('disabled');
-          stop.setAttribute('disabled', 'true');
-          uploadButton.removeAttribute('disabled');
-          discardButton.removeAttribute('disabled');
+          // console.log(mediaRecorder.state);
+          this.initStopControls();
+
           if (speechRecognitionEnabled) {
             recognition.stop(); // SPEECH
           }
@@ -364,7 +427,6 @@ export class AudioMeetingComponent implements OnInit {
         }
 
         mediaRecorder.onstop = () => {
-          let clipName = 'clipNameTest';
           // TODO: audio element aqui?
           let blob = new Blob(data, audioType);  // media stream
 
@@ -384,6 +446,7 @@ export class AudioMeetingComponent implements OnInit {
 
         discardButton.onclick = () => {
           cleanMainAudio();
+          this.initDiscardControls();
         }
 
         function cleanMainAudio() {
@@ -413,20 +476,6 @@ export class AudioMeetingComponent implements OnInit {
             error: () => alert('Erro ao enviar áudio.')
           });
         }
-        // testPlayback.onclick = () => {
-        //   let audioURL = "http://localhost:3000/audio-in-folder";
-        //   audio.src = audioURL;
-        //   audio.controls = true;
-        //   audio.preload = 'metadata'
-        //   audio.load();
-        // }
-        // testPlayback.onclick = () => {
-        //   let audioURL = "http://localhost:3000/audio-in-db/609b007829740040f84d59af";
-        //   audio.src = audioURL;
-        //   audio.controls = true;
-        //   audio.preload = 'metadata'
-        //   audio.load();
-        // }
       }
 
       let onError = (err) => {

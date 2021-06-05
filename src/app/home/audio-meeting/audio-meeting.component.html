@@ -78,12 +78,14 @@
     <div class="modeSelection">
       <div class="btn-group btn-group-sm btn-group-toggle" ngbRadioGroup name="radioBasic" [(ngModel)]="textOnly">
         <label ngbButtonLabel class="btn-outline-secondary" ngbTooltip="Selecione para digitar e enviar somente texto"
-          [openDelay]="800">
-          <input ngbButton type="radio" [value]="1" (click)="sendOnlyText()">Texto
+          placement="left" container="body" [openDelay]="800">
+          <input class="modeSelectionInput" ngbButton type="radio" [value]="1" (click)="initTextOnlyControls()">Texto
         </label>
         <label ngbButtonLabel class="btn-outline-secondary"
-          ngbTooltip="Selecione para gravar áudio e enviar junto com a transcrição" [openDelay]="800">
-          <input ngbButton type="radio" [value]="0">Áudio + Texto
+          ngbTooltip="Selecione para gravar áudio e enviar junto com a transcrição" placement="left" container="body"
+          [openDelay]="800">
+          <input class="modeSelectionInput" ngbButton type="radio" [value]="0"
+            (click)="initAudioAndTextControls()">Áudio + Transcrição
         </label>
       </div>
     </div>
@@ -114,8 +116,8 @@
       <!-- <h5 id="transcript_result">{{ transcript }}</h5> -->
       <div class="transcriptControls">
         <div>
-          <button class="btn btn-secondary btn-sm mr-1 mb-1" ngbTooltip="Editar transcrição" [openDelay]="800"
-            (click)="editTranscript()">
+          <button class="btn btn-secondary btn-sm mr-1 mb-1" id="editTranscriptButton" ngbTooltip="Editar transcrição"
+            [openDelay]="800" (click)="editTranscript()">
             <i class="bi bi-pencil-square"></i>
           </button>
         </div>
