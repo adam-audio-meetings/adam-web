@@ -17,7 +17,7 @@
     display: grid;
     background-color: rgb(200, 200, 200);
     background-color: #6c6667;
-    align-content: start;
+    align-content: flex-start;
     overflow-x: hidden;
     overflow-y: auto;
 }
@@ -26,7 +26,7 @@
     
     display: flex;
     margin: 0.5rem 0.5rem 0 0.5rem;
-    align-items: start;
+    align-items: flex-start;
     flex-direction: row;
     // background-color: #808080;
     justify-content: space-between;
@@ -58,18 +58,22 @@
     grid-area: main;
     display: grid;
     /* grid-template-columns: 1fr; */
-    grid-template-rows: 1fr 1fr 80px;
+    grid-template-rows: max-content 1fr 1fr max-content;
     background-color: rgb(238, 238, 238);
     /* flex-direction: column;*/
     /* justify-content: center; */
     align-items: center;
     justify-items: center;
-    grid-template-areas: 'mainControls' 'transcript' 'inputDevices';
+    grid-template-areas: 'modeSelection' 'mainPlayer' 'transcriptArea' 'inputDevicesArea';
+    overflow-y: hidden; // evita expandir a página ao exibir dropDown de inputDevicesArea
 }
 
 .list-group-item {
     background-color: #e5e5e5;
     height: 100px;
+    display: flex;
+    align-items: center;
+    justify-content: space-around;
 }
 
 .list-group-item:hover {
@@ -97,25 +101,26 @@
 }
 
 .sidebar::-webkit-scrollbar-thumb {
-    background-color: rgb(72, 153, 110);
+    background-color: $adam-light;
     outline: 1px solid rgb(63, 63, 63);
 }
 
-.audio-member {
-    /* z-index: 2; */
-    width: 150px;
-    height: 30px;
-}
+// .audio-member-container {
+//     display: grid;
+//     // height: auto;
+//     grid-template-areas: 'avatar info' 'avatar player';
+//     grid-template-columns: 80px auto;
+//     align-items: center;
+// }
 
-.audio-member-container {
-    display: grid;
-    grid-template-areas: 'avatar info player';
-    grid-template-columns: 1fr 1fr 1fr;
-    /* align-items: center; */
+.audio-member-controls {
+    width: 220px;
+    height: 20px;
 }
 
 .audio-member-avatar {
     align-self: center;
+    justify-content: center;
 }
 
 .audio-member-avatar img{
@@ -123,29 +128,48 @@
     border-radius: 50%;
     margin-right: 10px;
     vertical-align:middle;
-    box-shadow: 5px 5px 5px #b5b5b5;
+    box-shadow: 1px 1px 1px #b5b5b5;
+}
+
+.audio-member-avatar-alternative {
+    display: flex;
+    height: 60px;
+    width: 60px;
+    border-radius: 50%;
+    box-shadow: 1px 1px 1px #b5b5b5;
+    background-color: rgb(169, 209, 255);
+    font-size: 1.5rem;
+    justify-content: center;
+    align-items: center;
+    
+}
+
+.audio-member-avatar-alternative div{
+    display: inline-block;
 }
 
 .audio-member-info {
     grid-area: info;
-    /* align-self: end; */
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
 }
 
 .audio-member-player {
     grid-area: player;
-    align-self: center;
+    // justify-self: flex-end;
 }
 
 .audio-member-name {
     font-weight: bold;
     color: #6c6667;
-    font-size: 1rem;
+    font-size: 0.9rem;
 }
 
 .audio-member-date {
     font-weight: lighter;
     color: #6c6667;
-    font-size: 0.7rem;
+    font-size: 0.75rem;
 }
 
 .main-controls-button {
@@ -153,9 +177,18 @@
     border-radius: 2rem;
 }
 
-.mainControls {
+.modeSelection {
+    grid-area: modeSelection;
+    display: flex;
+    padding-top: 0.5rem;
+    justify-self: flex-end;
+    align-self: flex-start;
+}
+
+
+.mainPlayer {
     display: grid;
-    grid-area: mainControls;
+    grid-area: mainPlayer;
     justify-items: center;
     background-color: rgb(233, 233, 233);
     border-radius: .25rem;
@@ -163,9 +196,32 @@
     box-shadow: 5px 5px 5px #d1d1d1;
 }
 
-.transcript {
-    grid-area: transcript;
-    align-self: start;
+.transcriptArea {
+    grid-area: transcriptArea;
+    align-self: flex-start;
+}
+
+.transcriptControls {
+    display: flex;
+    justify-content: space-between;
+    flex-wrap: nowrap;
+    align-items: flex-end;
+}
+
+.transcriptControls h6, span {
+    color: #808080
+}
+
+.transcriptControls h6 {
+    margin-bottom: 0.25rem;
+}
+.transcriptControls span {
+    font-size: 0.9rem;
+}
+
+.inputDevicesArea {
+    grid-area: inputDevicesArea;
+    padding-bottom: 0.5rem;
 }
 
 .main-audio-player-container {
@@ -173,6 +229,6 @@
 }
 
 .team-name-division {
-    border-top: 0.1rem solid $light;
+    border-top: 0.1rem solid $adam-light;
     margin: 0.5rem;
 }

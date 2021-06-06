@@ -1,10 +1,7 @@
-import { User } from '../../users/interfaces/user';
-import { Team } from '../../teams/interfaces/team';
-import { Binary } from 'bson';
-
 export interface Audio {
     _id?: string,
     name: string,
+    transcription: string,
     created_at: Date
     team?: string,
     member?: string,

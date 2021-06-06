@@ -80,7 +80,7 @@ export class AudioService {
       );
   }
 
-  uploadAudio(file: File, userId: string, teamId: string): Observable<Audio> {
+  uploadAudio(file: File, userId: string, teamId: string, transcript: string): Observable<Audio> {
     // uploadAudio(file: Audio): Observable<Audio> {
     const formData = new FormData();
 
@@ -90,7 +90,7 @@ export class AudioService {
     formData.append("userId", userId);
     formData.append("teamId", teamId);
     formData.append("name", "teste2");
-    formData.append("transcription", "teste transcript");
+    formData.append("transcription", transcript);
     const url = this.audiosUrl + '/upload';
     return this.http.post(url, formData)
       .pipe(

@@ -7,6 +7,7 @@ import { UserSearchComponent } from './user-search/user-search.component';
 import { UserFormComponent } from './user-form/user-form.component';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { UserFilterPipe } from './user-filter.pipe';
+import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
 
 
 @NgModule({
@@ -21,6 +22,7 @@ import { UserFilterPipe } from './user-filter.pipe';
     FormsModule,
     ReactiveFormsModule,
     UsersRoutingModule,
+    NgbModule,
   ]
 })
 export class UsersModule { }

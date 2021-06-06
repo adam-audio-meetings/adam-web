@@ -26,7 +26,7 @@
       <div class="team-date-item">
 
         <!-- <span id="teamName">Equipe</span> -->
-        <div ngbDropdown class="d-inline-block">
+        <div ngbDropdown placement="bottom-right" class="d-inline-block">
           <button class="btn btn-secondary" id="dropdownTeams" ngbDropdownToggle>{{ selectedTeamName }}</button>
           <div ngbDropdownMenu aria-labelledby="dropdownTeams">
             <button ngbDropdownItem *ngFor="let team of ownTeams$ | async" (click)="selectedTeamName = team.name;
@@ -42,18 +42,26 @@
     <hr class="team-name-division">
     <div>
       <ul class="list-group">
-        <li class="list-group-item" *ngFor="let audio of audios$ | async">
-          <div class="audio-member-container">
+        <li class="list-group-item" *ngFor="let audio of audios$ | async"
+          (click)="getMemberTranscription(audio.member._id, audio.member.name, audio.transcription, audio.created_at)">
+          <!-- <div class="audio-member-container" -->
+          <!-- (click)="getMemberTranscription(audio.member._id, audio.member.name, audio.transcription, audio.created_at)"> -->
 
-            <div class="audio-member-avatar">
-              <img src="../../../assets/img/avatar/member0.png" alt="">
-            </div>
+          <!-- <div class="audio-member-avatar">
+            <img src="../../../assets/img/avatar/member0.png" alt="">
+          </div> -->
+
+          <div class="audio-member-avatar-alternative">
+            <div>{{ audio.member.name[0] }}</div>
+          </div>
+
+          <div>
 
             <div class="audio-member-info">
               <!-- | userFilter:roleFilter"> -->
-              <p class="audio-member-name">{{ audio.name | titlecase }}</p>
+              <p class="audio-member-name">{{ audio.member.name | titlecase }}</p>
               <!-- <p class="audio-member-date">{{audio.fileId }}</p> -->
-              <p class="audio-member-date">{{ audio.created_at | date : 'd/MM HH:mm' }}</p>
+              <p class="audio-member-date">{{ audio.created_at | date : 'HH:mm' }}</p>
             </div>
 
             <!-- <button class="btn btn-primary btn-sm mr-1 mb-1" routerLink="edit/{{user._id}}">Editar</button> -->
@@ -61,12 +69,13 @@
             <!-- TODO: buscar link api por environment -->
             <!-- TODO: type dinâmico -->
             <div class="audio-member-player">
-              <audio id="{{ audio._id }}" controls="true" class="audio-member" type="audio/webm; codecs=opus"
-                src="http://localhost:3000/audio-in-db/{{ audio.fileId }}"
-                (ended)="listenAudioEnded(audio._id)"></audio>
+              <audio id="{{ audio._id }}" controls="true" class="audio-member-controls" type="audio/webm; codecs=opus"
+                src="http://localhost:3000/audio-in-db/{{ audio.fileId }}" (ended)="listenAudioEnded(audio._id)"
+                (play)="getMemberTranscription(audio.member._id, audio.member.name, audio.transcription, audio.created_at)"></audio>
 
             </div>
           </div>
+          <!-- </div> -->
 
         </li>
       </ul>
@@ -74,7 +83,23 @@
   </div>
 
   <div class="main-container">
-    <div class="mainControls">
+
+    <div class="modeSelection">
+      <div class="btn-group btn-group-sm btn-group-toggle" ngbRadioGroup name="radioBasic" [(ngModel)]="textOnly">
+        <label ngbButtonLabel class="btn-outline-secondary" ngbTooltip="Selecione para digitar e enviar somente texto"
+          placement="left" container="body" [openDelay]="800">
+          <input class="modeSelectionInput" ngbButton type="radio" [value]="1" (click)="initTextOnlyControls()">Texto
+        </label>
+        <label ngbButtonLabel class="btn-outline-secondary"
+          ngbTooltip="Selecione para gravar áudio e enviar junto com a transcrição" placement="left" container="body"
+          [openDelay]="800">
+          <input class="modeSelectionInput" ngbButton type="radio" [value]="0"
+            (click)="initAudioAndTextControls()">Áudio + Transcrição
+        </label>
+      </div>
+    </div>
+
+    <div class="mainPlayer">
 
       <div class="main-audio-player-container">
         <audio id="main-audio-player"></audio>
@@ -93,15 +118,43 @@
       </div>
     </div>
 
-    <div class="transcript">
-      <h4>Transcrição</h4>
-      <h5 id="transcript_result"></h5>
+
+
+    <div class="transcriptArea">
+      <!-- <h4>Transcrição</h4> -->
+      <!-- <h5 id="transcript_result">{{ transcript }}</h5> -->
+      <div class="transcriptControls">
+        <div>
+          <h6>{{ transcriptionTitle }}</h6>
+          <span>{{ transcriptionDatetime | date : 'dd/MM HH:mm' }}</span>
+        </div>
+        <!-- <h5 *ngIf="textOnly==0">Transcrição do seu áudio</h5> -->
+        <!-- <h5 *ngIf="textOnly==1">Envie somente o Texto</h5> -->
+        <button class="btn btn-secondary btn-sm mr-1 mb-1" id="editTranscriptButton" ngbTooltip="Editar transcrição"
+          [openDelay]="800" (click)="editTranscript()">
+          <i class="bi bi-pencil-square"></i>
+        </button>
+      </div>
+
+
+      <textarea type="text" name="transcriptName" id="transcriptTextarea" cols="100" rows="7" maxlength="1000"
+        placeholder="Veja aqui a transcrição do seu áudio e faça correções se necessário. Ou somente escreva e envie um texto."
+        [(ngModel)]="transcript">
+      </textarea>
 
     </div>
 
-    <div class="inputDevices">
-      <select name="inputDevices" id="inputDevices"></select>
-    </div>
+    <div class="inputDevicesArea">
 
+      <div ngbDropdown placement="top-center" class="d-inline-block">
+        <button class="btn btn-light" id="inputDevices" ngbDropdownToggle>{{ selectedInputDeviceLabel }}</button>
+        <div ngbDropdownMenu aria-labelledby="dropdownInputDevices">
+          <button ngbDropdownItem *ngFor="let device of inputDevices" (click)="selectedInputDeviceLabel = device.label;
+          selectedInputDeviceValue = device.value">
+            {{ device.label }}</button>
+        </div>
+      </div>
+
+    </div>
   </div>
 </div>

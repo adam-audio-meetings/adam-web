@@ -6,10 +6,10 @@
   <div [ngbCollapse]="isMenuCollapsed" class="collapse navbar-collapse">
     <ul ngbNav #nav="ngbNav" class="navbar-nav mr-auto">
 
-      <!-- ALLWAYS -->
-
-      <li ngbNavItem (click)="isMenuCollapsed=true"><a ngbNavLink routerLink="/audio-meeting"
-          routerLinkActive="active">Daily Meeting</a></li>
+      <!-- MEMBER / COORDINATOR = Redirect to LOGIN if note logged in -->
+      <li ngbNavItem *ngIf="this.authService.userRole != 'admin'" (click)="isMenuCollapsed=true"><a ngbNavLink
+          routerLink="/audio-meeting" routerLinkActive="active">Daily
+          Meeting</a></li>
 
       <!-- NO AUTH -->
       <!-- <li ngbNavItem *ngIf="!this.authService.isLoggedIn">

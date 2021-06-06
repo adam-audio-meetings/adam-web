@@ -14,7 +14,9 @@
       </fieldset>
     </div>
     <div>
-      <button class="btn btn-success  my-1 mr-1" routerLink="form/">Novo</button>
+      <button class="btn btn-info  my-1 mr-1" routerLink="form/" ngbTooltip="Adicionar Usuário" [openDelay]="1000">
+        <i class="bi bi-person-plus"></i>
+      </button>
       <button class="btn btn-secondary" routerLink="random/">(+ aleatorio)</button>
     </div>
     <!-- <div *ngIf="users$"> -->
@@ -37,8 +39,14 @@
           <td>{{user.username}}</td>
           <td>{{user.email}}</td>
           <td>
-            <button class="btn btn-primary btn-sm mr-1 mb-1" routerLink="edit/{{user._id}}">Editar</button>
-            <button class="btn btn-danger btn-sm mr-1 mb-1" (click)="deleteUser(user._id)">Excluir</button>
+            <button class="btn btn-primary btn-sm mr-1 mb-1" routerLink="edit/{{user._id}}" ngbTooltip="Editar"
+              [openDelay]="1000">
+              <i class="bi bi-pencil-square"></i>
+            </button>
+            <button class="btn btn-danger btn-sm mr-1 mb-1" (click)="deleteUser(user._id)" ngbTooltip="Excluir"
+              [openDelay]="1000">
+              <i class="bi bi-trash"></i>
+            </button>
           </td>
         </tr>
       </tbody>
