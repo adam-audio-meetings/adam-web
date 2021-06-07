@@ -52,13 +52,12 @@ export class AudioService {
   //     );
   // }
 
-  searchAudios(teamId: string, dateStringStart: string, dateStringEnd: string): Observable<Audio[]> {
+  searchAudios(teamId: string, dateStringStart: string, dateStringEnd: string, onlyInfo = false): Observable<Audio[]> {
     // TODO: tratar 'date'
-    if (!teamId.trim()) {
+    if (!teamId) {
       return of([])
     }
-    // const url = `${this.audiosUrl}/search?role=${term}&name=${term}&audioname=${term}&email=${term}`;
-    const url = `${this.audiosUrl}/search?teamId=${teamId}&dateStringStart=${dateStringStart}&dateStringEnd=${dateStringEnd}`;
+    const url = `${this.audiosUrl}/search?teamId=${teamId}&dateStringStart=${dateStringStart}&dateStringEnd=${dateStringEnd}&onlyInfo=${onlyInfo}`;
     return this.http.get<Audio[]>(url)
       .pipe(
         tap(x => x.length ?

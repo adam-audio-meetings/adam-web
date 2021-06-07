@@ -9,6 +9,7 @@ import { HomeMemberComponent } from './home-member/home-member.component';
 import { AudioMeetingComponent } from './audio-meeting/audio-meeting.component';
 import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
+import { GoogleChartsModule } from 'angular-google-charts';
 
 
 @NgModule({
@@ -18,7 +19,8 @@ import { FormsModule, ReactiveFormsModule } from '@angular/forms';
     HomeRoutingModule,
     FormsModule,
     ReactiveFormsModule,
-    NgbModule
+    NgbModule,
+    GoogleChartsModule
   ]
 })
 export class HomeModule { }

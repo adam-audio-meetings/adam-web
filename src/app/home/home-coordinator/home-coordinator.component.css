@@ -5,7 +5,8 @@
 
 .container-coordinator {
   display: flex;
-  width: 100%;
+  flex-wrap: wrap;
+  /* width: 100%; */
 }
 
 .container-item {
@@ -14,7 +15,7 @@
   padding: 1rem;
   background-color: rgb(245, 245, 245);
   box-shadow: 3px 3px 5px rgb(170, 170, 170);
-  width: 50%;
+  /* width: 50%; */
 }
 
 .table {

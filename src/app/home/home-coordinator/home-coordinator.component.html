@@ -1,27 +1,45 @@
 <div class="page-container">
   <div class="page-container-item">
-    <h2 class="ml-3 pt-4">Painel do Coordenador</h2>
+    <h2 class="ml-3 pt-4">Dashboard</h2>
     <div class="container-coordinator">
 
       <div class="container-item">
-        <h3>Minhas equipes</h3>
-        <button type="button" routerLink="/teams" routerLinkActive="active" class="btn btn-primary btn-lg mb-2">
-          Gerenciar Minhas equipes
+        <button type="button" routerLink="/teams" routerLinkActive="active" class="btn btn-primary btn-lg mb-2"
+          ngbTooltip="Gerenciar Equipes" [openDelay]="1000">
+          <i class="bi bi-gear"></i> Equipes ({{ totalTeams }})
         </button>
         <table class="table">
           <thead>
             <tr>
-              <th>Assunto</th>
-              <th class="quantity">Quantidade</th>
+              <th>Equipe</th>
+              <th class="quantity">Membros</th>
             </tr>
           </thead>
           <tbody>
+            <tr *ngFor="let team of teams$ | async">
+              <td>{{ team.name }}</td>
+              <td class="quantity">{{ team.members.length }}</td>
+            </tr>
             <tr>
               <td><strong>TOTAL</strong></td>
-              <td class="quantity"><strong>{{totalTeams}}</strong></td>
+              <td class="quantity"><strong>{{totalMembers}}</strong></td>
             </tr>
           </tbody>
         </table>
+      </div>
+
+      <div class="container-item">
+        <google-chart [title]="chartMembersByTeams.title" [type]="chartMembersByTeams.type"
+          [data]="chartMembersByTeams.data" [columns]="chartMembersByTeams.chartColumns">
+        </google-chart>
+      </div>
+
+      <div class="container-item">
+
+      </div>
+
+      <div class="container-item">
+
       </div>
 
     </div>
