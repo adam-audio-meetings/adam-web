@@ -8,6 +8,7 @@ import { AudioService } from '../audio.service';
 import { delay, map } from 'rxjs/operators';
 import { isThisTypeNode } from 'typescript';
 import { User } from 'src/app/users/interfaces/user';
+var _ = require('lodash');
 
 @Component({
   selector: 'app-home-coordinator',
