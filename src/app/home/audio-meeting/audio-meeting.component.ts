@@ -104,14 +104,14 @@ export class AudioMeetingComponent implements OnInit {
     // if (this.selectedDateModel!) {
     //   this.selectedDateModel = this.calendar.getToday();
     // }
-    console.log(this.selectedDateModel);
+    // console.log(this.selectedDateModel);
     let date = this.selectedDateModel;
     //let javaDateModel: Date = this.dateAdapter.toModel(this.selectedDateModel);
     let jsDateStringStart = date.month + "-" + date.day + "-" + date.year;
+    console.log('jsDateStringStart: ', jsDateStringStart);
     let jsDateStart = new Date(jsDateStringStart);
-    console.log(jsDateStart);
     var jsDateEnd = new Date(jsDateStart.getTime() + 86400000); // + 1 day in ms
-    console.log(jsDateEnd.toDateString());
+    // console.log(jsDateEnd.toDateString());
     // Date em js: mês começa do 0
     let jsDateStringEnd = (jsDateEnd.getMonth() + 1) + "-" + jsDateEnd.getDate() + "-" + jsDateEnd.getFullYear();
     this.audios$ = this.audioService.searchAudios(this.selectedTeamId, jsDateStringStart, jsDateStringEnd);

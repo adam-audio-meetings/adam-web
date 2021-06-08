@@ -29,18 +29,29 @@
       </div>
 
       <div class="container-item">
-        <google-chart [title]="chartMembersByTeams.title" [type]="chartMembersByTeams.type"
-          [data]="chartMembersByTeams.data" [columns]="chartMembersByTeams.chartColumns">
+        <google-chart *ngIf="teams$ | async; else spinnerBlock" [title]="chartMembersByTeams.title"
+          [type]="chartMembersByTeams.type" [data]="chartMembersByTeams.data"
+          [columns]="chartMembersByTeams.chartColumns">
         </google-chart>
       </div>
 
       <div class="container-item">
-
+        <google-chart *ngIf="teams$ | async; else spinnerBlock" [title]="chartAudiosByTeams.title"
+          [type]="chartAudiosByTeams.type" [data]="chartAudiosByTeams.data" [columns]="chartAudiosByTeams.chartColumns">
+        </google-chart>
       </div>
 
-      <div class="container-item">
-
+      <div class="container-item" *ngIf="audiosByTeams; else spinnerBlock">
+        {{ audiosTeam0[0] }}
       </div>
+
+      <ng-template #spinnerBlock>
+        <div class="d-flex justify-content-center">
+          <div class="spinner-border text-info" role="status">
+            <span class="sr-only">Loading...</span>
+          </div>
+        </div>
+      </ng-template>
 
     </div>
     <!-- <button type="button" routerLink="/teams/available" routerLinkActive="active" class="btn btn-secondary btn-lg m-5">

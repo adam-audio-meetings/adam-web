@@ -4,5 +4,5 @@ export interface Audio {
     transcription: string,
     created_at: Date
     team?: string,
-    member?: string,
+    member?: string | any,
 }
