@@ -8,7 +8,7 @@ import { AudioService } from '../audio.service';
 import { delay, map } from 'rxjs/operators';
 import { isThisTypeNode } from 'typescript';
 import { User } from 'src/app/users/interfaces/user';
-var _ = require('lodash');
+import * as _ from 'lodash';
 
 @Component({
   selector: 'app-home-coordinator',
@@ -22,6 +22,7 @@ export class HomeCoordinatorComponent implements OnInit, OnDestroy {
     public audioService: AudioService,
   ) { }
 
+  _;
   totalTeams: number;
   totalMembers: number = 0;
   teams$: Observable<Team[]>;
@@ -50,84 +51,50 @@ export class HomeCoordinatorComponent implements OnInit, OnDestroy {
     chartColumns: ['Integrante', 'Qtde Audios']
   }
 
-  async getTeams() {
+  getTeams() {
     this.teams$ = this.teamService.getOwnTeams();
 
     this.subscribeTeams$ = this.teams$.subscribe(
       teams => {
-        this.totalTeams = teams.length;
-        teams.forEach(team => {
-          this.membersByTeams.push([team.name, team.members.length]);
-          this.totalMembers += team.members.length;
-          this.teamsIds.push(team._id);
-          console.log('teamsIds: ', this.teamsIds);
-        })
-        this.teamsIds.forEach(
-          id => {
-            console.log('forEach id= ', id);
-            //jsdatestring: 'mes-dia-ano'
-            this.audioService.searchAudios(id, '3-5-2021', '6-5-2022', true).pipe(
-              // this.audiosByTeams.push({ id: id, audios: audios })
-              // map(audioList => this.audiosByTeams.push(audioList)),
-
-              // map(audioList => audioList.forEach(audio => {
-              //   this.audiosByTeams.push(audio)
-              // })),
-
-            ).subscribe(audioList => {
-
-              // console.log('audiosByTeams: ', this.audiosByTeams);
-              audioList.forEach(audioByTeam => this.audiosTeam0.push([audioByTeam.team, audioByTeam.member.name]));
-              console.log('audiosTeam0: ', this.audiosTeam0);
-
-
-            });
-          });
+        console.log(teams);
 
       });
 
-    // this.audiosTeam0.push(this.audiosByTeams[0]);
-    // console.log('audiosTeam0: ', this.audiosTeam0);
-    // this.audiosByTeams[1].forEach(val => console.log());
+    // this.subscribeTeams$ = this.teams$.subscribe(
+    //   teams => {
+    //     this.totalTeams = teams.length;
+    //     teams.forEach(team => {
+    //       this.membersByTeams.push([team.name, team.members.length]);
+    //       this.totalMembers += team.members.length;
+    //       this.teamsIds.push(team._id);
+    //       // console.log('teamsIds: ', this.teamsIds);
+    //     })
+    //     // this.teamsIds.forEach(
+    //     //   id => {
+    //     //     console.log('forEach id= ', id);
+    //     //     //jsdatestring: 'mes-dia-ano'
+    //     //     this.audioService.searchAudios(id, '3-5-2021', '6-5-2022', true).pipe(
+    //     //       // this.audiosByTeams.push({ id: id, audios: audios })
+    //     //       // map(audioList => this.audiosByTeams.push(audioList)),
+
+    //     //       // map(audioList => audioList.forEach(audio => {
+    //     //       //   this.audiosByTeams.push(audio)
+    //     //       // })),
+
+    //     //     ).subscribe(audioList => {
+
+    //     //       // console.log('audiosByTeams: ', this.audiosByTeams);
+    //     //       audioList.forEach(audioByTeam => this.audiosTeam0.push([audioByTeam.team, audioByTeam.member.name]));
+    //     //       console.log('audiosTeam0: ', this.audiosTeam0);
+
+
+    //     //     });
+    //     //   });
+
+    //   });
+
 
   }
-
-
-
-
-
-
-
-  // async getAudiosByTeam() {
-  //   this.teamsIds.forEach(
-  //     id => {
-  //       console.log('forEach id= ', id);
-  //       //jsdatestring: 'mes-dia-ano'
-  //       this.audioService.searchAudios(id, '3-5-2021', '6-5-2022', true).subscribe(
-  //         audios => {
-  //           this.audiosByTeams.push({ id: id, audios: audios });
-  //         });
-  //     });
-  //   this.audiosByTeams.forEach(
-  //     audioByTeam => {
-  //       console.log('teste');
-  //     });
-  //   console.log('audiosByTeams', this.audiosByTeams[0]);
-  // }
-
-  // async getAudios() {
-  //   await this.getTeams();
-
-  //   await this.getAudiosByTeam();
-  //   // this.audios$ =
-
-  //   // this.subscribeAudios$ = this.audios$.subscribe(
-  //   //   audios => {
-  //   //     console.log(audios);
-  //   //   }
-  //   // );
-
-  // }
 
 
   ngOnInit(): void {
