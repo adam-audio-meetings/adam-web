@@ -29,20 +29,20 @@
       </div>
 
       <div class="container-item">
-        <google-chart *ngIf="teams$ | async; else spinnerBlock" [title]="chartMembersByTeams.title"
+        <google-chart *ngIf="teams$; else spinnerBlock" [title]="chartMembersByTeams.title"
           [type]="chartMembersByTeams.type" [data]="chartMembersByTeams.data"
           [columns]="chartMembersByTeams.chartColumns">
         </google-chart>
       </div>
 
       <div class="container-item">
-        <google-chart *ngIf="teams$ | async; else spinnerBlock" [title]="chartAudiosByTeams.title"
+        <google-chart *ngIf="audiosByTeams; else spinnerBlock" [title]="chartAudiosByTeams.title"
           [type]="chartAudiosByTeams.type" [data]="chartAudiosByTeams.data" [columns]="chartAudiosByTeams.chartColumns">
         </google-chart>
       </div>
 
       <div class="container-item" *ngIf="audiosByTeams; else spinnerBlock">
-        {{ audiosTeam0[0] }}
+        {{ audiosByTeams }}
       </div>
 
       <ng-template #spinnerBlock>
