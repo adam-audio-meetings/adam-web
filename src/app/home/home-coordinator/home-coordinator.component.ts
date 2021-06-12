@@ -5,10 +5,11 @@ import { Audio } from '../interfaces/audio';
 import { count } from 'console';
 import { Observable, Subscription } from 'rxjs';
 import { AudioService } from '../audio.service';
-import { delay, finalize, map, takeUntil } from 'rxjs/operators';
+import { delay, finalize, map, takeUntil, share } from 'rxjs/operators';
 import { isThisTypeNode } from 'typescript';
 import { User } from 'src/app/users/interfaces/user';
 import * as _ from 'lodash';
+import { Formatter, ScriptLoaderService } from 'angular-google-charts';
 
 @Component({
   selector: 'app-home-coordinator',
@@ -17,22 +18,30 @@ import * as _ from 'lodash';
 })
 export class HomeCoordinatorComponent implements OnInit, OnDestroy {
 
+  // https://github.com/FERNman/angular-google-charts
+  public readonly formatters$: Observable<Formatter[]> = this.scriptLoaderService.loadChartPackages().pipe(
+    share(),
+    map(() => [
+      // { colIndex: 1, formatter: new google.visualization.NumberFormat({ fractionDigits: 0, prefix: '$', suffix: '‰' }) }
+      { colIndex: 0, formatter: new google.visualization.DateFormat({ formatType: 'long' }) }
+    ])
+  );
+
   constructor(
     public teamService: TeamService,
     public audioService: AudioService,
+    private scriptLoaderService: ScriptLoaderService,
   ) { }
 
-  _;
   totalTeams: number;
   totalMembers: number = 0;
   teams$: Observable<Team[]>;
-  teamsData: Team[];
+  teams: Team[];
   membersByTeams = [];
-  subscribeTeams$: Subscription;
+  // subscribeTeams$: Subscription;
 
   teamsIds = [];
   audiosByTeams = [];
-  audiosTeam0 = [];
 
   audios$: Observable<Audio[]>;
   subscribeAudios$: Subscription;
@@ -46,9 +55,10 @@ export class HomeCoordinatorComponent implements OnInit, OnDestroy {
   }
 
   audiosByTeamsMock = [
-    ['2021-5-1', 3, 5],
-    ['2021-5-1', 3, 5],
-    ['2021-5-2', 3, 5],
+    [new Date(2021, 1, 1), 3, 5]
+    ,
+    // [new Date('2021'), 3, 5],
+    ['2021', 3, 5],
     ['2021-5-3', 3, 5],
     ['2021-5-4', 5, 5],
     ['2021-5-5', 3, 5],
@@ -59,16 +69,30 @@ export class HomeCoordinatorComponent implements OnInit, OnDestroy {
     ['2021-5-10', 3, 5],
     ['2021-5-11', 3, 5],
     ['2021-5-12', 3, 5],
+    ["2021-1-1", 2, 10],
+    ["2021-1-1", 1, 10],
+    ["2021-1-1", 1, 10],
+    ["2021-1-1", 1, 10],
+    ["2021-1-1", 1, 10],
+    ["2021-1-1", 1, 10],
+    ["2021-1-1", 2, 10],
+    ["2021-1-1", 3, 10],
+    ["2021-1-1", 1, 10],
   ]
 
-  dashboardData2 = [];
+  audioByTeamsByDate = [];
+  audioByTeamsByDate2 = [];
 
-  chartAudiosByTeams = {
+
+
+  public chartAudiosByTeams = {
     title: 'Áudios (?) por Integrantes da Equipe',
     type: 'AreaChart',
-    data: this.audiosByTeamsMock,
+    data: this.audioByTeamsByDate2,
     chartColumns: ['Data', 'Áudios entregues', 'Qtde Integrantes']
-  }
+  };
+
+
 
   // this.subscribeTeams$ = this.teams$.subscribe(
   //   teams => {
@@ -102,6 +126,56 @@ export class HomeCoordinatorComponent implements OnInit, OnDestroy {
   //     //   });
 
   //   });
+  getOwnTeams(): void {
+    this.teams$ = this.teamService.getOwnTeams()
+    this.teams$.pipe(
+      map(
+        (teams) => {
+          this.teams = teams
+          this.getTeamsSummary()
+          this.getAudios(this.teamsIds)
+        })
+    )
+
+  }
+
+  getAudiosByMembersByTeams(): void {
+    this.teamService.getOwnTeams().subscribe(
+      (teams) => {
+        // TODO: verificar se deve iniciar getOwnTeams primeiro 
+        // TODO: confirmar se busca audios por aqui
+        this.getAudios(this.teamsIds);
+      })
+
+
+
+  }
+
+  getTeamsSummary(): void {
+
+    this.teamService.getOwnTeams().subscribe(
+      (teams) => {
+        console.log(teams)
+
+        this.totalTeams = _.size(teams)
+
+        _.forEach(teams,
+          team => {
+            // total count members by team
+            this.membersByTeams.push([team.name, _.size(team.members)])
+            console.log(this.membersByTeams)
+            // total members
+            this.totalMembers += _.size(team.members)
+            // teams IDS
+            this.teamsIds.push(team._id);
+          })
+
+        return teams
+      })
+
+
+  }
+
   getAudios(teamsIds) {
     // console.log('teamdIds: ', teamsIds)
     teamsIds.forEach(
@@ -121,52 +195,51 @@ export class HomeCoordinatorComponent implements OnInit, OnDestroy {
               // agrupa por data > idMember (nome) : contagem de envios de áudios de usuários distindos por data
               //TODO: pegar por data sem hora
               let groupAudiosByDate = _.groupBy(this.audiosByTeams, 'audioCreatedAt')
-              this.dashboardData2 = []
+              let audioByTeamsByDateTemp = []
               // group[0].audioCreatedAt
-              // _.forEach(groupAudiosByDate, group => { this.dashboardData2.push(new Date('5-5-2021'), _.size(_.groupBy(group, 'audioMemberId')), 10) })
-              _.forEach(groupAudiosByDate, group => { this.dashboardData2.push([123456, _.size(_.groupBy(group, 'audioMemberId')), 10]) })
+              _.forEach(groupAudiosByDate, group => { audioByTeamsByDateTemp.push(['2021-1-1', _.size(_.groupBy(group, 'audioMemberId')), 10]) })
+              // _.forEach(groupAudiosByDate, group => { this.audioByTeamsByDate.push([123456, _.size(_.groupBy(group, 'audioMemberId')), 10]) })
               // console.log('audiosByTeams: ', this.audiosByTeams)
               console.log('groupAudiosByDate: ', groupAudiosByDate)
-              console.log('dashboardData2: ', this.dashboardData2)
+              console.log('audioByTeamsByDate: ', audioByTeamsByDateTemp)
+              console.log('audioByTeamsByDate typeOf: ', audioByTeamsByDateTemp[0][1].typeOf)
+              // let testeArr: { date: Date, number: number } = { date: new Date(2021, 1, 1), number: 1 }
+              // console.log('teste typeOf:', testeArr[0].typeOf)
+              this.audioByTeamsByDate2 = audioByTeamsByDateTemp
+              console.log('audioByTeamsByDate: ', this.audioByTeamsByDate)
 
             });
 
       })
-
 
   }
 
 
   ngOnInit(): void {
 
-    this.teams$ = this.teamService.getOwnTeams().pipe(
-      map((teams) => {
-        console.log(teams)
+    this.audioByTeamsByDate2.push([1, 2, 3]);
 
-        // this.teamsData = teams
-        this.totalTeams = _.size(teams)
+    this.teams$ = this.teamService.getOwnTeams()
+    this.teams$.pipe(
+      map(
+        (teams) => {
+          this.teams = teams;
 
-        _.forEach(teams,
-          team => {
-            // total count members by team
-            this.membersByTeams.push([team.name, _.size(team.members)])
-            // total members
-            this.totalMembers += _.size(team.members)
-            // teams IDS
-            this.teamsIds.push(team._id);
-          })
+        })
+    ).subscribe(() => {
+      this.getTeamsSummary();
+      console.log(this.teamsIds);
+      this.getAudios(this.teamsIds);
+    })
 
-        this.getAudios(this.teamsIds);
+    // this.getOwnTeams()
+    // this.getTeamsSummary();
+    this.getAudiosByMembersByTeams();
 
-        return teams
-      }),
 
-      // finalize(() => console.log('funcionando pipe')
-      // )
-    )
   }
 
   ngOnDestroy(): void {
-    this.subscribeAudios$.unsubscribe();
+    // this.subscribeAudios$.unsubscribe();
   }
 }

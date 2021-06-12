@@ -20,7 +20,8 @@ import { GoogleChartsModule } from 'angular-google-charts';
     FormsModule,
     ReactiveFormsModule,
     NgbModule,
-    GoogleChartsModule
+    // GoogleChartsModule
+    GoogleChartsModule.forRoot({ mapsApiKey: 'AIzaSyD-9tSrke72PouQMnMX-a7eZSW0jkFMBWY' })
   ]
 })
 export class HomeModule { }
