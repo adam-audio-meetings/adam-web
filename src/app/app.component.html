@@ -18,7 +18,8 @@
 
       <!-- ADMIN/COORDINATOR - DASHBOARD (redirecionamento Home) -->
       <li *ngIf="this.authService.isLoggedIn && this.authService.userRole != 'member'" ngbNavItem
-        (click)="isMenuCollapsed=true"><a ngbNavLink routerLink={{this.authService.redirectUrl}}>Dashboard</a>
+        (click)="isMenuCollapsed=true"><a ngbNavLink routerLink={{this.authService.redirectUrl}}
+          routerLinkActive="active">Dashboard</a>
       </li>
       <!-- MEMBER - CONTA -->
       <li *ngIf="this.authService.userRole == 'member'" ngbNavItem (click)="isMenuCollapsed=true"><a ngbNavLink
