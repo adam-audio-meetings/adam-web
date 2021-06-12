@@ -33,23 +33,20 @@
 
 
       <div class="container-item">
-        <ng-container *ngIf="teams$ | async; else spinnerBlock">
-
+        <div *ngIf="chartMembersByTeams.data.length; else spinnerBlock">
           <google-chart [title]="chartMembersByTeams.title" [type]="chartMembersByTeams.type"
-            [data]="chartMembersByTeams.data" [columns]="chartMembersByTeams.chartColumns">
+            [data]="chartMembersByTeams.data" [columns]="chartMembersByTeams.chartColumns"
+            [options]="chartMembersByTeams.options">
           </google-chart>
-
-
-        </ng-container>
+        </div>
       </div>
 
       <div class="container-item" *ngIf="(formatters$ | async) as formatter">
-        <!-- <div class="container-item"> -->
-        <ng-container *ngIf="teams$ | async; else spinnerBlock">
+        <div *ngIf="chartAudiosByTeams.data.length; else spinnerBlock">
           <google-chart [title]="chartAudiosByTeams.title" [type]="chartAudiosByTeams.type"
             [data]="chartAudiosByTeams.data" [columns]="chartAudiosByTeams.chartColumns" [formatters]="formatter">
           </google-chart>
-        </ng-container>
+        </div>
       </div>
 
       <!-- <div class="container-item" *ngIf="teams$; else spinnerBlock">

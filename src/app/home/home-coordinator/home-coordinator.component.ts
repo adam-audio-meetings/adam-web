@@ -5,7 +5,7 @@ import { Audio } from '../interfaces/audio';
 import { count } from 'console';
 import { Observable, Subscription } from 'rxjs';
 import { AudioService } from '../audio.service';
-import { delay, finalize, map, takeUntil, share } from 'rxjs/operators';
+import { delay, finalize, map, takeUntil, share, tap, take } from 'rxjs/operators';
 import { isThisTypeNode } from 'typescript';
 import { User } from 'src/app/users/interfaces/user';
 import * as _ from 'lodash';
@@ -36,157 +36,87 @@ export class HomeCoordinatorComponent implements OnInit, OnDestroy {
   totalTeams: number;
   totalMembers: number = 0;
   teams$: Observable<Team[]>;
-  teams: Team[];
   membersByTeams = [];
-  // subscribeTeams$: Subscription;
 
   teamsIds = [];
   audiosByTeams = [];
 
   audios$: Observable<Audio[]>;
-  subscribeAudios$: Subscription;
 
-  // google chart
+  // audiosByTeamsMock = [
+  //   [new Date(2021, 1, 1), 3, 5]
+  //   ['2021', 3, 5]
+  // ]
+
+  // inicializa google chart parameters
   chartMembersByTeams = {
     title: 'Membros por Equipe',
     type: 'PieChart',
-    data: this.membersByTeams,
-    chartColumns: ['Equipe', 'Qtde Integrantes']
+    data: [],
+    chartColumns: ['Equipe', 'Qtde Integrantes'],
+    options: {
+      pieHole: 0.4,
+      pieSliceTextStyle: {
+        color: 'black',
+      },
+      // legend: 'none'
+    }
   }
 
-  audiosByTeamsMock = [
-    [new Date(2021, 1, 1), 3, 5]
-    ,
-    // [new Date('2021'), 3, 5],
-    ['2021', 3, 5],
-    ['2021-5-3', 3, 5],
-    ['2021-5-4', 5, 5],
-    ['2021-5-5', 3, 5],
-    ['2021-5-6', 4, 5],
-    ['2021-5-7', 3, 5],
-    ['2021-5-8', 3, 5],
-    ['2021-5-9', 3, 4],
-    ['2021-5-10', 3, 5],
-    ['2021-5-11', 3, 5],
-    ['2021-5-12', 3, 5],
-    ["2021-1-1", 2, 10],
-    ["2021-1-1", 1, 10],
-    ["2021-1-1", 1, 10],
-    ["2021-1-1", 1, 10],
-    ["2021-1-1", 1, 10],
-    ["2021-1-1", 1, 10],
-    ["2021-1-1", 2, 10],
-    ["2021-1-1", 3, 10],
-    ["2021-1-1", 1, 10],
-  ]
-
   audioByTeamsByDate = [];
-  audioByTeamsByDate2 = [];
 
-
-
-  public chartAudiosByTeams = {
-    title: 'Áudios (?) por Integrantes da Equipe',
+  chartAudiosByTeams = {
+    title: 'Envio de Áudios por Integrantes da Equipe',
     type: 'AreaChart',
-    data: this.audioByTeamsByDate2,
+    data: [],
     chartColumns: ['Data', 'Áudios entregues', 'Qtde Integrantes']
   };
 
-
-
-  // this.subscribeTeams$ = this.teams$.subscribe(
-  //   teams => {
-  //     this.totalTeams = teams.length;
-  //     teams.forEach(team => {
-  //       this.membersByTeams.push([team.name, team.members.length]);
-  //       this.totalMembers += team.members.length;
-  //       this.teamsIds.push(team._id);
-  //       // console.log('teamsIds: ', this.teamsIds);
-  //     })
-  //     // this.teamsIds.forEach(
-  //     //   id => {
-  //     //     console.log('forEach id= ', id);
-  //     //     //jsdatestring: 'mes-dia-ano'
-  //     //     this.audioService.searchAudios(id, '3-5-2021', '6-5-2022', true).pipe(
-  //     //       // this.audiosByTeams.push({ id: id, audios: audios })
-  //     //       // map(audioList => this.audiosByTeams.push(audioList)),
-
-  //     //       // map(audioList => audioList.forEach(audio => {
-  //     //       //   this.audiosByTeams.push(audio)
-  //     //       // })),
-
-  //     //     ).subscribe(audioList => {
-
-  //     //       // console.log('audiosByTeams: ', this.audiosByTeams);
-  //     //       audioList.forEach(audioByTeam => this.audiosTeam0.push([audioByTeam.team, audioByTeam.member.name]));
-  //     //       console.log('audiosTeam0: ', this.audiosTeam0);
-
-
-  //     //     });
-  //     //   });
-
-  //   });
-  getOwnTeams(): void {
-    this.teams$ = this.teamService.getOwnTeams()
-    this.teams$.pipe(
-      map(
-        (teams) => {
-          this.teams = teams
-          this.getTeamsSummary()
-          this.getAudios(this.teamsIds)
-        })
-    )
-
-  }
-
-  getAudiosByMembersByTeams(): void {
-    this.teamService.getOwnTeams().subscribe(
-      (teams) => {
-        // TODO: verificar se deve iniciar getOwnTeams primeiro 
-        // TODO: confirmar se busca audios por aqui
-        this.getAudios(this.teamsIds);
-      })
-
-
-
-  }
-
   getTeamsSummary(): void {
 
-    this.teamService.getOwnTeams().subscribe(
-      (teams) => {
-        console.log(teams)
+    this.teamService.getOwnTeams()
+      .pipe(
+        // delay(700),
+        take(1),
+      )
+      .subscribe(
+        (teams) => {
+          // console.log(teams)
+          this.totalTeams = _.size(teams);
+          _.forEach(teams,
+            team => {
+              // total count members by team
+              this.membersByTeams.push([team.name, _.size(team.members)])
+              // console.log(this.membersByTeams)
+              // total members
+              this.totalMembers += _.size(team.members)
+              // teams IDS
+              this.teamsIds.push(team._id);
+            });
+        },
+        error => { alert('Dashboard. Erro ao buscar equipes no servidor') },
 
-        this.totalTeams = _.size(teams)
-
-        _.forEach(teams,
-          team => {
-            // total count members by team
-            this.membersByTeams.push([team.name, _.size(team.members)])
-            console.log(this.membersByTeams)
-            // total members
-            this.totalMembers += _.size(team.members)
-            // teams IDS
-            this.teamsIds.push(team._id);
-          })
-
-        return teams
-      })
-
-
+        //complete
+        () => {
+          this.updateChartMembersByTeams();
+          this.getAudios(this.teamsIds);
+        }
+      )
   }
 
   getAudios(teamsIds) {
     // console.log('teamdIds: ', teamsIds)
     teamsIds.forEach(
       id => {
-        console.log('forEach id= ', id);
+        // console.log('forEach id= ', id);
         //jsdatestring: 'mes-dia-ano'
-        this.subscribeAudios$ = this.audioService.searchAudios(id, '3-5-2021', '6-5-2022', true)
+        // this.subscribeAudios$ = this.audioService.searchAudios(id, '3-5-2021', '6-5-2022', true)
+        this.audioService.searchAudios(id, '3-5-2021', '6-5-2022', true)
+          .pipe(take(1))
           .subscribe(
             audios => {
               // this.audiosByTeams = audios
-              console.log('audios para teamId: ', id);
+              // console.log('audios para teamId: ', id);
               _.forEach(audios, audio => {
                 // TODO: verificar MES (inicia em 0 ou 1)
                 let date = new Date(audio.created_at)
@@ -197,49 +127,44 @@ export class HomeCoordinatorComponent implements OnInit, OnDestroy {
               let groupAudiosByDate = _.groupBy(this.audiosByTeams, 'audioCreatedAt')
               let audioByTeamsByDateTemp = []
               // group[0].audioCreatedAt
-              _.forEach(groupAudiosByDate, group => { audioByTeamsByDateTemp.push(['2021-1-1', _.size(_.groupBy(group, 'audioMemberId')), 10]) })
+              _.forEach(groupAudiosByDate, group => { audioByTeamsByDateTemp.push([group[0].audioCreatedAt, _.size(_.groupBy(group, 'audioMemberId')), 5]) })
               // _.forEach(groupAudiosByDate, group => { this.audioByTeamsByDate.push([123456, _.size(_.groupBy(group, 'audioMemberId')), 10]) })
               // console.log('audiosByTeams: ', this.audiosByTeams)
-              console.log('groupAudiosByDate: ', groupAudiosByDate)
-              console.log('audioByTeamsByDate: ', audioByTeamsByDateTemp)
-              console.log('audioByTeamsByDate typeOf: ', audioByTeamsByDateTemp[0][1].typeOf)
+              // console.log('groupAudiosByDate: ', groupAudiosByDate)
+              // console.log('audioByTeamsByDate: ', audioByTeamsByDateTemp)
+              // console.log('audioByTeamsByDate typeOf: ', audioByTeamsByDateTemp[0][1].typeOf)
               // let testeArr: { date: Date, number: number } = { date: new Date(2021, 1, 1), number: 1 }
               // console.log('teste typeOf:', testeArr[0].typeOf)
-              this.audioByTeamsByDate2 = audioByTeamsByDateTemp
+              this.audioByTeamsByDate = audioByTeamsByDateTemp
               console.log('audioByTeamsByDate: ', this.audioByTeamsByDate)
 
-            });
+            },
+            error => { alert('Dashboard. Erro ao buscar aúdios do servidor') },
 
+            //complete
+            () => {
+              this.updateChartAudiosByTeams();
+            }
+          );
       })
-
   }
 
+  updateChartMembersByTeams() {
+    this.chartMembersByTeams.data = this.membersByTeams;
+  }
+  updateChartAudiosByTeams() {
+    // this.chartAudiosByTeams.data = this.audiosByTeamsMock;
+    this.chartAudiosByTeams.data = this.audioByTeamsByDate;
+  }
 
   ngOnInit(): void {
 
-    this.audioByTeamsByDate2.push([1, 2, 3]);
+    this.teams$ = this.teamService.getOwnTeams();
 
-    this.teams$ = this.teamService.getOwnTeams()
-    this.teams$.pipe(
-      map(
-        (teams) => {
-          this.teams = teams;
-
-        })
-    ).subscribe(() => {
-      this.getTeamsSummary();
-      console.log(this.teamsIds);
-      this.getAudios(this.teamsIds);
-    })
-
-    // this.getOwnTeams()
-    // this.getTeamsSummary();
-    this.getAudiosByMembersByTeams();
-
+    this.getTeamsSummary();
 
   }
 
   ngOnDestroy(): void {
-    // this.subscribeAudios$.unsubscribe();
   }
 }
