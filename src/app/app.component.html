@@ -1,26 +1,40 @@
 <nav class="navbar fixed-top navbar-expand-lg navbar-light bg-light">
-  <a class="navbar-brand" routerLink="/" routerLinkActive="active">adam</a>
+  <a class="navbar-brand" routerLink="/">adam</a>
   <button class="navbar-toggler" type="button" data-toggle="collapse" (click)="isMenuCollapsed = !isMenuCollapsed">
     <span class="navbar-toggler-icon"></span>
   </button>
   <div [ngbCollapse]="isMenuCollapsed" class="collapse navbar-collapse">
     <ul ngbNav #nav="ngbNav" class="navbar-nav mr-auto">
 
-      <!-- MEMBER / COORDINATOR = Redirect to LOGIN if note logged in -->
-      <li ngbNavItem *ngIf="this.authService.userRole != 'admin'" (click)="isMenuCollapsed=true"><a ngbNavLink
-          routerLink="/audio-meeting" routerLinkActive="active">Daily
-          Meeting</a></li>
+
+      <!-- ADMIN/COORDINATOR - DASHBOARD (redirecionamento Home) -->
+      <li ngbNavItem *ngIf="this.authService.isLoggedIn && this.authService.userRole != 'member'"
+        (click)="isMenuCollapsed=true">
+        <a ngbNavLink routerLink="{{this.authService.redirectUrl}}" routerLinkActive="active">
+          Dashboard
+        </a>
+      </li>
+      <li ngbNavItem *ngIf="this.authService.isLoggedIn && this.authService.userRole != 'admin'"
+        (click)="isMenuCollapsed=true">
+        <a ngbNavLink routerLink="/audio-meeting" routerLinkActive="active">
+          Daily Meeting
+        </a>
+      </li>
+
+      <!-- MEMBER / COORDINATOR = Redirect to LOGIN if not logged -->
+      <li ngbNavItem *ngIf="!this.authService.isLoggedIn" (click)="isMenuCollapsed=true">
+        <a ngbNavLink routerLink="/audio-meeting">
+          Daily Meeting
+        </a>
+      </li>
+
 
       <!-- NO AUTH -->
       <!-- <li ngbNavItem *ngIf="!this.authService.isLoggedIn">
-        <a ngbNavLink routerLink="/teams-noauth" routerLinkActive="active" (click)="isMenuCollapsed=true">Equipes</a>
+        <a ngbNavLink routerLink="/teams-noauth"  (click)="isMenuCollapsed=true">Equipes</a>
       </li> -->
 
-      <!-- ADMIN/COORDINATOR - DASHBOARD (redirecionamento Home) -->
-      <li *ngIf="this.authService.isLoggedIn && this.authService.userRole != 'member'" ngbNavItem
-        (click)="isMenuCollapsed=true"><a ngbNavLink routerLink={{this.authService.redirectUrl}}
-          routerLinkActive="active">Dashboard</a>
-      </li>
+
       <!-- MEMBER - CONTA -->
       <li *ngIf="this.authService.userRole == 'member'" ngbNavItem (click)="isMenuCollapsed=true"><a ngbNavLink
           routerLink={{this.authService.redirectUrl}}>Conta</a>
@@ -32,18 +46,18 @@
           Gerenciar
         </a>
         <div ngbDropdownMenu>
-          <a ngbDropdownItem routerLink="/users" routerLinkActive="active" (click)="isMenuCollapsed=true">Usuários</a>
-          <a ngbDropdownItem routerLink="/teams" routerLinkActive="active" (click)="isMenuCollapsed=true">Equipes</a>
+          <a ngbDropdownItem routerLink="/users" (click)="isMenuCollapsed=true">Usuários</a>
+          <a ngbDropdownItem routerLink="/teams" (click)="isMenuCollapsed=true">Equipes</a>
         </div>
       </li>
       <li ngbNavItem></li>
 
       <!-- MEMBER / COORDINATOR -->
       <li ngbNavItem *ngIf="this.authService.isLoggedIn && this.authService.userRole != 'admin'">
-        <a ngbNavLink routerLink="/teams" routerLinkActive="active" (click)="isMenuCollapsed=true">Equipes</a>
+        <a ngbNavLink routerLink="/teams" (click)="isMenuCollapsed=true">Equipes</a>
       </li>
       <li ngbNavItem *ngIf="this.authService.isLoggedIn && this.authService.userRole != 'admin'">
-        <a ngbNavLink routerLink="/teams/available" routerLinkActive="active" (click)="isMenuCollapsed=true">Equipes
+        <a ngbNavLink routerLink="/teams/available" (click)="isMenuCollapsed=true">Equipes
           disponíveis</a>
       </li>
 
@@ -51,14 +65,13 @@
     <div class="my-2 my-lg-0">
       <!-- LOGIN/LOGOUT / SIGNIN -->
       <div *ngIf="!this.authService.isLoggedIn">
-        <button class="btn btn-primary ml-1 mb-1" ngbNavLink routerLink="/login" routerLinkActive="active"
+        <button *ngIf="this.router.url!='/login'" class="btn btn-primary ml-1 mb-1" ngbNavLink routerLink="/login"
           (click)="isMenuCollapsed=true">Entrar</button>
-        <button class="btn btn-outline-primary ml-1 mb-1" ngbNavLink routerLink="/signin" routerLinkActive="active"
-          (click)="isMenuCollapsed=true">Criar conta</button>
+        <button *ngIf="this.router.url != '/signin'" class="btn btn-outline-primary ml-1 mb-1" ngbNavLink
+          routerLink="/signin" (click)="isMenuCollapsed=true">Criar conta</button>
       </div>
       <div *ngIf="this.authService.isLoggedIn">
-        <button class="btn btn-danger" ngbNavLink routerLink="/logout" routerLinkActive="active"
-          (click)="isMenuCollapsed=true">Sair</button>
+        <button class="btn btn-danger" ngbNavLink routerLink="/logout" (click)="isMenuCollapsed=true">Sair</button>
       </div>
     </div>
   </div>

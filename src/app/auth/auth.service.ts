@@ -91,7 +91,7 @@ export class AuthService {
     this.http.post<any>(this.url, credentials, this.httpOptions)
       .subscribe({
         next: res => {
-          console.log('Login Authorized');
+          // console.log('Login Authorized');
           this.setSession(res),
             //this.startSessionCounter();
             this.isLoggedIn = true;
@@ -104,6 +104,9 @@ export class AuthService {
           } else {
             this.router.navigate([this.redirectUrl]);
           }
+          this.log('userRole: ' + this.userRole);
+          this.log('redirect: ' + this.redirectUrl);
+
 
         },
         error: err => {

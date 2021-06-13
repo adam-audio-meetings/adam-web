@@ -3,6 +3,7 @@ import { interval, Observable } from 'rxjs';
 import { AuthService } from './auth/auth.service';
 import { AngularFirestore } from '@angular/fire/firestore';
 import { AngularFireStorage } from '@angular/fire/storage';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-root',
@@ -20,7 +21,8 @@ export class AppComponent {
   constructor(
     // firestore: AngularFirestore,
     // private storage: AngularFireStorage,
-    public authService: AuthService
+    private authService: AuthService,
+    private router: Router
   ) {
 
     // this.roles$ = firestore.collection('roles').valueChanges({ idField: '_id' });
