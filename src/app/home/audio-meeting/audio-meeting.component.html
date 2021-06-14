@@ -105,13 +105,14 @@
         <audio id="main-audio-player"></audio>
       </div>
       <div>
-        <button id="record" class="btn btn-danger record main-controls-button m-1"><i id="iconRecord"
-            class="bi bi-mic-fill"></i></button>
-        <button id="stop" class="btn btn-secondary stop main-controls-button m-1"><i
-            class="bi bi-stop-fill"></i></button>
-        <button id="discardButton" class="btn btn-secondary main-controls-button m-1"><i
-            class="bi bi-trash"></i></button>
-        <button id="uploadButton" class="btn btn-success main-controls-button m-1" (click)="sendButtonClick()">
+        <button id="record" class="btn btn-danger record main-controls-button m-1" ngbTooltip="Gravar áudio"
+          placement="bottom" [openDelay]="800"><i id="iconRecord" class="bi bi-mic-fill"></i></button>
+        <button id="stop" class="btn btn-secondary stop main-controls-button m-1" ngbTooltip="Parar gravação"
+          placement="bottom" [openDelay]="800"><i class="bi bi-stop-fill"></i></button>
+        <button id="discardButton" class="btn btn-secondary main-controls-button m-1" placement="bottom"
+          ngbTooltip="Descartar áudio/texto" [openDelay]="800"><i class="bi bi-trash"></i></button>
+        <button id="uploadButton" class="btn btn-success main-controls-button m-1" ngbTooltip="Enviar áudio/texto"
+          placement="bottom" [openDelay]="800" (click)="sendButtonClick()">
           <i class="bi bi-upload"></i>
         </button>
         <!-- <button id="testPlayback" class="button">Teste Playback</button> -->
@@ -138,8 +139,9 @@
 
 
       <textarea type="text" name="transcriptName" id="transcriptTextarea" cols="100" rows="7" maxlength="1000"
-        placeholder="Veja e edite aqui a transcrição do seu áudio. Ou somente escreva e envie um texto."
-        [(ngModel)]="transcript">
+        placeholder="Veja e edite aqui a transcrição do seu áudio.
+Ou somente digite e envie texto.
+Altere esta opção no canto superior direito da página." [(ngModel)]="transcript">
       </textarea>
 
     </div>

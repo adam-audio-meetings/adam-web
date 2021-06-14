@@ -2,7 +2,7 @@ import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Router } from '@angular/router';
 import { interval, Observable, of } from 'rxjs';
-import { catchError, finalize, takeWhile, tap } from 'rxjs/operators';
+import { catchError, finalize, take, takeWhile, tap } from 'rxjs/operators';
 import { environment } from 'src/environments/environment';
 import { MessageService } from '../message.service';
 
@@ -17,6 +17,8 @@ export class AuthService {
 
   userRole: string;
   userId: string;
+  userUsername: string;
+  userName: string;
   currentTeamId: string;
   expiresIn: string; // milisseconds
   expiresInSeconds: string;
@@ -37,6 +39,7 @@ export class AuthService {
     private messageService: MessageService,
     private http: HttpClient,
     private router: Router,
+    // private userService: UserService
   ) { }
 
   private setSession(authResult: any) {
@@ -46,6 +49,8 @@ export class AuthService {
 
     this.userRole = authResult.role;
     this.userId = authResult.userId;
+    this.userUsername = authResult.userUsername;
+    this.userName = authResult.userName;
     this.expiresIn = authResult.expiresIn;
     this.expiresInSeconds = (+this.expiresIn / 1000).toString();
     this.expiresInDatetime = this.getExpiresInDatetime(this.expiresIn);
@@ -86,7 +91,7 @@ export class AuthService {
     this.redirectUrl = `${path}`;
   }
 
-  login(credentials: any): void {
+  login(credentials: any) {
     this.sessionTimeDurationSeconds = 0;
     this.http.post<any>(this.url, credentials, this.httpOptions)
       .subscribe({
@@ -116,7 +121,10 @@ export class AuthService {
           else {
             alert('Erro no servidor.')
           }
-        }
+        },
+        // complete: () => {
+        //   return { id: this.userId, role: this.userRole }
+        // }
       })
   }
 

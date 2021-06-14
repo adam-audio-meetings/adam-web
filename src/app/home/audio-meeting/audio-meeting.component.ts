@@ -156,7 +156,7 @@ export class AudioMeetingComponent implements OnInit {
   getMemberTranscription(memberId: string, memberName: string, transcription: string, created_at) {
     this.transcriptionTitle = ((memberId == this.loggedUserId) ? 'Você' : memberName) + ' enviou:';
     this.transcriptionDatetime = created_at;
-    this.transcript = transcription;
+    this.transcript = transcription.length !== 0 ? transcription : '[Áudio sem transcrição]';
     this.transcriptTextarea.setAttribute('readonly', 'true');
     this.editTranscriptButton.setAttribute('disabled', 'true');
     // audio/text
