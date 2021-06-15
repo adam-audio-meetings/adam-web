@@ -41,13 +41,32 @@
         </div>
       </div>
 
+
+
       <div class="container-item" *ngIf="(formatters$ | async) as formatter">
+        <div ngbDropdown placement="bottom-left" class="d-inline-block">
+          <button class="btn btn-secondary" id="dropdownTeams" ngbDropdownToggle>{{ selectedTeamName }}</button>
+          <div ngbDropdownMenu aria-labelledby="dropdownTeams">
+            <button ngbDropdownItem *ngFor="let team of teams$ | async" (click)="selectedTeamName = team.name;
+                      selectedTeamId = team._id;
+                      getAudiosByTeam(selectedTeamId)">
+              {{ team.name }}</button>
+          </div>
+        </div>
         <div *ngIf="chartAudiosByTeams.data.length; else spinnerBlock">
           <google-chart [title]="chartAudiosByTeams.title" [type]="chartAudiosByTeams.type"
             [data]="chartAudiosByTeams.data" [columns]="chartAudiosByTeams.chartColumns" [formatters]="formatter">
           </google-chart>
         </div>
       </div>
+
+      <!-- <div class="container-item" *ngIf="(formatters$ | async) as formatter">
+        <div *ngIf="chartAudiosByTeams.data.length; else spinnerBlock">
+          <google-chart [title]="chartAudiosByTeams.title" [type]="chartAudiosByTeams.type"
+            [data]="chartAudiosByTeams.data[1]" [columns]="chartAudiosByTeams.chartColumns" [formatters]="formatter">
+          </google-chart>
+        </div>
+      </div> -->
 
       <!-- <div class="container-item" *ngIf="teams$; else spinnerBlock">
         {{ membersByTeams[0] }}

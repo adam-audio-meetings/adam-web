@@ -71,7 +71,7 @@
           routerLink="/signin" (click)="isMenuCollapsed=true">Criar conta</button>
       </div>
       <div *ngIf="this.authService.isLoggedIn">
-        <div ngbDropdown placement="bottom-left" class="d-inline-block">
+        <div ngbDropdown placement="bottom-right" class="d-inline-block">
           <!-- <p id="dropdownAccount" ngbDropdownToggle>User</p> -->
           <div ngbDropdownToggle id="dropdownAccount" class="user-avatar-alternative caret-off">
             <div>{{ this.authService.userName[0] }}</div>
