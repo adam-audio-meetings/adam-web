@@ -15,6 +15,7 @@ import { AuthService } from 'src/app/auth/auth.service';
 import { TeamService } from 'src/app/teams/team.service';
 import { NgbCalendar, NgbDate, NgbDateAdapter, NgbDateNativeAdapter, NgbDateParserFormatter, NgbDateStruct } from '@ng-bootstrap/ng-bootstrap';
 import { isThisTypeNode } from 'typescript';
+import { UtilsService } from 'src/app/utils/utils.service';
 
 @Component({
   selector: 'app-audio-meeting',
@@ -75,7 +76,8 @@ export class AudioMeetingComponent implements OnInit {
     private calendar: NgbCalendar,
     public formatter: NgbDateParserFormatter,
     private dateAdapter: NgbDateAdapter<Date>,
-    private ngZone: NgZone
+    private ngZone: NgZone,
+    private utils: UtilsService,
   ) {
   }
 
@@ -101,19 +103,8 @@ export class AudioMeetingComponent implements OnInit {
   }
 
   getAudios($event?): void {
-    // if (this.selectedDateModel!) {
-    //   this.selectedDateModel = this.calendar.getToday();
-    // }
-    // console.log(this.selectedDateModel);
-    let date = this.selectedDateModel;
-    //let javaDateModel: Date = this.dateAdapter.toModel(this.selectedDateModel);
-    let jsDateStringStart = date.month + "-" + date.day + "-" + date.year;
-    console.log('jsDateStringStart: ', jsDateStringStart);
-    let jsDateStart = new Date(jsDateStringStart);
-    var jsDateEnd = new Date(jsDateStart.getTime() + 86400000); // + 1 day in ms
-    // console.log(jsDateEnd.toDateString());
-    // Date em js: mês começa do 0
-    let jsDateStringEnd = (jsDateEnd.getMonth() + 1) + "-" + jsDateEnd.getDate() + "-" + jsDateEnd.getFullYear();
+    let jsDateStringStart = this.utils.dateModelToString(this.selectedDateModel)
+    let jsDateStringEnd = this.utils.nextDayModelToString(this.selectedDateModel)
     this.audios$ = this.audioService.searchAudios(this.selectedTeamId, jsDateStringStart, jsDateStringEnd);
   }
 

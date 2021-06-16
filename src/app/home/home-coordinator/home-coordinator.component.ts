@@ -10,6 +10,7 @@ import { isThisTypeNode } from 'typescript';
 import { User } from 'src/app/users/interfaces/user';
 import * as _ from 'lodash';
 import { Formatter, ScriptLoaderService } from 'angular-google-charts';
+import { UtilsService } from 'src/app/utils/utils.service';
 
 @Component({
   selector: 'app-home-coordinator',
@@ -31,6 +32,7 @@ export class HomeCoordinatorComponent implements OnInit, OnDestroy {
     public teamService: TeamService,
     public audioService: AudioService,
     private scriptLoaderService: ScriptLoaderService,
+    private utils: UtilsService,
   ) { }
 
   totalTeams: number;
@@ -69,6 +71,14 @@ export class HomeCoordinatorComponent implements OnInit, OnDestroy {
   }
 
   audioByTeamsByDate = [];
+  audioByTeamsToday = [];
+
+  chartAudiosByTeamsToday = {
+    title: 'Envio de Áudios: Hoje',
+    type: 'AreaChart',
+    data: [],
+    chartColumns: ['Data', 'Participantes', 'Qtde Integrantes']
+  };
 
   chartAudiosByTeams = {
     title: 'Envio de Áudios por Integrantes da Equipe',
@@ -109,8 +119,10 @@ export class HomeCoordinatorComponent implements OnInit, OnDestroy {
           this.updateChartMembersByTeams();
           // this.getAudiosAllTeams(this.teamsIds);
           // console.log(this.teamsIds);
-          // inicializa gráfico com áudios da primeira equipe do corrdenador
-          this.getAudiosByTeam(this.selectedTeamId);
+
+          // inicializa gráficos com áudios da primeira equipe do coordenador
+          this.updateChartAudiosByTeamsTodayFilter();
+          this.updateChartAudiosByTeamsFilter();
         }
       )
   }
@@ -120,36 +132,61 @@ export class HomeCoordinatorComponent implements OnInit, OnDestroy {
   }
 
 
-  getAudiosByTeam(id) {
+  getAudiosByTeam(chart, id, startDateString?, endDateString?) {
+
+    //TODO: passar definição de datas iniciais para audioService.searchAudios
+    // date string format: 'DD-MM-YYYY'
+    if (!startDateString) {
+      startDateString = this.utils.todayString()
+      // startDateString = '3-5-2021'
+    }
+    if (!endDateString) {
+      endDateString = this.utils.nextDayString()
+      //'6-5-2022'
+    }
+
+    console.log('startDateString: ', startDateString)
+    console.log('endDateString: ', endDateString)
+
     // console.log('teamdIds: ', teamsIds)
 
     // console.log('forEach id= ', id);
     //jsdatestring: 'mes-dia-ano'
     // this.subscribeAudios$ = this.audioService.searchAudios(id, '3-5-2021', '6-5-2022', true)
-    this.audioService.searchAudios(id, '3-5-2021', '6-5-2022', true)
+    this.audioService.searchAudios(id, startDateString, endDateString, true)
       .pipe(take(1))
       .subscribe(
         audios => {
-          this.audiosByTeams = []
+          let audiosByTeams = []
           // this.audiosByTeams = audios
           // console.log('audios para teamId: ', id);
           //this.audiosByTeams.push({ id: id, data: [] });
           _.forEach(audios, audio => {
             // TODO: verificar MES (inicia em 0 ou 1)
             let date = new Date(audio.created_at)
-            this.audiosByTeams.push({ teamId: audio.team, audioMemberId: audio.member._id, audioMemberName: audio.member.name, audioCreatedAt: `${date.getDate()}-${date.getMonth() + 1}-${date.getFullYear()}` })
+            audiosByTeams.push({ teamId: audio.team, audioMemberId: audio.member._id, audioMemberName: audio.member.name, audioCreatedAt: `${date.getDate()}-${date.getMonth() + 1}-${date.getFullYear()}` })
           })
           // agrupa por data > idMember (nome) : contagem de envios de áudios de usuários distintos por data
-          let groupAudiosByDate = _.groupBy(this.audiosByTeams, 'audioCreatedAt')
-          let audioByTeamsByDateTemp = []
+          let groupAudiosByDate = _.groupBy(audiosByTeams, 'audioCreatedAt')
+          var audioByTeamsByDateTemp = []
           // group[0].audioCreatedAt
+          // TODO: usar número total participantes inscritos atualmente (//FIXME: deve ser na respectiva data data)
           _.forEach(groupAudiosByDate, group => { audioByTeamsByDateTemp.push([group[0].audioCreatedAt, _.size(_.groupBy(group, 'audioMemberId')), 5]) })
           // console.log('audiosByTeams: ', this.audiosByTeams)
           // console.log('groupAudiosByDate: ', groupAudiosByDate)
-          this.audioByTeamsByDate = audioByTeamsByDateTemp
+          // this.audioByTeamsByDate = audioByTeamsByDateTemp
+          if (audioByTeamsByDateTemp.length == 0) {
+            // TODO: usar número total participantes inscritos atualmente (//FIXME: deve ser na respectiva data data)
+            audioByTeamsByDateTemp = [[this.utils.todayString(), 0, 5]]
+          }
+          chart.data = audioByTeamsByDateTemp;
+          // this.chartAudiosByTeams.data = audioByTeamsByDateTemp
+          // console.log('chart data to be updated', chart.data);
 
           // console.log('audioByTeamsByDate: ', this.audioByTeamsByDate)
-          console.log('audioByTeams', this.audiosByTeams);
+          // console.log('audioByTeams', this.audiosByTeams);
+          // console.log('audioByTeams', audiosByTeams);
+          // console.log('audioByTeamsByDateTemp', audioByTeamsByDateTemp);
           // console.log('audioByTeamsAll', this.audiosByTeamsAll);
 
         },
@@ -157,14 +194,20 @@ export class HomeCoordinatorComponent implements OnInit, OnDestroy {
 
         //complete
         () => {
-          this.updateChartAudiosByTeamsFilter();
         }
       );
   }
 
   updateChartAudiosByTeamsFilter() {
+    console.log('changed team: ', this.selectedTeamId)
+    this.getAudiosByTeam(this.chartAudiosByTeams, this.selectedTeamId, '5-1-2021');
     // this.chartAudiosByTeams.data = this.audiosByTeamsMock;
-    this.chartAudiosByTeams.data = this.audioByTeamsByDate;
+    // this.chartAudiosByTeams.data = this.audioByTeamsByDate;
+  }
+
+  updateChartAudiosByTeamsTodayFilter() {
+    console.log('changed team: ', this.selectedTeamId)
+    this.getAudiosByTeam(this.chartAudiosByTeamsToday, this.selectedTeamId);
   }
 
   // getAudiosAllTeams(teamsIds) {

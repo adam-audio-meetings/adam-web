@@ -3,6 +3,7 @@
     <h2 class="ml-3 pt-4">Dashboard</h2>
     <div class="container-coordinator">
 
+      <!-- TABELA: membros por equipe -->
       <div class="container-item">
         <div *ngIf="(teams$ | async) as teams">
 
@@ -31,7 +32,7 @@
         </div>
       </div>
 
-
+      <!-- GRÁFICO: membros por equipe -->
       <div class="container-item">
         <div *ngIf="chartMembersByTeams.data.length; else spinnerBlock">
           <google-chart [title]="chartMembersByTeams.title" [type]="chartMembersByTeams.type"
@@ -41,18 +42,33 @@
         </div>
       </div>
 
-
-
-      <div class="container-item" *ngIf="(formatters$ | async) as formatter">
-        <div ngbDropdown placement="bottom-left" class="d-inline-block">
-          <button class="btn btn-secondary" id="dropdownTeams" ngbDropdownToggle>{{ selectedTeamName }}</button>
-          <div ngbDropdownMenu aria-labelledby="dropdownTeams">
-            <button ngbDropdownItem *ngFor="let team of teams$ | async" (click)="selectedTeamName = team.name;
-                      selectedTeamId = team._id;
-                      getAudiosByTeam(selectedTeamId)">
-              {{ team.name }}</button>
-          </div>
+      <div ngbDropdown placement="bottom-left" class="d-inline-block">
+        <button class="btn btn-secondary" id="dropdownTeams" ngbDropdownToggle>{{ selectedTeamName }}</button>
+        <div ngbDropdownMenu aria-labelledby="dropdownTeams">
+          <button ngbDropdownItem *ngFor="let team of teams$ | async" (click)="selectedTeamName = team.name;
+                    selectedTeamId = team._id;
+                    updateChartAudiosByTeamsTodayFilter();
+                    updateChartAudiosByTeamsFilter();
+                    ">
+            {{ team.name }}</button>
         </div>
+      </div>
+      {{ selectedTeamId }}
+
+      <!-- GRÁFICO: áudios hoje -->
+      <div class="container-item" *ngIf="(formatters$ | async) as formatter">
+
+        <div *ngIf="chartAudiosByTeamsToday.data.length; else spinnerBlock">
+          <google-chart [title]="chartAudiosByTeamsToday.title" [type]="chartAudiosByTeamsToday.type"
+            [data]="chartAudiosByTeamsToday.data" [columns]="chartAudiosByTeamsToday.chartColumns"
+            [formatters]="formatter">
+          </google-chart>
+        </div>
+      </div>
+
+      <!-- GRÁFICO: áudios por data -->
+      <div class="container-item" *ngIf="(formatters$ | async) as formatter">
+
         <div *ngIf="chartAudiosByTeams.data.length; else spinnerBlock">
           <google-chart [title]="chartAudiosByTeams.title" [type]="chartAudiosByTeams.type"
             [data]="chartAudiosByTeams.data" [columns]="chartAudiosByTeams.chartColumns" [formatters]="formatter">
@@ -60,10 +76,12 @@
         </div>
       </div>
 
+
+
       <!-- <div class="container-item" *ngIf="(formatters$ | async) as formatter">
         <div *ngIf="chartAudiosByTeams.data.length; else spinnerBlock">
           <google-chart [title]="chartAudiosByTeams.title" [type]="chartAudiosByTeams.type"
-            [data]="chartAudiosByTeams.data[1]" [columns]="chartAudiosByTeams.chartColumns" [formatters]="formatter">
+            [data]="chartAudiosByTeams.data" [columns]="chartAudiosByTeams.chartColumns" [formatters]="formatter">
           </google-chart>
         </div>
       </div> -->
