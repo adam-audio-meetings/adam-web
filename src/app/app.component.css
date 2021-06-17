@@ -24,3 +24,7 @@
   display: none;
   /* remove seta dropdown */
 }
+
+.navbar-dropdown-user-name {
+  font-weight: 500;
+}

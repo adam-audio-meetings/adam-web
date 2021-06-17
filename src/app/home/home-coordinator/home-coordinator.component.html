@@ -53,17 +53,20 @@
             {{ team.name }}</button>
         </div>
       </div>
-      {{ selectedTeamId }}
 
       <!-- GRÁFICO: áudios hoje -->
-      <div class="container-item" *ngIf="(formatters$ | async) as formatter">
+      <div class="container-item" *ngIf="chartAudiosByTeamsToday.data.length; else spinnerBlock">
 
-        <div *ngIf="chartAudiosByTeamsToday.data.length; else spinnerBlock">
-          <google-chart [title]="chartAudiosByTeamsToday.title" [type]="chartAudiosByTeamsToday.type"
-            [data]="chartAudiosByTeamsToday.data" [columns]="chartAudiosByTeamsToday.chartColumns"
-            [formatters]="formatter">
-          </google-chart>
-        </div>
+        <!-- <div *ngIf="chartAudiosByTeamsToday.data.length; else spinnerBlock"> -->
+        <google-chart style="width: 450px;" [title]="chartAudiosByTeamsToday.title"
+          [type]="chartAudiosByTeamsToday.type" [data]="chartAudiosByTeamsToday.data"
+          [columns]="chartAudiosByTeamsToday.chartColumns" [formatters]="formatter"
+          [options]="chartAudiosByTeamsToday.options" [dynamicResize]="false">
+        </google-chart>
+        <!-- </div> -->
+        <!-- <h3>
+          {{ audiosSentToday }} / {{ membersCountToday }}
+        </h3> -->
       </div>
 
       <!-- GRÁFICO: áudios por data -->
@@ -71,7 +74,8 @@
 
         <div *ngIf="chartAudiosByTeams.data.length; else spinnerBlock">
           <google-chart [title]="chartAudiosByTeams.title" [type]="chartAudiosByTeams.type"
-            [data]="chartAudiosByTeams.data" [columns]="chartAudiosByTeams.chartColumns" [formatters]="formatter">
+            [data]="chartAudiosByTeams.data" [columns]="chartAudiosByTeams.chartColumns"
+            [options]="chartAudiosByTeams.options" [formatters]="formatter">
           </google-chart>
         </div>
       </div>
