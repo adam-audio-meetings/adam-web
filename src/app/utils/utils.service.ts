@@ -20,8 +20,10 @@ export class UtilsService {
     // return next day (dateModel)
     let jsDateStringStart = this.dateModelToString(dateModel)
     let jsDateStart = new Date(jsDateStringStart);
+    console.log('Start Date:', jsDateStringStart);
+    console.log('Start Date:', jsDateStart.toDateString());
     var jsDateEnd = new Date(jsDateStart.getTime() + 86400000); // + 1 day in ms
-    // console.log(jsDateEnd.toDateString());
+    console.log('End Date:', jsDateEnd.toDateString());
     // Date em js: mês começa do 0
     return (jsDateEnd.getMonth() + 1) + "-" + jsDateEnd.getDate() + "-" + jsDateEnd.getFullYear();
   }

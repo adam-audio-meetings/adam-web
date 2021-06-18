@@ -16,6 +16,7 @@ import { TeamService } from 'src/app/teams/team.service';
 import { NgbCalendar, NgbDate, NgbDateAdapter, NgbDateNativeAdapter, NgbDateParserFormatter, NgbDateStruct } from '@ng-bootstrap/ng-bootstrap';
 import { isThisTypeNode } from 'typescript';
 import { UtilsService } from 'src/app/utils/utils.service';
+import * as _ from 'lodash';
 
 @Component({
   selector: 'app-audio-meeting',
@@ -36,6 +37,7 @@ export class AudioMeetingComponent implements OnInit {
 
   // socket.io-client
   msgInput: string = 'upload de audio no servidor';
+  msgInputAudioListened: string = 'Áudio reproduzido pelo usuário.';
 
   // datePicker
   selectedDateModel: NgbDateStruct;
@@ -113,20 +115,27 @@ export class AudioMeetingComponent implements OnInit {
     this.websocketService.sendMessage(this.msgInput)
   }
 
+  // grava o id do usuário que reproduziuo áudio até o fim
   listenAudioEnded(audioId) {
     // console.log('Usuário reproduziu áudio', audioId);
-    let audioListened = {
-      fileId: audioId,
-      // team ,  // TODO: utilizar ids logados
-      // member: ,
+    let audioListened: Audio = {
+      _id: audioId,
+      listened_by: this.loggedUserId
     }
-    this.audioService.createAudioListened(audioListened)
+    this.audioService.updateAudioListened(audioListened)
       .subscribe({
         next: (res) => {
-          console.log('Áudio reproduzido pelo usuário.');
+          console.log(this.msgInputAudioListened);
+          this.websocketService.sendMessage(this.msgInputAudioListened)
         },
         error: () => alert('Erro ao enviar status de áudio reproduzido.')
       });;
+  }
+
+  audioListened(listenedBy) {
+    //TODO: reduzir carga de aúdios ou - carregar somente os das equipes selecionadas
+
+    return _.includes(listenedBy, this.loggedUserId)
   }
 
   selectToday() {

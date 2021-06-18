@@ -62,7 +62,10 @@
               <p class="audio-member-name">{{ audio.member.name | titlecase }}</p>
               <!-- <p class="audio-member-date">{{audio.fileId }}</p> -->
               <p class="audio-member-date">{{ audio.created_at | date : 'HH:mm' }}</p>
+              <!-- <i class="bi bi-check-lg"></i> -->
+              <i *ngIf="audioListened(audio.listened_by)" class="bi bi-check-circle"></i>
             </div>
+
 
             <!-- <button class="btn btn-primary btn-sm mr-1 mb-1" routerLink="edit/{{user._id}}">Editar</button> -->
             <!-- <button class="btn btn-danger btn-sm mr-1 mb-1" (click)="deleteUser(user._id)">Excluir</button> -->
