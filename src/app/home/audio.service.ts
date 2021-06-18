@@ -6,6 +6,7 @@ import { MessageService } from '../message.service';
 import { Audio } from './interfaces/audio';
 import { AudioListened } from './interfaces/audioListened';
 import { environment } from 'src/environments/environment';
+import { UtilsService } from '../utils/utils.service';
 
 @Injectable({
   providedIn: 'root'
@@ -22,6 +23,7 @@ export class AudioService {
   constructor(
     private http: HttpClient,
     private messageService: MessageService,
+    private utils: UtilsService
   ) { }
 
   private audiosUrl = environment.apiUrl + 'audio-noauth'; // FIXME: alterar para "audios";
@@ -53,7 +55,8 @@ export class AudioService {
   // }
 
   searchAudios(teamId: string, dateStringStart: string, dateStringEnd: string, onlyInfo = false): Observable<Audio[]> {
-    // TODO: tratar 'date'
+    dateStringStart = this.utils.dateStringToAPIFormat(dateStringStart)
+    dateStringEnd = this.utils.dateStringToAPIFormat(dateStringEnd)
     if (!teamId) {
       return of([])
     }
