@@ -41,9 +41,9 @@
     </div>
     <hr class="team-name-division">
     <div>
-      <ul class="list-group">
-        <li class="list-group-item" *ngFor="let audio of audios$ | async"
-          (click)="getMemberTranscription(audio.member._id, audio.member.name, audio.transcription, audio.created_at)">
+      <ul id="member-player-list" class="list-group">
+        <li id="member-player-{{ i }}" class="list-group-item" *ngFor="let audio of audios$ | async; let i = index"
+          (click)="getMemberTranscription(audio.member._id, audio.member.name, audio.transcription, audio.created_at); activeMemberPlayer(i)">
           <!-- <div class="audio-member-container" -->
           <!-- (click)="getMemberTranscription(audio.member._id, audio.member.name, audio.transcription, audio.created_at)"> -->
 
@@ -74,7 +74,7 @@
             <div class="audio-member-player">
               <audio id="{{ audio._id }}" controls="true" class="audio-member-controls" type="audio/webm; codecs=opus"
                 src="http://localhost:3000/audio-in-db/{{ audio.fileId }}" (ended)="listenAudioEnded(audio._id)"
-                (play)="getMemberTranscription(audio.member._id, audio.member.name, audio.transcription, audio.created_at)"></audio>
+                (play)="getMemberTranscription(audio.member._id, audio.member.name, audio.transcription, audio.created_at); activeMemberPlayer(i)"></audio>
 
             </div>
           </div>

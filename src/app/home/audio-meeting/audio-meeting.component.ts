@@ -68,6 +68,9 @@ export class AudioMeetingComponent implements OnInit {
   // mode selection
   modeSelectionInput: NodeListOf<HTMLElement>;
 
+  // toggle member player
+  // stateFlag = true
+
   constructor(
     private teamService: TeamService,
     public audioService: AudioService,
@@ -83,6 +86,17 @@ export class AudioMeetingComponent implements OnInit {
   ) {
   }
 
+  // toggleStateMemberPlayer() {
+  //   this.stateFlag = !this.stateFlag
+  // }
+
+  activeMemberPlayer(elementId) {
+    console.log('elementId', `#${elementId}`)
+    document.querySelector('#member-player-list').querySelectorAll('li').forEach(
+      item => item.classList.remove('active')
+    )
+    document.querySelector(`#member-player-${elementId}`).classList.add('active')
+  }
 
   getOwnTeams(): void {
     this.ownTeams$ = this.teamService.getOwnTeams();
@@ -162,6 +176,10 @@ export class AudioMeetingComponent implements OnInit {
     // audio/text
     this.uploadButton.setAttribute('disabled', 'true');
     this.discardButton.setAttribute('disabled', 'true');
+  }
+
+  setPlayerSelected(element) {
+    console.log(element)
   }
 
   initAudioAndTextControls() {
