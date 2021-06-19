@@ -54,7 +54,7 @@
 
       <!-- MEMBER / COORDINATOR -->
       <li ngbNavItem *ngIf="this.authService.isLoggedIn && this.authService.userRole != 'admin'">
-        <a ngbNavLink routerLink="/teams" (click)="isMenuCollapsed=true">Equipes</a>
+        <a ngbNavLink routerLink="/teams" (click)="isMenuCollapsed=true">Minhas Equipes</a>
       </li>
       <li ngbNavItem *ngIf="this.authService.isLoggedIn && this.authService.userRole != 'admin'">
         <a ngbNavLink routerLink="/teams/available" (click)="isMenuCollapsed=true">Equipes

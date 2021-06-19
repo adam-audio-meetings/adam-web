@@ -86,7 +86,7 @@
             <button class="btn btn-info my-1 mr-1" routerLink="form/" ngbTooltip="Adicionar equipe" [openDelay]="1000">
               <i class="bi bi-plus-lg"></i>
             </button>
-            <button class="btn btn-secondary" routerLink="random/">(+ aleatorio)</button>
+            <!-- <button class="btn btn-secondary" routerLink="random/">(+ aleatorio)</button> -->
           </div>
           <div *ngIf="((teams$ | async) | teamFilter:teamFilterTerm)?.length > 0">
             <table class="table">
@@ -115,7 +115,7 @@
                     <i class="bi bi-pencil-square"></i>
                   </button>
                   <button class="btn btn-danger btn-sm mr-1 mb-1" (click)="deleteTeam(team._id)" ngbTooltip="Excluir"
-                    [openDelay]="1000">
+                    disabled [openDelay]="1000">
                     <i class="bi bi-trash"></i></button>
                 </td>
               </tr>
@@ -130,9 +130,8 @@
                 <tr>
                   <th>Equipe</th>
                   <th>Coordenador(a)</th>
-                  <th>Categoria</th>
+                  <!-- <th>Categoria</th> -->
                   <th>Descrição</th>
-                  <th>Instrutor(a)</th>
                   <th>Ações</th>
                 </tr>
               </thead>
@@ -140,15 +139,14 @@
                 <tr *ngFor="let team of (teams$ | async) | teamFilter:teamFilterTerm">
                   <td>{{team.name}}</td>
                   <td>{{team.coordinator.name}}</td>
-                  <td>{{team.category}}</td>
+                  <!-- <td>{{team.category}}</td> -->
                   <td>{{team.description}}</td>
-                  <td>{{team.coordinator.name}}</td>
                   <td>
                     <button class="btn btn-danger btn-sm mr-1 mb-1" *ngIf="isOwnTeams"
-                      (click)="unsubscribe(team._id)">Cancelar inscrição
+                      (click)="unsubscribe(team._id)">Sair
                     </button>
                     <button class="btn btn-success btn-sm mr-1 mb-1" *ngIf="!isOwnTeams"
-                      (click)="subscribe(team._id)">Inscrever-se
+                      (click)="subscribe(team._id)">Participar
                     </button>
                   </td>
                 </tr>
