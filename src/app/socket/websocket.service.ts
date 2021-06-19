@@ -14,8 +14,14 @@ export class WebsocketService {
 
   // EMITTER
   sendMessage(msg: string) {
-    console.log('sendMessage emmiter: ', msg);
+    //console.log('sendMessage emmiter: ', msg);
     this.socket.emit('clientMessage', { message: msg });
+  }
+
+  // EMMITER: Connected to Team Room
+  sendMessageEnterTeamId(teamId: string) {
+    //console.log('sendMessage emmiter team room: ', teamId);
+    this.socket.emit('clienteMessageEnterTeamId', { message: teamId });
   }
 
   // HANDLER

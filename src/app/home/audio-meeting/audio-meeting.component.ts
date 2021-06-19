@@ -102,9 +102,14 @@ export class AudioMeetingComponent implements OnInit {
       (team) => {
         this.selectedTeamName = team[0].name;
         this.selectedTeamId = team[0]._id;
+        this.enterTeamRoom();
         this.getAudios();
       }
     );
+  }
+
+  enterTeamRoom() {
+    this.websocketService.sendMessageEnterTeamId(this.selectedTeamId);
   }
 
   getLoggedUser(): void {
@@ -113,6 +118,7 @@ export class AudioMeetingComponent implements OnInit {
 
   changeTeam(): void {
     console.log('Team changed: ', this.selectedTeamId, this.selectedTeamName);
+    this.enterTeamRoom();
     this.getAudios();
   }
 
