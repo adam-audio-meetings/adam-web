@@ -5,7 +5,6 @@ import { AudioService } from '../audio.service';
 import { User } from '../../users/interfaces/user';
 import { Team } from '../../teams/interfaces/team';
 import { Audio } from '../../home/interfaces/audio';
-import { AudioListened } from '../../home/interfaces/audioListened';
 import { UserService } from '../../users/user.service';
 import { Observable, Subscription } from 'rxjs';
 import { ROLES } from '../../users/mocks/user-roles';
@@ -15,6 +14,8 @@ import { AuthService } from 'src/app/auth/auth.service';
 import { TeamService } from 'src/app/teams/team.service';
 import { NgbCalendar, NgbDate, NgbDateAdapter, NgbDateNativeAdapter, NgbDateParserFormatter, NgbDateStruct } from '@ng-bootstrap/ng-bootstrap';
 import { isThisTypeNode } from 'typescript';
+import { UtilsService } from 'src/app/utils/utils.service';
+import * as _ from 'lodash';
 
 @Component({
   selector: 'app-audio-meeting',
@@ -35,6 +36,7 @@ export class AudioMeetingComponent implements OnInit {
 
   // socket.io-client
   msgInput: string = 'upload de audio no servidor';
+  msgInputAudioListened: string = 'Áudio reproduzido pelo usuário.';
 
   // datePicker
   selectedDateModel: NgbDateStruct;
@@ -65,6 +67,9 @@ export class AudioMeetingComponent implements OnInit {
   // mode selection
   modeSelectionInput: NodeListOf<HTMLElement>;
 
+  // toggle member player
+  // stateFlag = true
+
   constructor(
     private teamService: TeamService,
     public audioService: AudioService,
@@ -75,10 +80,21 @@ export class AudioMeetingComponent implements OnInit {
     private calendar: NgbCalendar,
     public formatter: NgbDateParserFormatter,
     private dateAdapter: NgbDateAdapter<Date>,
-    private ngZone: NgZone
+    private ngZone: NgZone,
+    private utils: UtilsService,
   ) {
   }
 
+  // toggleStateMemberPlayer() {
+  //   this.stateFlag = !this.stateFlag
+  // }
+
+  activeMemberPlayer(elementId) {
+    document.querySelector('#member-player-list').querySelectorAll('li').forEach(
+      item => item.classList.remove('active')
+    )
+    document.querySelector(`#member-player-${elementId}`).classList.add('active')
+  }
 
   getOwnTeams(): void {
     this.ownTeams$ = this.teamService.getOwnTeams();
@@ -101,19 +117,8 @@ export class AudioMeetingComponent implements OnInit {
   }
 
   getAudios($event?): void {
-    // if (this.selectedDateModel!) {
-    //   this.selectedDateModel = this.calendar.getToday();
-    // }
-    console.log(this.selectedDateModel);
-    let date = this.selectedDateModel;
-    //let javaDateModel: Date = this.dateAdapter.toModel(this.selectedDateModel);
-    let jsDateStringStart = date.month + "-" + date.day + "-" + date.year;
-    let jsDateStart = new Date(jsDateStringStart);
-    console.log(jsDateStart);
-    var jsDateEnd = new Date(jsDateStart.getTime() + 86400000); // + 1 day in ms
-    console.log(jsDateEnd.toDateString());
-    // Date em js: mês começa do 0
-    let jsDateStringEnd = (jsDateEnd.getMonth() + 1) + "-" + jsDateEnd.getDate() + "-" + jsDateEnd.getFullYear();
+    let jsDateStringStart = this.utils.dateModelToString(this.selectedDateModel)
+    let jsDateStringEnd = this.utils.nextDayModelToString(this.selectedDateModel)
     this.audios$ = this.audioService.searchAudios(this.selectedTeamId, jsDateStringStart, jsDateStringEnd);
   }
 
@@ -122,20 +127,49 @@ export class AudioMeetingComponent implements OnInit {
     this.websocketService.sendMessage(this.msgInput)
   }
 
-  listenAudioEnded(audioId) {
+  // grava o id do usuário que reproduziuo áudio até o fim
+  listenAudioEnded(audioId, listenedBy) {
     // console.log('Usuário reproduziu áudio', audioId);
-    let audioListened = {
-      fileId: audioId,
-      // team ,  // TODO: utilizar ids logados
-      // member: ,
+    // envia informação de áudio reproduzido somente se usuário ainda não escutou
+    if (!this.audioListened(listenedBy)) {
+      let audioListened: Audio = {
+        _id: audioId,
+        listened_by: this.loggedUserId
+      }
+      this.audioService.updateAudioListened(audioListened)
+        .subscribe({
+          next: (res) => {
+            console.log(this.msgInputAudioListened);
+            this.websocketService.sendMessage(this.msgInputAudioListened)
+          },
+          error: () => alert('Erro ao enviar status de áudio reproduzido.')
+        });;
     }
-    this.audioService.createAudioListened(audioListened)
-      .subscribe({
-        next: (res) => {
-          console.log('Áudio reproduzido pelo usuário.');
-        },
-        error: () => alert('Erro ao enviar status de áudio reproduzido.')
-      });;
+  }
+
+  audioListened(listenedBy) {
+    //TODO: reduzir carga de aúdios ou - carregar somente os das equipes selecionadas
+
+    return _.includes(listenedBy, this.loggedUserId)
+  }
+
+  loggedUserQuoted(transcription) {
+    let quoted = false
+    if (transcription.length > 0) {
+      // searchKeywordsOnTranscript(audio.transcription)
+      // TODO: mover para controller ou outro
+      // TODO: usar palavras chave definidas pelos nomes dos membros da equipe do áudio
+      let userFullName = this.authService.userName
+      let firstName = userFullName.split(' ')[0]
+      let keywords = [firstName, userFullName];
+      keywords.forEach(word => {
+        let found = transcription.toLowerCase().search(word.toLowerCase())
+        if (found >= 0) {
+          quoted = true
+        }
+      });
+    }
+    return quoted
   }
 
   selectToday() {
@@ -143,8 +177,8 @@ export class AudioMeetingComponent implements OnInit {
   }
 
   updateTranscript(text: string) {
-    let text2 = text.trim()[0].toUpperCase() + text.trim().slice(1);
-    this.transcript += text2 + '.\n';
+    let textTemp = text.trim()[0].toUpperCase() + text.trim().slice(1);
+    this.transcript += textTemp + '.\n';
     this.transcriptTextarea.scrollTop = this.transcriptTextarea.scrollHeight;
   }
 
@@ -156,7 +190,7 @@ export class AudioMeetingComponent implements OnInit {
   getMemberTranscription(memberId: string, memberName: string, transcription: string, created_at) {
     this.transcriptionTitle = ((memberId == this.loggedUserId) ? 'Você' : memberName) + ' enviou:';
     this.transcriptionDatetime = created_at;
-    this.transcript = transcription;
+    this.transcript = transcription.length !== 0 ? transcription : '[Áudio sem transcrição]';
     this.transcriptTextarea.setAttribute('readonly', 'true');
     this.editTranscriptButton.setAttribute('disabled', 'true');
     // audio/text

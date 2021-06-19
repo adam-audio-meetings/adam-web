@@ -6,6 +6,7 @@ import { MessageService } from '../message.service';
 import { Audio } from './interfaces/audio';
 import { AudioListened } from './interfaces/audioListened';
 import { environment } from 'src/environments/environment';
+import { UtilsService } from '../utils/utils.service';
 
 @Injectable({
   providedIn: 'root'
@@ -22,6 +23,7 @@ export class AudioService {
   constructor(
     private http: HttpClient,
     private messageService: MessageService,
+    private utils: UtilsService
   ) { }
 
   private audiosUrl = environment.apiUrl + 'audio-noauth'; // FIXME: alterar para "audios";
@@ -52,13 +54,13 @@ export class AudioService {
   //     );
   // }
 
-  searchAudios(teamId: string, dateStringStart: string, dateStringEnd: string): Observable<Audio[]> {
-    // TODO: tratar 'date'
-    if (!teamId.trim()) {
+  searchAudios(teamId: string, dateStringStart: string, dateStringEnd: string, onlyInfo = false): Observable<Audio[]> {
+    dateStringStart = this.utils.dateStringToAPIFormat(dateStringStart)
+    dateStringEnd = this.utils.dateStringToAPIFormat(dateStringEnd)
+    if (!teamId) {
       return of([])
     }
-    // const url = `${this.audiosUrl}/search?role=${term}&name=${term}&audioname=${term}&email=${term}`;
-    const url = `${this.audiosUrl}/search?teamId=${teamId}&dateStringStart=${dateStringStart}&dateStringEnd=${dateStringEnd}`;
+    const url = `${this.audiosUrl}/search?teamId=${teamId}&dateStringStart=${dateStringStart}&dateStringEnd=${dateStringEnd}&onlyInfo=${onlyInfo}`;
     return this.http.get<Audio[]>(url)
       .pipe(
         tap(x => x.length ?
@@ -66,6 +68,20 @@ export class AudioService {
           this.log('not found')),
         catchError(this.handleError<Audio[]>('searchAudios', []))
       )
+  }
+
+  updateAudioListened(audio: Audio): Observable<Audio> {
+    // httpOptions.headers =
+    //   httpOptions.headers.set('Authorization', 'my-new-auth-token');
+    const id = audio._id;
+    // FIXME: api login route - sigin function
+    // const url = `${this.audiosUrl}/${id}`;
+    const url = `${this.audiosUrl}/audio_listened/${id}`;
+    return this.http.put<Audio>(url, audio)
+      .pipe(
+        tap(_ => this.log(`updated audio id=${id}`)),
+        catchError(this.handleError<Audio>(`updateAudio id=${id}`))
+      );
   }
 
   updateAudio(audio: Audio): Observable<Audio> {
@@ -112,7 +128,7 @@ export class AudioService {
     // FIXME: api login route - sigin function
     // const url = environment.apiUrl + 'audio_info'
     const url = this.audiosUrl + '/audio_info';
-    console.log('createAudio info');
+    // console.log('createAudio info');
     return this.http.post<Audio>(url, audio, this.httpOptions)
       .pipe(
         tap((newAudio: Audio) => this.log(`added audio id=${newAudio._id}`)),
@@ -131,19 +147,19 @@ export class AudioService {
       );
   }
 
-  createAudioListened(audioListened: AudioListened): Observable<AudioListened> {
+  // createAudioListened(audioListened: AudioListened): Observable<AudioListened> {
 
-    // FIXME: api login route - sigin function
-    // const url = environment.apiUrl + 'audio_listened'
-    const url = this.audiosUrl + '/audio_listened';
-    console.log('createAudioListened info');
-    return this.http.post<AudioListened>(url, audioListened, this.httpOptions)
-      .pipe(
-        tap((newAudioListened: AudioListened) => this.log(`added audioListened id=${newAudioListened._id}`)),
-        catchError(this.handleError<AudioListened>(`createAudioListened`))
-      );
+  //   // FIXME: api login route - sigin function
+  //   // const url = environment.apiUrl + 'audio_listened'
+  //   const url = this.audiosUrl + '/audio_listened';
+  //   console.log('createAudioListened info');
+  //   return this.http.post<AudioListened>(url, audioListened, this.httpOptions)
+  //     .pipe(
+  //       tap((newAudioListened: AudioListened) => this.log(`added audioListened id=${newAudioListened._id}`)),
+  //       catchError(this.handleError<AudioListened>(`createAudioListened`))
+  //     );
 
-  }
+  // }
 
   /** Log a message with the service */
   private log(message: string): void {

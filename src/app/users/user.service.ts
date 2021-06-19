@@ -23,7 +23,7 @@ export class UserService {
     private http: HttpClient,
     private messageService: MessageService,
     private authService: AuthService
-    ) { }
+  ) { }
 
   private usersUrl = environment.apiUrl + "users";
 
@@ -32,11 +32,11 @@ export class UserService {
       .pipe(
         tap(_ => this.log('fetched users')),
         catchError(this.handleError<User[]>('getUsers', []))
-      )    
+      )
   }
 
   getUser(id: string): Observable<User> {
-    const url =  `${this.usersUrl}/${id}`;
+    const url = `${this.usersUrl}/${id}`;
     return this.http.get<User>(url)
       .pipe(
         tap(_ => this.log(`fetched user id=${id}`)),
@@ -45,15 +45,15 @@ export class UserService {
   }
 
   searchUsers(term: string): Observable<User[]> {
-    if(!term.trim()){
+    if (!term.trim()) {
       return of([])
     }
     const url = `${this.usersUrl}/search?role=${term}&name=${term}&username=${term}&email=${term}`;
     return this.http.get<User[]>(url)
       .pipe(
         tap(x => x.length ?
-            this.log('found users') :
-            this.log('not found')),
+          this.log('found users') :
+          this.log('not found')),
         catchError(this.handleError<User[]>('searchUsers', []))
       )
   }
@@ -62,7 +62,7 @@ export class UserService {
     // httpOptions.headers =
     //   httpOptions.headers.set('Authorization', 'my-new-auth-token');
     const id = user._id;
-    const url =  `${this.usersUrl}/${id}`;
+    const url = `${this.usersUrl}/${id}`;
     return this.http.put<User>(url, user)
       .pipe(
         tap(_ => this.log(`updated user id=${id}`)),
@@ -73,7 +73,7 @@ export class UserService {
   createUser(user: User): Observable<User> {
 
     // api login route - sigin function
-    const url =  environment.apiUrl + 'register/'
+    const url = environment.apiUrl + 'register/'
     return this.http.post<User>(url, user, this.httpOptions)
       .pipe(
         tap((newUser: User) => this.log(`added user id=${newUser._id}`)),
@@ -88,26 +88,26 @@ export class UserService {
   signinUser(user: User): void {
 
     // api login route - sigin function
-    const url =  environment.apiUrl + 'register/'
+    const url = environment.apiUrl + 'register/'
     this.http.post<User>(url, user, this.httpOptions)
-    .subscribe({
-      next: res => {
-        console.log('Signin Authorized');
-        console.log('Login Authorized');
-        const credentials = { 
-          username: user.username,
-          password: user.password
-        };
-        this.authService.login(credentials);
-      },
-      error: err => {
-        console.log('ERRO: ', err.message);
-        this.handleError<any>('sigin');
-        if(err.status == 403) { alert('Nome de Usuário já em uso.')}
-        else {
-          alert('Erro no servidor.')
-        }        
-      }
+      .subscribe({
+        next: res => {
+          console.log('Signin Authorized');
+          console.log('Login Authorized');
+          const credentials = {
+            username: user.username,
+            password: user.password
+          };
+          this.authService.login(credentials);
+        },
+        error: err => {
+          console.log('ERRO: ', err.message);
+          this.handleError<any>('sigin');
+          if (err.status == 403) { alert('Nome de Usuário já em uso.') }
+          else {
+            alert('Erro no servidor.')
+          }
+        }
       })
   }
 
@@ -135,17 +135,17 @@ export class UserService {
   * @param result - optional value to return as the observable result
   */
   private handleError<T>(operation = 'operation', result?: T) {
-   return (error: any): Observable<T> => {
-    
-     // TODO: send the error to remote logging infrastructure
-     console.error(error); // log to console instead
-    
-     // TODO: better job of transforming error for user consumption
-     this.log(`${operation} failed: ${error.message}`);
-    
-     // Let the app keep running by returning an empty result.
-     return of(result as T);
-   };
+    return (error: any): Observable<T> => {
+
+      // TODO: send the error to remote logging infrastructure
+      console.error(error); // log to console instead
+
+      // TODO: better job of transforming error for user consumption
+      this.log(`${operation} failed: ${error.message}`);
+
+      // Let the app keep running by returning an empty result.
+      return of(result as T);
+    };
   }
 
 }

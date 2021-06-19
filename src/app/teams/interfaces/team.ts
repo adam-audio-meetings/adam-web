@@ -7,5 +7,5 @@ export interface Team {
   category: string,  //TODO: use Category model on API
   description: string,
   coordinator?: User,
-  member?: User[]
+  members?: User[]
 }

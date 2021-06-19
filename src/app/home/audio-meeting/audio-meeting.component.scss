@@ -78,6 +78,11 @@
 
 .list-group-item:hover {
     background-color: rgb(218, 218, 218);
+    cursor: pointer;
+}
+
+.list-group-item.active {
+    background-color: rgb(212, 212, 212);
 }
 
 .blink_me {
@@ -146,6 +151,7 @@
 
 .audio-member-avatar-alternative div{
     display: inline-block;
+    cursor: pointer;
 }
 
 .audio-member-info {
@@ -231,4 +237,12 @@
 .team-name-division {
     border-top: 0.1rem solid $adam-light;
     margin: 0.5rem;
+}
+
+#transcriptTextarea {
+    resize: none;
+}
+
+.dropdown-item:hover {
+    background-color: rgb(216, 216, 216);
 }

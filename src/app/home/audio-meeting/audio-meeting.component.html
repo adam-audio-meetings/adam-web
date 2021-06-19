@@ -41,9 +41,9 @@
     </div>
     <hr class="team-name-division">
     <div>
-      <ul class="list-group">
-        <li class="list-group-item" *ngFor="let audio of audios$ | async"
-          (click)="getMemberTranscription(audio.member._id, audio.member.name, audio.transcription, audio.created_at)">
+      <ul id="member-player-list" class="list-group">
+        <li id="member-player-{{ i }}" class="list-group-item" *ngFor="let audio of audios$ | async; let i = index"
+          (click)="getMemberTranscription(audio.member._id, audio.member.name, audio.transcription, audio.created_at); activeMemberPlayer(i)">
           <!-- <div class="audio-member-container" -->
           <!-- (click)="getMemberTranscription(audio.member._id, audio.member.name, audio.transcription, audio.created_at)"> -->
 
@@ -62,7 +62,11 @@
               <p class="audio-member-name">{{ audio.member.name | titlecase }}</p>
               <!-- <p class="audio-member-date">{{audio.fileId }}</p> -->
               <p class="audio-member-date">{{ audio.created_at | date : 'HH:mm' }}</p>
+              <!-- <i class="bi bi-check-lg"></i> -->
+              <i *ngIf="audioListened(audio.listened_by)" class="bi bi-check-circle"></i>
+              <i *ngIf="loggedUserQuoted(audio.transcription)" class="bi bi-chat-quote"></i>
             </div>
+
 
             <!-- <button class="btn btn-primary btn-sm mr-1 mb-1" routerLink="edit/{{user._id}}">Editar</button> -->
             <!-- <button class="btn btn-danger btn-sm mr-1 mb-1" (click)="deleteUser(user._id)">Excluir</button> -->
@@ -70,8 +74,9 @@
             <!-- TODO: type dinâmico -->
             <div class="audio-member-player">
               <audio id="{{ audio._id }}" controls="true" class="audio-member-controls" type="audio/webm; codecs=opus"
-                src="http://localhost:3000/audio-in-db/{{ audio.fileId }}" (ended)="listenAudioEnded(audio._id)"
-                (play)="getMemberTranscription(audio.member._id, audio.member.name, audio.transcription, audio.created_at)"></audio>
+                src="http://localhost:3000/audio-in-db/{{ audio.fileId }}"
+                (ended)="listenAudioEnded(audio._id, audio.listened_by)"
+                (play)="getMemberTranscription(audio.member._id, audio.member.name, audio.transcription, audio.created_at); activeMemberPlayer(i)"></audio>
 
             </div>
           </div>
@@ -105,13 +110,14 @@
         <audio id="main-audio-player"></audio>
       </div>
       <div>
-        <button id="record" class="btn btn-danger record main-controls-button m-1"><i id="iconRecord"
-            class="bi bi-mic-fill"></i></button>
-        <button id="stop" class="btn btn-secondary stop main-controls-button m-1"><i
-            class="bi bi-stop-fill"></i></button>
-        <button id="discardButton" class="btn btn-secondary main-controls-button m-1"><i
-            class="bi bi-trash"></i></button>
-        <button id="uploadButton" class="btn btn-success main-controls-button m-1" (click)="sendButtonClick()">
+        <button id="record" class="btn btn-danger record main-controls-button m-1" ngbTooltip="Gravar áudio"
+          placement="bottom" [openDelay]="800"><i id="iconRecord" class="bi bi-mic-fill"></i></button>
+        <button id="stop" class="btn btn-secondary stop main-controls-button m-1" ngbTooltip="Parar gravação"
+          placement="bottom" [openDelay]="800"><i class="bi bi-stop-fill"></i></button>
+        <button id="discardButton" class="btn btn-secondary main-controls-button m-1" placement="bottom"
+          ngbTooltip="Descartar áudio/texto" [openDelay]="800"><i class="bi bi-trash"></i></button>
+        <button id="uploadButton" class="btn btn-success main-controls-button m-1" ngbTooltip="Enviar áudio/texto"
+          placement="bottom" [openDelay]="800" (click)="sendButtonClick()">
           <i class="bi bi-upload"></i>
         </button>
         <!-- <button id="testPlayback" class="button">Teste Playback</button> -->
@@ -138,8 +144,9 @@
 
 
       <textarea type="text" name="transcriptName" id="transcriptTextarea" cols="100" rows="7" maxlength="1000"
-        placeholder="Veja aqui a transcrição do seu áudio e faça correções se necessário. Ou somente escreva e envie um texto."
-        [(ngModel)]="transcript">
+        placeholder="Veja e edite aqui a transcrição do seu áudio.
+Ou somente digite e envie texto.
+Altere esta opção no canto superior direito da página." [(ngModel)]="transcript">
       </textarea>
 
     </div>

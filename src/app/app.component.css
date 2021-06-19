@@ -2,3 +2,29 @@
   position: absolute;
   right: 12px;
 }
+
+.user-avatar-alternative {
+  display: flex;
+  height: 45px;
+  width: 45px;
+  border-radius: 50%;
+  box-shadow: 1px 1px 1px #b5b5b5;
+  background-color: rgb(169, 209, 255);
+  font-size: 1.5rem;
+  justify-content: center;
+  align-items: center;
+}
+
+.user-avatar-alternative div {
+  display: inline-block;
+  cursor: pointer;
+}
+
+.caret-off::before, .caret-off::after {
+  display: none;
+  /* remove seta dropdown */
+}
+
+.navbar-dropdown-user-name {
+  font-weight: 500;
+}
