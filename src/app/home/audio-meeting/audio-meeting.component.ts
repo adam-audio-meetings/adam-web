@@ -5,7 +5,6 @@ import { AudioService } from '../audio.service';
 import { User } from '../../users/interfaces/user';
 import { Team } from '../../teams/interfaces/team';
 import { Audio } from '../../home/interfaces/audio';
-import { AudioListened } from '../../home/interfaces/audioListened';
 import { UserService } from '../../users/user.service';
 import { Observable, Subscription } from 'rxjs';
 import { ROLES } from '../../users/mocks/user-roles';
@@ -91,7 +90,6 @@ export class AudioMeetingComponent implements OnInit {
   // }
 
   activeMemberPlayer(elementId) {
-    console.log('elementId', `#${elementId}`)
     document.querySelector('#member-player-list').querySelectorAll('li').forEach(
       item => item.classList.remove('active')
     )
@@ -152,13 +150,32 @@ export class AudioMeetingComponent implements OnInit {
     return _.includes(listenedBy, this.loggedUserId)
   }
 
+  loggedUserQuoted(transcription) {
+    let quoted = false
+    if (transcription.length > 0) {
+      // searchKeywordsOnTranscript(audio.transcription)
+      // TODO: mover para controller ou outro
+      // TODO: usar palavras chave definidas pelos nomes dos membros da equipe do áudio
+      let userFullName = this.authService.userName
+      let firstName = userFullName.split(' ')[0]
+      let keywords = [firstName, userFullName];
+      keywords.forEach(word => {
+        let found = transcription.toLowerCase().search(word.toLowerCase())
+        if (found >= 0) {
+          quoted = true
+        }
+      });
+    }
+    return quoted
+  }
+
   selectToday() {
     this.selectedDateModel = this.calendar.getToday();
   }
 
   updateTranscript(text: string) {
-    let text2 = text.trim()[0].toUpperCase() + text.trim().slice(1);
-    this.transcript += text2 + '.\n';
+    let textTemp = text.trim()[0].toUpperCase() + text.trim().slice(1);
+    this.transcript += textTemp + '.\n';
     this.transcriptTextarea.scrollTop = this.transcriptTextarea.scrollHeight;
   }
 
@@ -176,10 +193,6 @@ export class AudioMeetingComponent implements OnInit {
     // audio/text
     this.uploadButton.setAttribute('disabled', 'true');
     this.discardButton.setAttribute('disabled', 'true');
-  }
-
-  setPlayerSelected(element) {
-    console.log(element)
   }
 
   initAudioAndTextControls() {

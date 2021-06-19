@@ -64,6 +64,7 @@
               <p class="audio-member-date">{{ audio.created_at | date : 'HH:mm' }}</p>
               <!-- <i class="bi bi-check-lg"></i> -->
               <i *ngIf="audioListened(audio.listened_by)" class="bi bi-check-circle"></i>
+              <i *ngIf="loggedUserQuoted(audio.transcription)" class="bi bi-chat-quote"></i>
             </div>
 
 
