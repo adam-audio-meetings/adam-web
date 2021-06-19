@@ -128,20 +128,23 @@ export class AudioMeetingComponent implements OnInit {
   }
 
   // grava o id do usuário que reproduziuo áudio até o fim
-  listenAudioEnded(audioId) {
+  listenAudioEnded(audioId, listenedBy) {
     // console.log('Usuário reproduziu áudio', audioId);
-    let audioListened: Audio = {
-      _id: audioId,
-      listened_by: this.loggedUserId
+    // envia informação de áudio reproduzido somente se usuário ainda não escutou
+    if (!this.audioListened(listenedBy)) {
+      let audioListened: Audio = {
+        _id: audioId,
+        listened_by: this.loggedUserId
+      }
+      this.audioService.updateAudioListened(audioListened)
+        .subscribe({
+          next: (res) => {
+            console.log(this.msgInputAudioListened);
+            this.websocketService.sendMessage(this.msgInputAudioListened)
+          },
+          error: () => alert('Erro ao enviar status de áudio reproduzido.')
+        });;
     }
-    this.audioService.updateAudioListened(audioListened)
-      .subscribe({
-        next: (res) => {
-          console.log(this.msgInputAudioListened);
-          this.websocketService.sendMessage(this.msgInputAudioListened)
-        },
-        error: () => alert('Erro ao enviar status de áudio reproduzido.')
-      });;
   }
 
   audioListened(listenedBy) {
