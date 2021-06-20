@@ -73,7 +73,7 @@
             <!-- TODO: buscar link api por environment -->
             <!-- TODO: type dinâmico -->
             <div class="audio-member-player">
-              <audio id="{{ audio._id }}" controls="true" class="audio-member-controls" type="audio/webm; codecs=opus"
+              <audio id="{{ audio._id }}" controls="true" class="audio-member-controls" type="audio/webm"
                 src="http://localhost:3000/audio-in-db/{{ audio.fileId }}"
                 (ended)="listenAudioEnded(audio._id, audio.listened_by)"
                 (play)="getMemberTranscription(audio.member._id, audio.member.name, audio.transcription, audio.created_at); activeMemberPlayer(i)"></audio>

@@ -202,6 +202,8 @@ export class AudioMeetingComponent implements OnInit {
     // audio/text
     this.uploadButton.setAttribute('disabled', 'true');
     this.discardButton.setAttribute('disabled', 'true');
+    // marcar como texto lido (audio reproduzido) quando não exite áudio, somente texto
+    console.log()
   }
 
   initAudioAndTextControls() {
@@ -328,11 +330,13 @@ export class AudioMeetingComponent implements OnInit {
     this.modeSelectionInput = modeSelectionInput;
 
 
-    // let audioTypeWebm = { 'type': 'audio/webm' };
-    let audioTypeWebmOpus = { 'type': 'audio/webm; codecs=opus' };
+    let audioTypeWebm = { 'type': 'audio/webm' };
+    let audioType = audioTypeWebm;
+    // let audioTypeWebmOpus = { 'type': 'audio/webm; codecs=opus' };
+    // let audioType = audioTypeWebmOpus;
     // let audioTypeOgg = { 'type': 'audio/ogg; codecs=opus' };
     // let audioTypeMp3 = { 'type': 'audio/mpeg' };
-    let audioType = audioTypeWebmOpus;
+    // let audioType = audioTypeMp3;
 
     this.initAudioAndTextControls();
 
@@ -484,22 +488,64 @@ export class AudioMeetingComponent implements OnInit {
           console.log('Event handler: Dados de áudio coletados')
         }
 
+        audio.onloadedmetadata = (data) => {
+          console.log('loaded metadata', data)
+          console.log('loaded metadata target', data.target)
+          console.log('loaded metadata audio duration', audio.duration)
+
+
+          if (audio.duration === Infinity) {
+            // set it to bigger than the actual duration
+            // https://stackoverflow.com/questions/38443084/how-can-i-add-predefined-length-to-audio-recorded-from-mediarecorder-in-chrome
+            audio.currentTime = 1e101;
+            audio.ontimeupdate = function () {
+              this.ontimeupdate = () => {
+                return;
+              }
+              console.log('after workaround: ' + audio.duration);
+              audio.currentTime = 0;
+            }
+          }
+
+
+
+
+        }
+
         mediaRecorder.onstop = () => {
           // TODO: audio element aqui?
           let blob = new Blob(data, audioType);  // media stream
+          let audioDuration = 0;
+          console.log('audioDuration: ', audioDuration + ' seconds');
 
           // se necessário saber a duração do aúdio (bug Chrome) 
-          // getBlobDuration(blob).then(function (duration) {
-          //   console.log(duration + ' seconds');
-          // });
+          getBlobDuration(blob).then(function (duration) {
+            console.log('duration: ', duration + ' seconds');
+            audioDuration = duration
+
+          });
 
           console.log('Áudio gravado com sucesso.');
           let mainAudioURL = window.URL.createObjectURL(blob);
           console.log('mainAudioURL: ', mainAudioURL);
+
+          audio.addEventListener("loadedmetadata", function () {
+            //you can display the duration now
+            console.log('loadedmetadata')
+
+          });
+
+
+
           audio.src = mainAudioURL;
+          console.log('audio.preload.length: ', audio.preload.length)
           audio.controls = true;
-          audio.preload = 'metadata'
+          audio.preload = 'auto'
+
+          console.log('real audio duration: ', audio.duration)
           audio.load();
+
+
         }
 
         discardButton.onclick = () => {
@@ -508,7 +554,8 @@ export class AudioMeetingComponent implements OnInit {
         }
 
         function cleanMainAudio() {
-          // TODO: refatorar utilizando componente
+          // TODO: refatorar utilizando componente 
+          data = []
           window.URL.revokeObjectURL(mainAudioURL);
           // console.log('mainAudioURL: ', mainAudioURL);
           audio.src = '';
