@@ -10,10 +10,18 @@ import { AudioMeetingComponent } from './audio-meeting/audio-meeting.component';
 import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { GoogleChartsModule } from 'angular-google-charts';
+import { SessionCounterPipe } from '../session-counter.pipe';
 
 
 @NgModule({
-  declarations: [HomeComponent, HomeAdminComponent, HomeCoordinatorComponent, HomeMemberComponent, AudioMeetingComponent],
+  declarations: [
+    HomeComponent,
+    HomeAdminComponent,
+    HomeCoordinatorComponent,
+    HomeMemberComponent,
+    AudioMeetingComponent,
+    SessionCounterPipe
+  ],
   imports: [
     CommonModule,
     HomeRoutingModule,

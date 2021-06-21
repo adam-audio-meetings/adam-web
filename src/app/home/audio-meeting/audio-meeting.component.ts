@@ -1,4 +1,4 @@
-import { Component, OnInit, NgZone } from '@angular/core';
+import { Component, OnInit, NgZone, Self } from '@angular/core';
 import getBlobDuration from 'get-blob-duration';
 import { fileURLToPath } from 'url';
 import { AudioService } from '../audio.service';
@@ -6,7 +6,7 @@ import { User } from '../../users/interfaces/user';
 import { Team } from '../../teams/interfaces/team';
 import { Audio } from '../../home/interfaces/audio';
 import { UserService } from '../../users/user.service';
-import { Observable, Subscription } from 'rxjs';
+import { interval, Observable, Subscription } from 'rxjs';
 import { ROLES } from '../../users/mocks/user-roles';
 import { WebsocketService } from 'src/app/socket/websocket.service';
 import { ActivatedRoute } from '@angular/router';
@@ -16,6 +16,8 @@ import { NgbCalendar, NgbDate, NgbDateAdapter, NgbDateNativeAdapter, NgbDatePars
 import { isThisTypeNode } from 'typescript';
 import { UtilsService } from 'src/app/utils/utils.service';
 import * as _ from 'lodash';
+import { finalize, map, take, takeWhile, tap } from 'rxjs/operators';
+import { resolve } from '@angular/compiler-cli/src/ngtsc/file_system';
 
 @Component({
   selector: 'app-audio-meeting',
@@ -25,7 +27,8 @@ import * as _ from 'lodash';
 export class AudioMeetingComponent implements OnInit {
 
   ownTeams$: Observable<Team[]>;
-  audios$: Observable<Audio[]>;
+  // audios$: Observable<Audio[]>;
+  audios$: Audio[];
   selectedId: string;
   roles = ROLES;
   roleFilter = "";
@@ -33,6 +36,7 @@ export class AudioMeetingComponent implements OnInit {
   // currentRoute: string;
   selectedTeamId: string;
   selectedTeamName: string;
+  mainAudioDuration: number;
 
   // socket.io-client
   msgInput: string = 'upload de audio no servidor';
@@ -67,8 +71,11 @@ export class AudioMeetingComponent implements OnInit {
   // mode selection
   modeSelectionInput: NodeListOf<HTMLElement>;
 
-  // toggle member player
-  // stateFlag = true
+  //record times
+  recordTimer: number = 0
+  secondsCounter = interval(1000);
+  result$: Observable<number>;
+  stopTimerFlag = false;
 
   constructor(
     private teamService: TeamService,
@@ -84,10 +91,6 @@ export class AudioMeetingComponent implements OnInit {
     private utils: UtilsService,
   ) {
   }
-
-  // toggleStateMemberPlayer() {
-  //   this.stateFlag = !this.stateFlag
-  // }
 
   activeMemberPlayer(elementId) {
     document.querySelector('#member-player-list').querySelectorAll('li').forEach(
@@ -125,7 +128,60 @@ export class AudioMeetingComponent implements OnInit {
   getAudios($event?): void {
     let jsDateStringStart = this.utils.dateModelToString(this.selectedDateModel)
     let jsDateStringEnd = this.utils.nextDayModelToString(this.selectedDateModel)
-    this.audios$ = this.audioService.searchAudios(this.selectedTeamId, jsDateStringStart, jsDateStringEnd);
+    this.audioService.searchAudios(this.selectedTeamId, jsDateStringStart, jsDateStringEnd)
+      .pipe(take(1))
+      .subscribe(
+        (audios) => {
+          this.audios$ = audios;
+          // this.getAllAudioMemberPlayersDuration()
+        },
+        error => { },
+        () => {
+          // <div class="audio-member-player">
+          //     <audio id="audio-member-player{{ audio._id }}" controls="true" class="audio-member-controls"
+          //       type="audio/webm" preload="metadata"
+          //       (play)="getMemberTranscription(audio.member._id, audio.member.name, audio.transcription, audio.created_at); activeMemberPlayer(i)"></audio>
+          //TODO: retornar onend e src -->
+          // </div>
+          this.audios$.forEach(audio => {
+            // let audioPlayer: HTMLAudioElement = document.getElementById(`${audio._id}`)
+            let id = '#audio-member-player' + audio._id
+            let audioPlayer: HTMLAudioElement = document.querySelector(id)
+            console.log('audioPlayer existente: ', audioPlayer != undefined)
+
+            if (audioPlayer != undefined) {
+              audioPlayer.classList.add('flagDurationOk')
+              console.log('audio player classList', audioPlayer.classList)
+              // console.log('ANTES setAttribute src', audioPlayer.src)
+              // console.log('ANTES setAttributes preload', audioPlayer.preload)
+              // audioPlayer.src="http://localhost:3000/audio-in-db/{{ audio.fileId }}"
+              // audioPlayer.setAttribute('src', `http://localhost:3000/audio-in-db/${audio.fileId}`)
+              // audioPlayer.setAttribute('preload', 'auto')
+              audioPlayer.preload = 'none'
+              // audioPlayer.src = `http://localhost:3000/audio-in-db/${audio.fileId}`
+              // console.log('DEPOIS setAttribute src', audioPlayer.src)
+              // console.log('DEPOIS setAttributes preload', audioPlayer.preload)
+
+              if (audioPlayer.duration == Infinity || isNaN(audioPlayer.duration)) {
+
+                console.log('entrou em IF audioPlayer.duration: ' + audioPlayer.duration);
+                // audioPlayer.load()
+                audioPlayer.currentTime = 1e101;
+
+                audioPlayer.ontimeupdate = function () {
+                  this.ontimeupdate = () => {
+                    return;
+                  }
+                  console.log('after workaround: ' + audioPlayer.duration);
+                  audioPlayer.currentTime = 0;
+                }
+                console.log('if Infinity or NaN', audioPlayer.duration);
+              }
+            }
+          }
+          )
+        }
+      )
   }
 
   sendButtonClick() {
@@ -133,24 +189,46 @@ export class AudioMeetingComponent implements OnInit {
     this.websocketService.sendMessage(this.msgInput)
   }
 
+  getAllAudioMemberPlayersDuration() {
+    // atribuir duration se Infinity para audio player de membros 
+    document.querySelector('#member-player-list')
+      .querySelectorAll('audio')
+      .forEach(
+        audio => {
+          if (audio.duration == Infinity) {
+            audio.classList.add('flagDurationOk')
+            audio.currentTime = 1e101;
+          }
+          console.log(audio.duration);
+        })
+  }
+
   // grava o id do usuário que reproduziuo áudio até o fim
   listenAudioEnded(audioId, listenedBy) {
+
+    // TODO: atualiza somente o audio player alvo e manter posição na tela
+
     // console.log('Usuário reproduziu áudio', audioId);
     // envia informação de áudio reproduzido somente se usuário ainda não escutou
-    if (!this.audioListened(listenedBy)) {
-      let audioListened: Audio = {
-        _id: audioId,
-        listened_by: this.loggedUserId
-      }
-      this.audioService.updateAudioListened(audioListened)
-        .subscribe({
-          next: (res) => {
-            console.log(this.msgInputAudioListened);
-            this.websocketService.sendMessage(this.msgInputAudioListened)
-          },
-          error: () => alert('Erro ao enviar status de áudio reproduzido.')
-        });;
-    }
+
+    // E somente envia informação se duration não é Infinity
+
+    // let audioMemberPlayer: HTMLAudioElement = document.querySelector(`#${audioId}`)
+    // if (!this.audioListened(listenedBy)) {
+
+    //   let audioListened: Audio = {
+    //     _id: audioId,
+    //     listened_by: this.loggedUserId
+    //   }
+    //   this.audioService.updateAudioListened(audioListened)
+    //     .subscribe({
+    //       next: (res) => {
+    //         console.log(this.msgInputAudioListened);
+    //         this.websocketService.sendMessage(this.msgInputAudioListened)
+    //       },
+    //       error: () => alert('Erro ao enviar status de áudio reproduzido.')
+    //     });;
+    // }
   }
 
   audioListened(listenedBy) {
@@ -230,6 +308,7 @@ export class AudioMeetingComponent implements OnInit {
     this.transcriptionDatetime = '';
     // audio
     this.record.setAttribute('disabled', 'true');
+    this.mainAudioDuration = 0;
     // audio/text
     this.uploadButton.removeAttribute('disabled');
     this.discardButton.removeAttribute('disabled');
@@ -278,6 +357,7 @@ export class AudioMeetingComponent implements OnInit {
     } else {
       this.initAudioAndTextControls();
     }
+    this.recordTimer = 0
   }
 
   initUploadControls() {
@@ -287,6 +367,27 @@ export class AudioMeetingComponent implements OnInit {
       this.initAudioAndTextControls();
     }
   }
+
+  startTimer() {
+
+    this.recordTimer = 0
+    this.stopTimerFlag = false
+    this.result$ = this.secondsCounter.pipe(
+      // takeWhile(n => n < +this.expiresInSeconds && this.isLoggedIn),
+      takeWhile(() => !this.stopTimerFlag),
+
+      finalize(() => {
+      } // else, only finalize interval to avoid duplicates
+      ));
+    this.result$.subscribe(
+      _ => this.recordTimer += 1
+    )
+  }
+
+  stopTimer() {
+    this.stopTimerFlag = true
+  }
+
 
 
   ngOnInit(): void {
@@ -338,6 +439,45 @@ export class AudioMeetingComponent implements OnInit {
     // let audioTypeMp3 = { 'type': 'audio/mpeg' };
     // let audioType = audioTypeMp3;
 
+    audio.controls = true;
+    audio.setAttribute('controlsList', 'nodownload')
+    audio.preload = 'none'
+    // audio.onloadedmetadata = (data) => {
+    //   console.log('loaded metadata')
+    //   // console.log('loaded metadata target', data.target)
+    //   // console.log('loaded metadata audio duration', audio.duration)
+    //   // console.log('main audio duration sem THIS', mainAudioDuration)
+
+
+    //   if (audio.duration === Infinity) {
+    //     // set it to bigger than the actual duration
+    //     // https://stackoverflow.com/questions/38443084/how-can-i-add-predefined-length-to-audio-recorded-from-mediarecorder-in-chrome
+    //     audio.currentTime = 1e101;
+    //     console.log('time update BEFORE', audio.currentTime)
+
+    //     audio.ontimeupdate = function () {
+
+    //       this.ontimeupdate = () => {
+    //         return;
+    //       }
+
+    //       // console.log('after workaround: ' + audio.duration);
+    //       // self.mainAudioDuration = audio.duration
+    //       // mainAudioDuration = audio.duration
+    //       // console.log('after workaround mainAudioDuration: ' + mainAudioDuration);
+    //       // console.log('after workaround self mainAudioDuration: ' + self.mainAudioDuration);
+    //       audio.currentTime = 0;
+    //       console.log('time update AFTER', audio.currentTime)
+    //     }
+    //     // console.log('real audio duration: ', audio.duration)
+    //     // console.log('mainAudioDuration to save local: ', mainAudioDuration)
+    //     // console.log('mainAudioDuration to save self: ', self.mainAudioDuration)
+    //     // this.mainAudioDuration = mainAudioDuration
+    //   }
+    //   // this.mainAudioDuration = mainAudioDuration
+    //   // console.log('after workaround this self mainAudioDuration: ' + this.mainAudioDuration);
+    // }
+
     this.initAudioAndTextControls();
 
     // variáveis SPEECH RECOGNITION
@@ -356,7 +496,7 @@ export class AudioMeetingComponent implements OnInit {
         //"video/x-matroska;codecs=avc1",
         "audio/webm",
         "audio/webm; codecs=opus",
-        "audio/ogg; codecs=opus", // TODO: teste: em chrome diz não ser suportado, mas funcionou
+        "audio/ogg; codecs=opus",
         "audio/ogg; codecs=vorbis",
         "audio/mp4",
         //"video/mp4;codecs=avc1",
@@ -456,12 +596,14 @@ export class AudioMeetingComponent implements OnInit {
       let mainAudioURL: string = '';
       let base64data: string | ArrayBuffer;
       let lastInsertedId = ''
+      let mainAudioDuration: number = 0;
 
       let onSuccess = (stream) => {
         const mediaRecorder = new MediaRecorder(stream); //preparado para capturar a stream em um Blob (https://developer.mozilla.org/en-US/docs/Web/API/Blob)
 
         record.onclick = () => {
           mediaRecorder.start();
+          this.startTimer();
           this.initRecordControls();
           // console.log(mediaRecorder.state);
 
@@ -475,6 +617,7 @@ export class AudioMeetingComponent implements OnInit {
 
         stop.onclick = () => {
           mediaRecorder.stop();
+          this.stopTimer();
           // console.log(mediaRecorder.state);
           this.initStopControls();
 
@@ -488,62 +631,63 @@ export class AudioMeetingComponent implements OnInit {
           console.log('Event handler: Dados de áudio coletados')
         }
 
-        audio.onloadedmetadata = (data) => {
-          console.log('loaded metadata', data)
-          console.log('loaded metadata target', data.target)
-          console.log('loaded metadata audio duration', audio.duration)
-
-
-          if (audio.duration === Infinity) {
-            // set it to bigger than the actual duration
-            // https://stackoverflow.com/questions/38443084/how-can-i-add-predefined-length-to-audio-recorded-from-mediarecorder-in-chrome
-            audio.currentTime = 1e101;
-            audio.ontimeupdate = function () {
-              this.ontimeupdate = () => {
-                return;
-              }
-              console.log('after workaround: ' + audio.duration);
-              audio.currentTime = 0;
-            }
-          }
 
 
 
-
-        }
 
         mediaRecorder.onstop = () => {
-          // TODO: audio element aqui?
           let blob = new Blob(data, audioType);  // media stream
-          let audioDuration = 0;
-          console.log('audioDuration: ', audioDuration + ' seconds');
 
           // se necessário saber a duração do aúdio (bug Chrome) 
+
           getBlobDuration(blob).then(function (duration) {
             console.log('duration: ', duration + ' seconds');
-            audioDuration = duration
-
           });
+
+
+          // this.mainAudioDuration = getDuration(blob);
+          console.log('THIS mainAudiDuration AFTER STOP: ', this.mainAudioDuration)
 
           console.log('Áudio gravado com sucesso.');
           let mainAudioURL = window.URL.createObjectURL(blob);
           console.log('mainAudioURL: ', mainAudioURL);
 
-          audio.addEventListener("loadedmetadata", function () {
-            //you can display the duration now
-            console.log('loadedmetadata')
+          // audio.addEventListener("loadedmetadata", function () {
+          //   //you can display the duration now
+          //   // let audioTemp: HTMLAudioElement;
+          //   // audioTemp = data.currentTarget as HTMLAudioElement
+          //   // console.log('loadedmetadata, data = ', data)
+          //   // console.log('loadedmetadata, data.target = ', audioTemp)
+          //   // console.log('loadedmetadata, audio.duration = ', audioTemp.duration)
 
-          });
+          // });
 
+
+          // audio.onloadeddata = (event) => {
+          //   console.log(event)
+          //   console.log('onload, currentTime: ', audio.currentTime)
+          //   if (audio.duration === Infinity) {
+          //     audio.currentTime = 1e101;
+          //     audio.ontimeupdate = function () {
+
+          //       this.ontimeupdate = () => {
+          //         return;
+          //       }
+
+          //       audio.currentTime = 0;
+          //       console.log('onload, currentTime: ', audio.currentTime)
+          //     }
+          //   }
+          // }
 
 
           audio.src = mainAudioURL;
-          console.log('audio.preload.length: ', audio.preload.length)
-          audio.controls = true;
-          audio.preload = 'auto'
+          // console.log('audio.preload.length: ', audio.preload.length)
 
-          console.log('real audio duration: ', audio.duration)
           audio.load();
+
+
+
 
 
         }
@@ -565,14 +709,30 @@ export class AudioMeetingComponent implements OnInit {
 
         uploadButton.onclick = () => {
           let blob = new Blob(data, audioType);
-          let file = new File([blob], "testeAudioBlobToFile.weba", audioType)
+          let file = new File([blob], "audioBlobToFile.weba", audioType)
+          let audioDuration: number;
           // console.log('File: ', file)
+
+          // se foi coletado áudio
+          if (data) {
+            audioDuration = audio.duration
+            console.log('THIS mainAudiDuration AFTER UPLOAD: ', this.mainAudioDuration)
+            console.log('data AFTER UPLOAD (DEV SER > 0): ', data)
+            console.log('data.lenght AFTER UPLOAD (DEV SER > 0): ', data.length)
+          } else {
+            audioDuration = 0
+            console.log('THIS mainAudiDuration AFTER UPLOAD: ', this.mainAudioDuration)
+            console.log('data AFTER UPLOAD (DEV SER 0): ', data)
+            console.log('data.lenght AFTER UPLOAD (DEV SER 0): ', data.length)
+          }
+
 
           this.audioService.uploadAudio(
             file,
             this.loggedUserId,
             this.selectedTeamId,
-            this.transcript
+            this.transcript,
+            audioDuration
           ).subscribe({
             next: (res) => {
               // TODO: refatorar utilizando componente

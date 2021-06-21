@@ -4,8 +4,10 @@ export interface Audio {
     _id?: string,
     name?: string,
     transcription?: string,
-    created_at?: Date
+    fileId?: string,
+    created_at?: Date,
+    duration?: number,
     team?: string,
     member?: string | any,
-    listened_by?:string
+    listened_by?: string
 }

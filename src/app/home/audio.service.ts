@@ -96,17 +96,19 @@ export class AudioService {
       );
   }
 
-  uploadAudio(file: File, userId: string, teamId: string, transcript: string): Observable<Audio> {
+  uploadAudio(file: File, userId: string, teamId: string, transcript: string, audioDuration: number): Observable<Audio> {
     // uploadAudio(file: Audio): Observable<Audio> {
     const formData = new FormData();
-
-    // files.forEach(file => formData.append('file', file, file.name));
-    // file => formData.append('file', file, file.name);
+    let filename = teamId + '-' + userId + (new Date()).toJSON().replace(':', '-');
+    if (isNaN(audioDuration)) {
+      audioDuration = 0
+    }
     formData.append('file', file, file.name);
     formData.append("userId", userId);
     formData.append("teamId", teamId);
-    formData.append("name", "teste2");
+    formData.append("name", filename);
     formData.append("transcription", transcript);
+    formData.append("duration", audioDuration.toString());
     const url = this.audiosUrl + '/upload';
     return this.http.post(url, formData)
       .pipe(

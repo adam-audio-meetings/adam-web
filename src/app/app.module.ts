@@ -13,7 +13,7 @@ import { TeamsModule } from './teams/teams.module';
 import { CommonModule } from '@angular/common';
 import { AuthModule } from './auth/auth.module';
 import { httpInterceptorProviders } from './http-interceptors';
-import { SessionCounterPipe } from './session-counter.pipe';
+// import { SessionCounterPipe } from './session-counter.pipe';
 import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
 import { WebsocketService } from './socket/websocket.service';
 // import { GoogleChartsModule } from 'angular-google-charts';
@@ -29,7 +29,7 @@ import { WebsocketService } from './socket/websocket.service';
   declarations: [
     AppComponent,
     MessagesComponent,
-    SessionCounterPipe,
+    // SessionCounterPipe,
   ],
   imports: [
     CommonModule,
