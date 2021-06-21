@@ -42,8 +42,8 @@
     <hr class="team-name-division">
     <div>
       <ul id="member-player-list" class="list-group">
-        <li id="member-player-{{ i }}" class="list-group-item" *ngFor="let audio of audios$; let i = index"
-          (click)="getMemberTranscription(audio.member._id, audio.member.name, audio.transcription, audio.created_at); activeMemberPlayer(i)">
+        <li id="member-player-{{ i }}" class="list-group-item" *ngFor="let audio of audios$; let i = index" (click)="getMemberTranscription(audio.member._id, audio.member.name, audio.transcription, audio.created_at);
+          activeMemberPlayer(i); markOnlyTextAsSeen(audio._id, audio.duration, audio.member._id, audio.listened_by);">
           <!-- <div class="audio-member-container" -->
           <!-- (click)="getMemberTranscription(audio.member._id, audio.member.name, audio.transcription, audio.created_at)"> -->
 
@@ -63,7 +63,7 @@
               <!-- <p class="audio-member-date">{{audio.fileId }}</p> -->
               <p class="audio-member-date">{{ audio.created_at | date : 'HH:mm' }}</p>
               <!-- <i class="bi bi-check-lg"></i> -->
-              <i *ngIf="audioListened(audio.listened_by)" class="bi bi-check-circle"></i>
+              <i *ngIf="isAudioListened(audio.member._id, audio.listened_by)" class="bi bi-check-circle"></i>
               <i *ngIf="loggedUserQuoted(audio.transcription)" class="bi bi-chat-quote"></i>
             </div>
 
@@ -76,8 +76,9 @@
             <div *ngIf="audio.duration" class="audio-member-player">
               <audio id="audio-member-player{{ audio._id }}" controls class="audio-member-controls"
                 controlsList="nodownload" type="audio/webm" preload="none"
-                src="http://localhost:3000/audio-in-db/{{ audio.fileId }}" (play)=" getMemberTranscription(audio.member._id, audio.member.name, audio.transcription,
-                audio.created_at); activeMemberPlayer(i)"></audio>
+                src="http://localhost:3000/audio-in-db/{{ audio.fileId }}"
+                (play)=" getMemberTranscription(audio.member._id, audio.member.name, audio.transcription,
+                audio.created_at); activeMemberPlayer(i); markOnlyTextAsSeen(audio._id, audio.duration, audio.member._id, audio.listened_by);"></audio>
               <!-- //TODO: retornar onend e src -->
             </div>
           </div>
@@ -92,9 +93,10 @@
 
     <div class="modeSelection">
       <div class="btn-group btn-group-sm btn-group-toggle" ngbRadioGroup name="radioBasic" [(ngModel)]="textOnly">
-        <label ngbButtonLabel class="btn-outline-secondary" ngbTooltip="Selecione para digitar e enviar somente texto"
-          placement="left" container="body" [openDelay]="800">
-          <input class="modeSelectionInput" ngbButton type="radio" [value]="1" (click)="initTextOnlyControls()">Texto
+        <label ngbButtonLabel class="btn-outline-secondary"
+          ngbTooltip="Selecione para escrever e enviar somente mensagem" placement="left" container="body"
+          [openDelay]="800">
+          <input class="modeSelectionInput" ngbButton type="radio" [value]="1" (click)="initTextOnlyControls()">Mensagem
         </label>
         <label ngbButtonLabel class="btn-outline-secondary"
           ngbTooltip="Selecione para gravar áudio e enviar junto com a transcrição" placement="left" container="body"
@@ -118,12 +120,13 @@
           </span>
         </div>
         <button id="record" class="btn btn-danger record main-controls-button m-1" ngbTooltip="Gravar áudio"
-          placement="bottom" [openDelay]="800"><i id="iconRecord" class="bi bi-mic-fill"></i></button>
+          placement="bottom" [openDelay]="800" [closeDelay]="100"><i id="iconRecord"
+            class="bi bi-mic-fill"></i></button>
         <button id="stop" class="btn btn-secondary stop main-controls-button m-1" ngbTooltip="Parar gravação"
           placement="bottom" [openDelay]="800"><i class="bi bi-stop-fill"></i></button>
         <button id="discardButton" class="btn btn-secondary main-controls-button m-1" placement="bottom"
-          ngbTooltip="Descartar áudio/texto" [openDelay]="800"><i class="bi bi-trash"></i></button>
-        <button id="uploadButton" class="btn btn-success main-controls-button m-1" ngbTooltip="Enviar áudio/texto"
+          ngbTooltip="Descartar áudio/mensagem" [openDelay]="800"><i class="bi bi-trash"></i></button>
+        <button id="uploadButton" class="btn btn-success main-controls-button m-1" ngbTooltip="Enviar áudio/mensagem"
           placement="bottom" [openDelay]="800" (click)="sendButtonClick()">
           <i class="bi bi-upload"></i>
         </button>
@@ -150,9 +153,9 @@
       </div>
 
 
-      <textarea type="text" name="transcriptName" id="transcriptTextarea" cols="100" rows="7" maxlength="1000"
+      <textarea type="text" name="transcriptName" id="transcriptTextarea" cols="80" rows="7" maxlength="1000"
         placeholder="Veja e edite aqui a transcrição do seu áudio.
-Ou somente digite e envie texto.
+Ou somente digite e envie uma mensagem.
 Altere esta opção no canto superior direito da página." [(ngModel)]="transcript">
       </textarea>
 

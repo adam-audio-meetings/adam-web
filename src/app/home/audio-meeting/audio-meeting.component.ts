@@ -53,7 +53,7 @@ export class AudioMeetingComponent implements OnInit {
   // audio transcript
   transcriptionTitle: string = '';
   transcriptionTitleAudioAndText: string = 'Transcrição do seu áudio';
-  transcriptionTitleTextOnly: string = 'Envie um texto';
+  transcriptionTitleTextOnly: string = 'Envie uma mensagem';
   transcriptionDatetime: string = '';
   transcript: string = '';
   textOnly = 0;
@@ -203,7 +203,7 @@ export class AudioMeetingComponent implements OnInit {
         })
   }
 
-  // grava o id do usuário que reproduziuo áudio até o fim
+  // grava o id do usuário que reproduziu o áudio até o fim
   listenAudioEnded(audioId, listenedBy) {
 
     // TODO: atualiza somente o audio player alvo e manter posição na tela
@@ -214,6 +214,7 @@ export class AudioMeetingComponent implements OnInit {
     // E somente envia informação se duration não é Infinity
 
     // let audioMemberPlayer: HTMLAudioElement = document.querySelector(`#${audioId}`)
+    // // TODO: incluir isTextSeen(...) e alterar nome anterior para isAudioListened
     // if (!this.audioListened(listenedBy)) {
 
     //   let audioListened: Audio = {
@@ -231,10 +232,37 @@ export class AudioMeetingComponent implements OnInit {
     // }
   }
 
-  audioListened(listenedBy) {
+  // retorna true para áudio/mensagem do usuário logado ou se o usuário logado reproduziu/leu o áudio/mensagem dos outros membros 
+  isAudioListened(memberId, listenedBy) {
     //TODO: reduzir carga de aúdios ou - carregar somente os das equipes selecionadas
+    return memberId == this.loggedUserId || _.includes(listenedBy, this.loggedUserId)
+  }
 
-    return _.includes(listenedBy, this.loggedUserId)
+  isTextSeen(audioDuration, memberId, listenedBy) {
+    return audioDuration == 0 && this.isAudioListened(memberId, listenedBy)
+  }
+
+  markOnlyTextAsSeen(audioId, audioDuration, memberId, listenedBy) {
+    if (audioDuration == 0 && !this.isTextSeen(audioDuration, memberId, listenedBy)) {
+      this.updateAudioListenedOrTextSeen(audioId)
+
+    }
+  }
+
+  updateAudioListenedOrTextSeen(audioId) {
+    let fileListenedOrSeen: Audio = {
+      _id: audioId,
+      listened_by: this.loggedUserId
+    }
+    this.audioService.updateAudioListened(fileListenedOrSeen)
+      .subscribe({
+        next: () => {
+          // console.log(this.msgInputAudioListened);
+          this.websocketService.sendMessage(this.msgInputAudioListened)
+        },
+        error: () => alert('Erro ao enviar status de áudio reproduzido/mensagem lida.')
+      });
+
   }
 
   loggedUserQuoted(transcription) {
@@ -280,7 +308,7 @@ export class AudioMeetingComponent implements OnInit {
     // audio/text
     this.uploadButton.setAttribute('disabled', 'true');
     this.discardButton.setAttribute('disabled', 'true');
-    // marcar como texto lido (audio reproduzido) quando não exite áudio, somente texto
+    // marcar como mensagem lido (audio reproduzido) quando não exite áudio, somente mensagem
     console.log()
   }
 
