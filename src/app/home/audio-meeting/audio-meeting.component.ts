@@ -214,35 +214,6 @@ export class AudioMeetingComponent implements OnInit {
         })
   }
 
-  // grava o id do usuário que reproduziu o áudio até o fim
-  listenAudioEnded(audioId, listenedBy) {
-
-    // TODO: atualiza somente o audio player alvo e manter posição na tela
-
-    // console.log('Usuário reproduziu áudio', audioId);
-    // envia informação de áudio reproduzido somente se usuário ainda não escutou
-
-    // E somente envia informação se duration não é Infinity
-
-    // let audioMemberPlayer: HTMLAudioElement = document.querySelector(`#${audioId}`)
-    // // TODO: incluir isTextSeen(...) e alterar nome anterior para isAudioListened
-    // if (!this.audioListened(listenedBy)) {
-
-    //   let audioListened: Audio = {
-    //     _id: audioId,
-    //     listened_by: this.loggedUserId
-    //   }
-    //   this.audioService.updateAudioListened(audioListened)
-    //     .subscribe({
-    //       next: (res) => {
-    //         console.log(this.msgInputAudioListened);
-    //         this.websocketService.sendMessage(this.msgInputAudioListened)
-    //       },
-    //       error: () => alert('Erro ao enviar status de áudio reproduzido.')
-    //     });;
-    // }
-  }
-
   // retorna true para áudio/mensagem do usuário logado ou se o usuário logado reproduziu/leu o áudio/mensagem dos outros membros 
   isAudioListened(memberId, listenedBy) {
     //TODO: reduzir carga de aúdios ou - carregar somente os das equipes selecionadas
@@ -253,10 +224,21 @@ export class AudioMeetingComponent implements OnInit {
     return audioDuration == 0 && this.isAudioListened(memberId, listenedBy)
   }
 
-  markOnlyTextAsSeen(audioId, audioDuration, memberId, listenedBy) {
+  markOnlyTextAsSeen(audioId, audioDuration, memberId, listenedBy): void {
     if (audioDuration == 0 && !this.isTextSeen(audioDuration, memberId, listenedBy)) {
       this.updateAudioListenedOrTextSeen(audioId)
+    }
+  }
 
+  // grava o id do usuário que reproduziu o áudio até o fim
+  markAsListened(audioId, audioDuration, memberId, listenedBy) {
+
+    // TODO: atualizar somente o audio player alvo e manter posição na tela
+
+    // envia informação de áudio reproduzido somente se usuário ainda não escutou
+    // E somente envia informação se duration não é Infinity
+    if (audioDuration && !this.isAudioListened(memberId, listenedBy)) {
+      this.updateAudioListenedOrTextSeen(audioId)
     }
   }
 
@@ -269,7 +251,7 @@ export class AudioMeetingComponent implements OnInit {
       .subscribe({
         next: () => {
           // console.log(this.msgInputAudioListened);
-          this.websocketService.sendMessage(this.msgInputAudioListened)
+          this.websocketService.sendMessageMarkedAsListenedOrSeen(this.msgInputAudioListened);
         },
         error: () => alert('Erro ao enviar status de áudio reproduzido/mensagem lida.')
       });
@@ -319,8 +301,6 @@ export class AudioMeetingComponent implements OnInit {
     // audio/text
     this.uploadButton.setAttribute('disabled', 'true');
     this.discardButton.setAttribute('disabled', 'true');
-    // marcar como mensagem lido (audio reproduzido) quando não exite áudio, somente mensagem
-    console.log()
   }
 
   initAudioAndTextControls() {
@@ -439,7 +419,8 @@ export class AudioMeetingComponent implements OnInit {
     this.websocketService.onNewMessage().subscribe(msg => {
       console.log('Recebido do servidor: ', msg);
       // servidor envia mensagem para atualizar lista de audios no cliente
-      if (msg.type == "enter-teamId-room" || msg.type == "new-audio-teamId-room") {
+      // conforme o type
+      if (msg.type == "enter-teamId-room" || msg.type == "new-audio-teamId-room" || msg.type == "mark-as-listened-or-seen") {
         // console.log('get audios: ', msg.type)
         this.getAudios();
       }

@@ -77,7 +77,8 @@
                 controlsList="nodownload" type="audio/webm" preload="none"
                 src="http://localhost:3000/audio-in-db/{{ audio.fileId }}"
                 (play)=" getMemberTranscription(audio.member._id, audio.member.name, audio.transcription,
-                audio.created_at); activeMemberPlayer(i); markOnlyTextAsSeen(audio._id, audio.duration, audio.member._id, audio.listened_by);"></audio>
+                audio.created_at); activeMemberPlayer(i); markOnlyTextAsSeen(audio._id, audio.duration, audio.member._id, audio.listened_by);"
+                (ended)="markAsListened(audio._id, audio.duration, audio.member._id, audio.listened_by)"></audio>
               <!-- //TODO: retornar onend e src -->
             </div>
           </div>

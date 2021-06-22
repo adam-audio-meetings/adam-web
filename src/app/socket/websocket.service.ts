@@ -30,6 +30,12 @@ export class WebsocketService {
     this.socket.emit('clientMessageNewAudio', { message: teamId });
   }
 
+  // EMMITER: Send new audio or message
+  sendMessageMarkedAsListenedOrSeen(teamId: string) {
+    //console.log('sendMessage emmiter team room: ', teamId);
+    this.socket.emit('clientMessageMarkedAsListenedOrSeen', { message: 'client marked' });
+  }
+
   // HANDLER
   onNewMessage() {
     return new Observable<any>(observer => {
