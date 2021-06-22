@@ -16,6 +16,7 @@ import { httpInterceptorProviders } from './http-interceptors';
 // import { SessionCounterPipe } from './session-counter.pipe';
 import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
 import { WebsocketService } from './socket/websocket.service';
+
 // import { GoogleChartsModule } from 'angular-google-charts';
 // import { DataService } from './socket/data.service';
 
@@ -42,11 +43,7 @@ import { WebsocketService } from './socket/websocket.service';
     TeamsModule,
     AuthModule,
     NgbModule,
-    // GoogleChartsModule,
-    // AngularFireModule.initializeApp(environment.firebase),
-    // AngularFireAnalyticsModule,
-    // AngularFirestoreModule,
-    // AngularFireStorageModule,
+
     AppRoutingModule,
   ],
   providers: [

@@ -18,6 +18,7 @@ import { UtilsService } from 'src/app/utils/utils.service';
 import * as _ from 'lodash';
 import { finalize, map, take, takeWhile, tap } from 'rxjs/operators';
 import { resolve } from '@angular/compiler-cli/src/ngtsc/file_system';
+import { NotifierService } from 'angular-notifier';
 
 @Component({
   selector: 'app-audio-meeting',
@@ -25,7 +26,7 @@ import { resolve } from '@angular/compiler-cli/src/ngtsc/file_system';
   styleUrls: ['./audio-meeting.component.css', './audio-meeting.component.scss']
 })
 export class AudioMeetingComponent implements OnInit {
-
+  private notifier: NotifierService;
   ownTeams$: Observable<Team[]>;
   // audios$: Observable<Audio[]>;
   audios$: Audio[];
@@ -89,7 +90,9 @@ export class AudioMeetingComponent implements OnInit {
     private dateAdapter: NgbDateAdapter<Date>,
     private ngZone: NgZone,
     private utils: UtilsService,
+    notifier: NotifierService
   ) {
+    this.notifier = notifier;
   }
 
   activeMemberPlayer(elementId) {
@@ -424,12 +427,12 @@ export class AudioMeetingComponent implements OnInit {
     this.getOwnTeams();
     this.selectToday();
 
-    // testes socket.io-client
+    // socket.io-client
     this.websocketService.onNewMessage().subscribe(msg => {
       console.log('Recebido do servidor: ', msg);
       // servidor envia mensagem para atualizar lista de audios no cliente
-      // this.getUsers();
-      this.getAudios();
+      // this.getAudios();
+      // this.notifier.notify('info', 'Novo áudio recebido');
     });
 
     // variáveis RECORD/PLAY

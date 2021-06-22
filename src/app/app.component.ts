@@ -9,6 +9,7 @@ import { User } from './users/interfaces/user';
 import { take } from 'rxjs/operators';
 // import { User } from './users/interfaces/user';
 
+
 @Component({
   selector: 'app-root',
   templateUrl: './app.component.html',
@@ -23,6 +24,8 @@ export class AppComponent implements OnInit {
   // user: User;
 
   imageUrl: Observable<string | null>;
+
+
 
   constructor(
     // firestore: AngularFirestore,
@@ -40,10 +43,10 @@ export class AppComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    console.log('teste oninit app')
+    // console.log('teste oninit app')
     if (this.authService.userId) {
       this.getUser();
-      console.log('get user logged in')
+      // console.log('get user logged in')
     }
   }
 
