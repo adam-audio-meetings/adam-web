@@ -21,15 +21,23 @@ export class WebsocketService {
   // EMMITER: Connected to Team Room
   sendMessageEnterTeamId(teamId: string) {
     //console.log('sendMessage emmiter team room: ', teamId);
-    this.socket.emit('clienteMessageEnterTeamId', { message: teamId });
+    this.socket.emit('clientMessageEnterTeamId', { message: teamId });
+  }
+
+  // EMMITER: Send new audio or message
+  sendMessageNewAudio(teamId: string) {
+    //console.log('sendMessage emmiter team room: ', teamId);
+    this.socket.emit('clientMessageNewAudio', { message: teamId });
   }
 
   // HANDLER
   onNewMessage() {
-    return new Observable(observer => {
-      this.socket.on('serverMessage', msg => {
+    return new Observable<any>(observer => {
+      let srvMsg: { type: string, text: string }
+      this.socket.on('serverMessage', srvMsg => {
         console.log('onNewMessage handler');
-        observer.next(msg);
+        // let srvMsg = { type: msg.type, text: msg.text }
+        observer.next(srvMsg);
       });
     });
   }

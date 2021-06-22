@@ -41,7 +41,7 @@ export class AudioMeetingComponent implements OnInit {
   mainAudioDuration: number;
 
   // socket.io-client
-  msgInput: string = 'upload de audio no servidor';
+  msgInputNewAudio: string = 'upload de audio no servidor';
   msgInputAudioListened: string = 'Áudio reproduzido pelo usuário.';
 
   // datePicker
@@ -197,7 +197,7 @@ export class AudioMeetingComponent implements OnInit {
 
   sendButtonClick() {
     // console.log('Usuário enviou áudio');
-    this.websocketService.sendMessage(this.msgInput)
+    this.websocketService.sendMessageNewAudio(this.msgInputNewAudio)
   }
 
   getAllAudioMemberPlayersDuration() {
@@ -439,7 +439,11 @@ export class AudioMeetingComponent implements OnInit {
     this.websocketService.onNewMessage().subscribe(msg => {
       console.log('Recebido do servidor: ', msg);
       // servidor envia mensagem para atualizar lista de audios no cliente
-      // this.getAudios();
+      if (msg.type == "enter-teamId-room" || msg.type == "new-audio-teamId-room") {
+        // console.log('get audios: ', msg.type)
+        this.getAudios();
+      }
+
       // this.notifier.notify('info', 'Novo áudio recebido');
     });
 
@@ -679,12 +683,14 @@ export class AudioMeetingComponent implements OnInit {
 
           // se necessário saber a duração do aúdio (bug Chrome) 
 
-          getBlobDuration(blob).then(function (duration) {
-            console.log('duration: ', duration + ' seconds');
-          });
+          // getBlobDuration(blob).then(function (duration) {
+          //   console.log('duration: ', duration + ' seconds');
+          //   this.mainAudioDuration = duration
+          // });
+          getBlobDuration(blob).then(duration => this.mainAudioDuration = duration);
 
 
-          // this.mainAudioDuration = getDuration(blob);
+          // this.mainAudioDuration = getBlobDuration(blob);
           console.log('THIS mainAudiDuration AFTER STOP: ', this.mainAudioDuration)
 
           console.log('Áudio gravado com sucesso.');
@@ -754,18 +760,19 @@ export class AudioMeetingComponent implements OnInit {
 
           // se foi coletado áudio
           if (data) {
-            audioDuration = audio.duration
-            console.log('THIS mainAudiDuration AFTER UPLOAD: ', this.mainAudioDuration)
-            console.log('data AFTER UPLOAD (DEV SER > 0): ', data)
-            console.log('data.lenght AFTER UPLOAD (DEV SER > 0): ', data.length)
+            // audioDuration = audio.duration : sem usar onloadedmetadata, fica infinity. Se usa onloadedmetadata, causa erro de player ficar esperando o fim do áudio ou de ficar somente no fim
+            audioDuration = this.mainAudioDuration
+            // console.log('THIS mainAudiDuration AFTER UPLOAD: ', this.mainAudioDuration)
+            // console.log('data AFTER UPLOAD (DEV SER > 0): ', data)
+            // console.log('data.lenght AFTER UPLOAD (DEV SER > 0): ', data.length)
           } else {
             audioDuration = 0
-            console.log('THIS mainAudiDuration AFTER UPLOAD: ', this.mainAudioDuration)
-            console.log('data AFTER UPLOAD (DEV SER 0): ', data)
-            console.log('data.lenght AFTER UPLOAD (DEV SER 0): ', data.length)
+            // console.log('THIS mainAudiDuration AFTER UPLOAD: ', this.mainAudioDuration)
+            // console.log('data AFTER UPLOAD (DEV SER 0): ', data)
+            // console.log('data.lenght AFTER UPLOAD (DEV SER 0): ', data.length)
           }
 
-
+          // upload para servidor
           this.audioService.uploadAudio(
             file,
             this.loggedUserId,

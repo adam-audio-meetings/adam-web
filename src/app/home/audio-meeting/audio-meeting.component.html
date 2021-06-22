@@ -72,8 +72,7 @@
             <!-- <button class="btn btn-danger btn-sm mr-1 mb-1" (click)="deleteUser(user._id)">Excluir</button> -->
             <!-- TODO: buscar link api por environment -->
             <!-- TODO: type dinâmico -->
-
-            <div *ngIf="audio.duration" class="audio-member-player">
+            <div *ngIf="audio.duration!=0" class="audio-member-player">
               <audio id="audio-member-player{{ audio._id }}" controls class="audio-member-controls"
                 controlsList="nodownload" type="audio/webm" preload="none"
                 src="http://localhost:3000/audio-in-db/{{ audio.fileId }}"
