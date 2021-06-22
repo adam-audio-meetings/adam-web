@@ -35,6 +35,7 @@ export class AudioMeetingComponent implements OnInit {
   roleFilter = "";
   loggedUserId = "";
   // currentRoute: string;
+  lastTeamId: string;
   selectedTeamId: string;
   selectedTeamName: string;
   mainAudioDuration: number;
@@ -106,8 +107,10 @@ export class AudioMeetingComponent implements OnInit {
     this.ownTeams$ = this.teamService.getOwnTeams();
     this.ownTeams$.subscribe(
       (team) => {
+        // atribui equipe inicial
         this.selectedTeamName = team[0].name;
         this.selectedTeamId = team[0]._id;
+        this.lastTeamId = team[0]._id;
         this.enterTeamRoom();
         this.getAudios();
       }
@@ -123,9 +126,14 @@ export class AudioMeetingComponent implements OnInit {
   }
 
   changeTeam(): void {
-    console.log('Team changed: ', this.selectedTeamId, this.selectedTeamName);
-    this.enterTeamRoom();
-    this.getAudios();
+    // console.log('old Team id changed: ', this.lastTeamId);
+    // console.log('new Team id changed: ', this.selectedTeamId);
+    if (this.lastTeamId != this.selectedTeamId) {
+      // console.log('Team changed: ', this.selectedTeamId, this.selectedTeamName);
+      this.lastTeamId = this.selectedTeamId
+      this.enterTeamRoom();
+      this.getAudios();
+    }
   }
 
   getAudios($event?): void {
