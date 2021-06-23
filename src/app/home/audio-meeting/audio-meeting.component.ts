@@ -265,7 +265,7 @@ export class AudioMeetingComponent implements OnInit {
 
   sendButtonClick() {
     // console.log('Usuário enviou áudio');
-    this.websocketService.sendMessageNewAudio(this.msgInputNewAudio)
+    this.websocketService.sendMessageNewAudio(this.msgInputNewAudio, this.loggedUserId)
   }
 
   getAllAudioMemberPlayersDuration() {
@@ -510,8 +510,12 @@ export class AudioMeetingComponent implements OnInit {
         this.getAudios();
 
       }
-      if (msg.type == "new-audio-teamId-room") {
-        this.notifier.notify('info', 'Novo áudio recebido');
+      if (msg.type == "new-audio-teamId-room" && msg.userId != this.loggedUserId) {
+        // console.log('msg.userId: ', msg.userId)
+        // console.log('this.loggedUserId: ', this.loggedUserId)
+        this.notifier.notify('info', 'Áudio/Mensagem entregue pela equipe');
+      } else if (msg.type == "new-audio-teamId-room" && msg.userId == this.loggedUserId) {
+        this.notifier.notify('success', 'Entregue com sucesso: Áudio/Mensagem');
       }
     });
 

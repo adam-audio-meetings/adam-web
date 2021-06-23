@@ -5,6 +5,7 @@ import { interval, Observable, of } from 'rxjs';
 import { catchError, finalize, take, takeWhile, tap } from 'rxjs/operators';
 import { environment } from 'src/environments/environment';
 import { MessageService } from '../message.service';
+import { WebsocketService } from '../socket/websocket.service';
 
 @Injectable({
   providedIn: 'root'
@@ -40,6 +41,7 @@ export class AuthService {
     private http: HttpClient,
     private router: Router,
     // private userService: UserService
+    private websocketService: WebsocketService,
   ) { }
 
   private setSession(authResult: any) {
@@ -130,6 +132,8 @@ export class AuthService {
 
   logout(): void {
     this.log('logged out')
+    // this.websocketService.sendMessageLogout();
+    this.websocketService.sendMessageLeaveTeamId(this.currentTeamId);
     this.isLoggedIn = false;
     // this.sessionTimeDurationSeconds = 0;
     // this.secondsCounter$.pipe(finalize(()=> console.log('finalize'))).subscribe();
