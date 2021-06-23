@@ -35,6 +35,8 @@ export class AudioMeetingComponent implements OnInit {
   roles = ROLES;
   roleFilter = "";
   loggedUserId = "";
+  loggedUserRole = "";
+  isLoggedUserMember = false;
   // currentRoute: string;
   lastTeamId: string;
   selectedTeamId: string;
@@ -163,6 +165,10 @@ export class AudioMeetingComponent implements OnInit {
 
   getLoggedUser(): void {
     this.loggedUserId = this.authService.userId;
+    this.loggedUserRole = this.authService.userRole;
+    // desabilita escolha de para para membros, exceto coordenador e admin
+    this.loggedUserRole == 'member' ? this.isLoggedUserMember = true : this.isLoggedUserMember = false
+    this.datePickerDisabled = this.isLoggedUserMember
   }
 
   changeTeam(): void {
@@ -449,7 +455,7 @@ export class AudioMeetingComponent implements OnInit {
       this.initAudioAndTextControls();
     }
     this.recordTimer = 0
-    this.datePickerDisabled = false
+    this.datePickerDisabled = this.isLoggedUserMember // reabilita datepicker se coordinator ou admin
     this.dropdownTeamsDisabled = false
   }
 
