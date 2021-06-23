@@ -19,9 +19,14 @@ export class WebsocketService {
   }
 
   // EMMITER: Connected to Team Room
-  sendMessageEnterTeamId(teamId: string) {
+  sendMessageJoinTeamId(teamId: string) {
     //console.log('sendMessage emmiter team room: ', teamId);
-    this.socket.emit('clientMessageEnterTeamId', { message: teamId });
+    this.socket.emit('clientMessageJoinTeamId', { message: teamId });
+  }
+  // EMMITER: Connected to Team Room
+  sendMessageLeaveTeamId(teamId: string) {
+    //console.log('sendMessage emmiter team room: ', teamId);
+    this.socket.emit('clientMessageLeaveTeamId', { message: teamId });
   }
 
   // EMMITER: Send new audio or message

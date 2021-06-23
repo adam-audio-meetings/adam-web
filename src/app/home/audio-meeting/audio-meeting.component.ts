@@ -156,7 +156,9 @@ export class AudioMeetingComponent implements OnInit {
   }
 
   enterTeamRoom() {
-    this.websocketService.sendMessageEnterTeamId(this.selectedTeamId);
+    this.websocketService.sendMessageLeaveTeamId(this.lastTeamId);
+    this.lastTeamId = this.selectedTeamId
+    this.websocketService.sendMessageJoinTeamId(this.selectedTeamId);
   }
 
   getLoggedUser(): void {
@@ -175,8 +177,6 @@ export class AudioMeetingComponent implements OnInit {
       } else {
         this.initAudioAndTextControls()
       }
-
-      this.lastTeamId = this.selectedTeamId
       this.enterTeamRoom()
       this.getAudios()
     }
@@ -504,8 +504,9 @@ export class AudioMeetingComponent implements OnInit {
         this.getAudios();
 
       }
-
-      // this.notifier.notify('info', 'Novo áudio recebido');
+      if (msg.type == "new-audio-teamId-room") {
+        this.notifier.notify('info', 'Novo áudio recebido');
+      }
     });
 
     // variáveis RECORD/PLAY
