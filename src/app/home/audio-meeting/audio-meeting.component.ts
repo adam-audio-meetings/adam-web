@@ -68,6 +68,7 @@ export class AudioMeetingComponent implements OnInit {
 
   // audio controls
   record: HTMLElement;
+  spanRecordTimer: HTMLElement;
   iconRecord: HTMLElement;
   stop: HTMLElement;
   audio: HTMLAudioElement;
@@ -82,6 +83,13 @@ export class AudioMeetingComponent implements OnInit {
   secondsCounter = interval(1000);
   result$: Observable<number>;
   stopTimerFlag = false;
+
+  // selectors
+  // "dropdownTeams"
+  // "inputDatepickerMeeting"
+  // "buttonDatepickerMeeting"
+  datePickerDisabled = false;
+  dropdownTeamsDisabled = false;
 
   constructor(
     private teamService: TeamService,
@@ -130,7 +138,6 @@ export class AudioMeetingComponent implements OnInit {
     }
     this.selectedMemberPlayerId = '_'
   }
-
 
   getOwnTeams(): void {
     this.ownTeams$ = this.teamService.getOwnTeams();
@@ -368,6 +375,7 @@ export class AudioMeetingComponent implements OnInit {
     this.record.removeAttribute('disabled');
     this.record.focus();
     this.stop.setAttribute('disabled', 'true');
+    this.spanRecordTimer.style.display = 'block'
     // audio/text
     this.uploadButton.setAttribute('disabled', 'true');
     this.discardButton.setAttribute('disabled', 'true');
@@ -387,6 +395,7 @@ export class AudioMeetingComponent implements OnInit {
     // audio
     this.record.setAttribute('disabled', 'true');
     this.mainAudioDuration = 0;
+    this.spanRecordTimer.style.display = 'none'
     // audio/text
     this.uploadButton.removeAttribute('disabled');
     this.discardButton.removeAttribute('disabled');
@@ -406,14 +415,18 @@ export class AudioMeetingComponent implements OnInit {
     this.stop.removeAttribute('disabled');
     this.stop.focus();
     this.record.setAttribute('disabled', 'true');
+    this.spanRecordTimer.style.display = 'block'
     // audio/text
     this.uploadButton.setAttribute('disabled', 'true');
     this.discardButton.setAttribute('disabled', 'true');
     // transcript
     this.transcriptTextarea.setAttribute('readonly', 'true');
     this.editTranscriptButton.setAttribute('disabled', 'true');
-    // mode
+    // mode - change team - member players - datepicker
     this.modeSelectionInput.forEach((element) => element.setAttribute('disabled', 'true'));
+    this.datePickerDisabled = true
+    this.dropdownTeamsDisabled = true
+
   }
 
   initStopControls() {
@@ -436,6 +449,8 @@ export class AudioMeetingComponent implements OnInit {
       this.initAudioAndTextControls();
     }
     this.recordTimer = 0
+    this.datePickerDisabled = false
+    this.dropdownTeamsDisabled = false
   }
 
   initUploadControls() {
@@ -496,6 +511,7 @@ export class AudioMeetingComponent implements OnInit {
     // variáveis RECORD/PLAY
     let record: HTMLElement = document.querySelector('#record');
     let iconRecord: HTMLElement = document.querySelector('#iconRecord');
+    let spanRecordTimer: HTMLElement = document.querySelector('#recordTimer');
     let stop: HTMLElement = document.querySelector('#stop');
     let audio: HTMLAudioElement = document.querySelector('#main-audio-player');
     let discardButton: HTMLElement = document.querySelector('#discardButton');
@@ -504,6 +520,7 @@ export class AudioMeetingComponent implements OnInit {
     // TODO: confirmar atribuições iniciais e vínculo com variáveis de componente.
     this.record = record;
     this.iconRecord = iconRecord;
+    this.spanRecordTimer = spanRecordTimer;
     this.stop = stop;
     this.audio = audio;
     this.discardButton = discardButton;

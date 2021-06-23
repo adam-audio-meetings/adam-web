@@ -10,10 +10,12 @@
         <form class="form-inline">
           <div class="form-group">
             <div class="input-group">
-              <input class="form-control" placeholder="yyyy-mm-dd" [(ngModel)]="selectedDateModel" name="dp"
-                (dateSelect)="getAudios($event)" ngbDatepicker #d="ngbDatepicker">
+              <input id="inputDatepickerMeeting" class="form-control" placeholder="yyyy-mm-dd"
+                [(ngModel)]="selectedDateModel" name="dp" (dateSelect)="getAudios($event)" ngbDatepicker
+                #d="ngbDatepicker" [disabled]="datePickerDisabled">
               <div class="input-group-append">
-                <button class="btn btn-secondary calendar" (click)="d.toggle()" type="button">
+                <button id="buttonDatepickerMeeting" class="btn btn-secondary calendar" (click)="d.toggle()"
+                  [disabled]="datePickerDisabled" type="button">
                   <i class="bi bi-calendar-event"></i>
                 </button>
               </div>
@@ -27,7 +29,9 @@
 
         <!-- <span id="teamName">Equipe</span> -->
         <div ngbDropdown placement="bottom-right" class="d-inline-block">
-          <button class="btn btn-secondary" id="dropdownTeams" ngbDropdownToggle>{{ selectedTeamName }}</button>
+          <button class="btn btn-secondary" id="dropdownTeams" ngbDropdownToggle [disabled]="dropdownTeamsDisabled">{{
+            selectedTeamName
+            }}</button>
           <div ngbDropdownMenu aria-labelledby="dropdownTeams">
             <button ngbDropdownItem *ngFor="let team of ownTeams$ | async" (click)="selectedTeamName = team.name;
                       selectedTeamId = team._id;
