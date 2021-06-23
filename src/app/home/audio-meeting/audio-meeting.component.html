@@ -42,7 +42,8 @@
     <hr class="team-name-division">
     <div>
       <ul id="member-player-list" class="list-group">
-        <li id="member-player-{{ i }}" class="list-group-item" *ngFor="let audio of audios$; let i = index" (click)="getMemberTranscription(audio.member._id, audio.member.name, audio.transcription, audio.created_at);
+        <li id="member-player-{{ i }}" class="list-group-item {{ selectedMemberPlayerId == this.id ? 'active' : '' }}"
+          *ngFor="let audio of audios$ | async; let i = index" (click)="getMemberTranscription(audio.member._id, audio.member.name, audio.transcription, audio.created_at);
           activeMemberPlayer(i); markOnlyTextAsSeen(audio._id, audio.duration, audio.member._id, audio.listened_by);">
           <!-- <div class="audio-member-container" -->
           <!-- (click)="getMemberTranscription(audio.member._id, audio.member.name, audio.transcription, audio.created_at)"> -->
@@ -93,9 +94,8 @@
 
     <div class="modeSelection">
       <div class="btn-group btn-group-sm btn-group-toggle" ngbRadioGroup name="radioBasic" [(ngModel)]="textOnly">
-        <label ngbButtonLabel class="btn-outline-secondary"
-          ngbTooltip="Selecione para escrever e enviar somente mensagem" placement="left" container="body"
-          [openDelay]="800">
+        <label ngbButtonLabel class="btn-outline-secondary" ngbTooltip="Selecione para escrever e enviar uma mensagem"
+          placement="left" container="body" [openDelay]="800">
           <input class="modeSelectionInput" ngbButton type="radio" [value]="1" (click)="initTextOnlyControls()">Mensagem
         </label>
         <label ngbButtonLabel class="btn-outline-secondary"
@@ -120,8 +120,7 @@
             <!-- {{ recordTimer }} -->
           </span>
         </div>
-        <button id="record" class="btn btn-danger record main-controls-button m-1" ngbTooltip="Gravar áudio"
-          placement="bottom" [openDelay]="800" [closeDelay]="100"><i id="iconRecord"
+        <button id="record" class="btn btn-danger record main-controls-button m-1"><i id="iconRecord"
             class="bi bi-mic-fill"></i></button>
         <button id="stop" class="btn btn-secondary stop main-controls-button m-1" ngbTooltip="Parar gravação"
           placement="bottom" [openDelay]="800"><i class="bi bi-stop-fill"></i></button>

@@ -1,4 +1,4 @@
-import { Component, OnInit, NgZone, Self } from '@angular/core';
+import { Component, OnInit, NgZone } from '@angular/core';
 import getBlobDuration from 'get-blob-duration';
 import { fileURLToPath } from 'url';
 import { AudioService } from '../audio.service';
@@ -26,11 +26,12 @@ import { NotifierService } from 'angular-notifier';
   styleUrls: ['./audio-meeting.component.css', './audio-meeting.component.scss']
 })
 export class AudioMeetingComponent implements OnInit {
+
   private notifier: NotifierService;
   ownTeams$: Observable<Team[]>;
-  // audios$: Observable<Audio[]>;
-  audios$: Audio[];
-  selectedId: string;
+  audios$: Observable<Audio[]>;
+  // audios$: Audio[];
+  // selectedId: string;
   roles = ROLES;
   roleFilter = "";
   loggedUserId = "";
@@ -39,6 +40,9 @@ export class AudioMeetingComponent implements OnInit {
   selectedTeamId: string;
   selectedTeamName: string;
   mainAudioDuration: number;
+
+  // member-player selection
+  selectedMemberPlayerId: string = '_';
 
   // socket.io-client
   msgInputNewAudio: string = 'upload de audio no servidor';
@@ -95,18 +99,45 @@ export class AudioMeetingComponent implements OnInit {
   ) {
     this.notifier = notifier;
   }
+  // ngAfterContentChecked(): void {
+  //   // console.log('ngAfterContentChecked')
+  //   this.reactiveMemberPlayer()
+  // }
+  // ngAfterContentInit(): void {
+  //   console.log('ngAfterContentInit')
+  //   // this.reactiveMemberPlayer()
+  // }
 
   activeMemberPlayer(elementId) {
     document.querySelector('#member-player-list').querySelectorAll('li').forEach(
       item => item.classList.remove('active')
     )
     document.querySelector(`#member-player-${elementId}`).classList.add('active')
+    this.selectedMemberPlayerId = `member-player-${elementId}`
   }
+
+  reactiveMemberPlayer() {
+    if (this.selectedMemberPlayerId != '_') {
+      console.log('reactiveMemberPlayer: ', this.selectedMemberPlayerId)
+      document.querySelector(`#${this.selectedMemberPlayerId}`).classList.add('active')
+    }
+  }
+
+  unselectedMemberPlayer() {
+    if (this.selectedMemberPlayerId != '_') {
+      console.log('Limpa Player selecionado: ', this.selectedMemberPlayerId)
+      document.querySelector(`#${this.selectedMemberPlayerId}`).classList.remove('active')
+    }
+    this.selectedMemberPlayerId = '_'
+  }
+
 
   getOwnTeams(): void {
     this.ownTeams$ = this.teamService.getOwnTeams();
     this.ownTeams$.subscribe(
       (team) => {
+
+
         // atribui equipe inicial
         this.selectedTeamName = team[0].name;
         this.selectedTeamId = team[0]._id;
@@ -130,69 +161,93 @@ export class AudioMeetingComponent implements OnInit {
     // console.log('new Team id changed: ', this.selectedTeamId);
     if (this.lastTeamId != this.selectedTeamId) {
       // console.log('Team changed: ', this.selectedTeamId, this.selectedTeamName);
+
+      // reinicia controles
+      if (this.textOnly) {
+        this.initTextOnlyControls()
+      } else {
+        this.initAudioAndTextControls()
+      }
+
       this.lastTeamId = this.selectedTeamId
-      this.enterTeamRoom();
-      this.getAudios();
+      this.enterTeamRoom()
+      this.getAudios()
     }
   }
 
   getAudios($event?): void {
     let jsDateStringStart = this.utils.dateModelToString(this.selectedDateModel)
     let jsDateStringEnd = this.utils.nextDayModelToString(this.selectedDateModel)
-    this.audioService.searchAudios(this.selectedTeamId, jsDateStringStart, jsDateStringEnd)
-      .pipe(take(1))
-      .subscribe(
-        (audios) => {
-          this.audios$ = audios;
-          // this.getAllAudioMemberPlayersDuration()
-        },
-        error => { },
-        () => {
-          // <div class="audio-member-player">
-          //     <audio id="audio-member-player{{ audio._id }}" controls="true" class="audio-member-controls"
-          //       type="audio/webm" preload="metadata"
-          //       (play)="getMemberTranscription(audio.member._id, audio.member.name, audio.transcription, audio.created_at); activeMemberPlayer(i)"></audio>
-          //TODO: retornar onend e src -->
-          // </div>
-          this.audios$.forEach(audio => {
-            // let audioPlayer: HTMLAudioElement = document.getElementById(`${audio._id}`)
-            let id = '#audio-member-player' + audio._id
-            let audioPlayer: HTMLAudioElement = document.querySelector(id)
-            console.log('audioPlayer existente: ', audioPlayer != undefined)
+    this.audios$ = this.audioService.searchAudios(this.selectedTeamId, jsDateStringStart, jsDateStringEnd)
+    // TODO: não funcional
+    this.reactiveMemberPlayer()
 
-            if (audioPlayer != undefined) {
-              audioPlayer.classList.add('flagDurationOk')
-              console.log('audio player classList', audioPlayer.classList)
-              // console.log('ANTES setAttribute src', audioPlayer.src)
-              // console.log('ANTES setAttributes preload', audioPlayer.preload)
-              // audioPlayer.src="http://localhost:3000/audio-in-db/{{ audio.fileId }}"
-              // audioPlayer.setAttribute('src', `http://localhost:3000/audio-in-db/${audio.fileId}`)
-              // audioPlayer.setAttribute('preload', 'auto')
-              audioPlayer.preload = 'none'
-              // audioPlayer.src = `http://localhost:3000/audio-in-db/${audio.fileId}`
-              // console.log('DEPOIS setAttribute src', audioPlayer.src)
-              // console.log('DEPOIS setAttributes preload', audioPlayer.preload)
+  }
 
-              if (audioPlayer.duration == Infinity || isNaN(audioPlayer.duration)) {
+  getAudiosOLD($event?): void {
+    // let jsDateStringStart = this.utils.dateModelToString(this.selectedDateModel)
+    // let jsDateStringEnd = this.utils.nextDayModelToString(this.selectedDateModel)
+    // this.audioService.searchAudios(this.selectedTeamId, jsDateStringStart, jsDateStringEnd)
+    //   .pipe(take(1))
+    //   .subscribe(
+    //     (audios) => {
+    //       this.audios$ = audios;
+    //       // this.getAllAudioMemberPlayersDuration()
+    //     },
+    //     error => { },
+    //     () => {
 
-                console.log('entrou em IF audioPlayer.duration: ' + audioPlayer.duration);
-                // audioPlayer.load()
-                audioPlayer.currentTime = 1e101;
+    //       // if (this.selectedMemberPlayerId) {
+    //       //   console.log('carregou audios; Player selecionado antes: ', this.selectedMemberPlayerId)
+    //       //   document.querySelector(`#${this.selectedMemberPlayerId}`).classList.add('active')
+    //       // }
 
-                audioPlayer.ontimeupdate = function () {
-                  this.ontimeupdate = () => {
-                    return;
-                  }
-                  console.log('after workaround: ' + audioPlayer.duration);
-                  audioPlayer.currentTime = 0;
-                }
-                console.log('if Infinity or NaN', audioPlayer.duration);
-              }
-            }
-          }
-          )
-        }
-      )
+    //       // TODO: documentar e remover
+    //       // testes abaixo para duration, mas foi resolvido com persistencia do tempo no upload
+    //       // <div class="audio-member-player">
+    //       //     <audio id="audio-member-player{{ audio._id }}" controls="true" class="audio-member-controls"
+    //       //       type="audio/webm" preload="metadata"
+    //       //       (play)="getMemberTranscription(audio.member._id, audio.member.name, audio.transcription, audio.created_at); activeMemberPlayer(i)"></audio>
+    //       // </div>
+    //       // this.audios$.forEach(audio => {
+    //       //   // let audioPlayer: HTMLAudioElement = document.getElementById(`${audio._id}`)
+    //       //   let id = '#audio-member-player' + audio._id
+    //       //   let audioPlayer: HTMLAudioElement = document.querySelector(id)
+    //       //   console.log('audioPlayer existente: ', audioPlayer != undefined)
+
+    //       //   if (audioPlayer != undefined) {
+    //       //     audioPlayer.classList.add('flagDurationOk')
+    //       //     console.log('audio player classList', audioPlayer.classList)
+    //       //     // console.log('ANTES setAttribute src', audioPlayer.src)
+    //       //     // console.log('ANTES setAttributes preload', audioPlayer.preload)
+    //       //     // audioPlayer.src="http://localhost:3000/audio-in-db/{{ audio.fileId }}"
+    //       //     // audioPlayer.setAttribute('src', `http://localhost:3000/audio-in-db/${audio.fileId}`)
+    //       //     // audioPlayer.setAttribute('preload', 'auto')
+    //       //     audioPlayer.preload = 'none'
+    //       //     // audioPlayer.src = `http://localhost:3000/audio-in-db/${audio.fileId}`
+    //       //     // console.log('DEPOIS setAttribute src', audioPlayer.src)
+    //       //     // console.log('DEPOIS setAttributes preload', audioPlayer.preload)
+
+    //       //     if (audioPlayer.duration == Infinity || isNaN(audioPlayer.duration)) {
+
+    //       //       console.log('entrou em IF audioPlayer.duration: ' + audioPlayer.duration);
+    //       //       // audioPlayer.load()
+    //       //       audioPlayer.currentTime = 1e101;
+
+    //       //       audioPlayer.ontimeupdate = function () {
+    //       //         this.ontimeupdate = () => {
+    //       //           return;
+    //       //         }
+    //       //         console.log('after workaround: ' + audioPlayer.duration);
+    //       //         audioPlayer.currentTime = 0;
+    //       //       }
+    //       //       console.log('if Infinity or NaN', audioPlayer.duration);
+    //       //     }
+    //       //   }
+    //       // }
+    //       // )
+    //     }
+    //   )
   }
 
   sendButtonClick() {
@@ -304,6 +359,8 @@ export class AudioMeetingComponent implements OnInit {
   }
 
   initAudioAndTextControls() {
+    this.unselectedMemberPlayer()
+
     this.transcriptionTitle = this.transcriptionTitleAudioAndText;
     this.transcriptionDatetime = '';
     // audio
@@ -323,6 +380,8 @@ export class AudioMeetingComponent implements OnInit {
   }
 
   initTextOnlyControls() {
+    this.unselectedMemberPlayer()
+
     this.transcriptionTitle = this.transcriptionTitleTextOnly;
     this.transcriptionDatetime = '';
     // audio
@@ -411,6 +470,11 @@ export class AudioMeetingComponent implements OnInit {
 
   ngOnInit(): void {
 
+    if (this.selectedMemberPlayerId != '_') {
+      console.log('carregou onInit; Player selecionado antes: ', this.selectedMemberPlayerId)
+      document.querySelector(`#${this.selectedMemberPlayerId}`).classList.add('active')
+    }
+
     this.getLoggedUser();
     this.getOwnTeams();
     this.selectToday();
@@ -423,6 +487,7 @@ export class AudioMeetingComponent implements OnInit {
       if (msg.type == "enter-teamId-room" || msg.type == "new-audio-teamId-room" || msg.type == "mark-as-listened-or-seen") {
         // console.log('get audios: ', msg.type)
         this.getAudios();
+
       }
 
       // this.notifier.notify('info', 'Novo áudio recebido');
