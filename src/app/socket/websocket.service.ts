@@ -57,7 +57,7 @@ export class WebsocketService {
   // HANDLER
   onNewMessage() {
     return new Observable<any>(observer => {
-      let srvMsg: { type: string, text: string, userId: string }
+      let srvMsg: { type: string, text: string, userId: string, msgTime: string }
       this.socket.on('serverMessage', srvMsg => {
         console.log('onNewMessage handler');
         // let srvMsg = { type: msg.type, text: msg.text }
