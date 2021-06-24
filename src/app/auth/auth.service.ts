@@ -124,15 +124,16 @@ export class AuthService {
             alert('Erro no servidor.')
           }
         },
-        // complete: () => {
-        //   return { id: this.userId, role: this.userRole }
-        // }
+        complete: () => {
+          //   // return { id: this.userId, role: this.userRole }
+          this.websocketService.sendMessageLogin()
+        }
       })
   }
 
   logout(): void {
     this.log('logged out')
-    // this.websocketService.sendMessageLogout();
+    this.websocketService.sendMessageLogout();
     this.websocketService.sendMessageLeaveTeamId(this.currentTeamId);
     this.isLoggedIn = false;
     // this.sessionTimeDurationSeconds = 0;

@@ -514,6 +514,9 @@ export class AudioMeetingComponent implements OnInit {
         // console.log('msg.userId: ', msg.userId)
         // console.log('this.loggedUserId: ', this.loggedUserId)
         this.notifier.notify('info', 'Áudio/Mensagem entregue pela equipe');
+        // TODO: verificar se foi citado
+
+
       } else if (msg.type == "new-audio-teamId-room" && msg.userId == this.loggedUserId) {
         this.notifier.notify('success', 'Entregue com sucesso: Áudio/Mensagem');
       }

@@ -7,9 +7,10 @@ import { io, Socket } from 'socket.io-client';
 export class WebsocketService {
 
   private socket: Socket;
+  private socketUrl = 'http://localhost:3000/'; //FIXME: pegar por .ENV 
 
   constructor() {
-    this.socket = io('http://localhost:3000/');
+    this.socket = io(this.socketUrl, { autoConnect: false });
   }
 
   // EMITTER
@@ -35,10 +36,17 @@ export class WebsocketService {
     this.socket.emit('clientMessageNewAudio', { message: teamId, userId: userId });
   }
 
+  // EMMITER: Login message
+  sendMessageLogin() {
+    // this.socket.emit('login', { message: 'logged in' });
+    this.socket.open()
+  }
+
   // EMMITER: Logout message
-  // sendMessageLogout() {
-  //   this.socket.emit('logout', { message: 'logged out' });
-  // }
+  sendMessageLogout() {
+    this.socket.emit('logout', { message: 'logged out' });
+    // this.socket.disconnect()
+  }
 
   // EMMITER: Send new audio or message
   sendMessageMarkedAsListenedOrSeen(teamId: string) {
