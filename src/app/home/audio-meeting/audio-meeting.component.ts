@@ -187,111 +187,24 @@ export class AudioMeetingComponent implements OnInit {
 
   }
 
-  getAudiosOLD($event?): void {
-    // let jsDateStringStart = this.utils.dateModelToString(this.selectedDateModel)
-    // let jsDateStringEnd = this.utils.nextDayModelToString(this.selectedDateModel)
-    // this.audioService.searchAudios(this.selectedTeamId, jsDateStringStart, jsDateStringEnd)
-    //   .pipe(take(1))
-    //   .subscribe(
-    //     (audios) => {
-    //       this.audios$ = audios;
-    //       // this.getAllAudioMemberPlayersDuration()
-    //     },
-    //     error => { },
-    //     () => {
-
-    //       // TODO: documentar e remover
-    //       // testes abaixo para duration, mas foi resolvido com persistencia do tempo no upload
-    //       // <div class="audio-member-player">
-    //       //     <audio id="audio-member-player{{ audio._id }}" controls="true" class="audio-member-controls"
-    //       //       type="audio/webm" preload="metadata"
-    //       //       (play)="getMemberTranscription(audio.member._id, audio.member.name, audio.transcription, audio.created_at); activeMemberPlayer(i)"></audio>
-    //       // </div>
-    //       // this.audios$.forEach(audio => {
-    //       //   // let audioPlayer: HTMLAudioElement = document.getElementById(`${audio._id}`)
-    //       //   let id = '#audio-member-player' + audio._id
-    //       //   let audioPlayer: HTMLAudioElement = document.querySelector(id)
-    //       //   console.log('audioPlayer existente: ', audioPlayer != undefined)
-
-    //       //   if (audioPlayer != undefined) {
-    //       //     audioPlayer.classList.add('flagDurationOk')
-    //       //     console.log('audio player classList', audioPlayer.classList)
-    //       //     // console.log('ANTES setAttribute src', audioPlayer.src)
-    //       //     // console.log('ANTES setAttributes preload', audioPlayer.preload)
-    //       //     // audioPlayer.src="http://localhost:3000/audio-in-db/{{ audio.fileId }}"
-    //       //     // audioPlayer.setAttribute('src', `http://localhost:3000/audio-in-db/${audio.fileId}`)
-    //       //     // audioPlayer.setAttribute('preload', 'auto')
-    //       //     audioPlayer.preload = 'none'
-    //       //     // audioPlayer.src = `http://localhost:3000/audio-in-db/${audio.fileId}`
-    //       //     // console.log('DEPOIS setAttribute src', audioPlayer.src)
-    //       //     // console.log('DEPOIS setAttributes preload', audioPlayer.preload)
-
-    //       //     if (audioPlayer.duration == Infinity || isNaN(audioPlayer.duration)) {
-
-    //       //       console.log('entrou em IF audioPlayer.duration: ' + audioPlayer.duration);
-    //       //       // audioPlayer.load()
-    //       //       audioPlayer.currentTime = 1e101;
-
-    //       //       audioPlayer.ontimeupdate = function () {
-    //       //         this.ontimeupdate = () => {
-    //       //           return;
-    //       //         }
-    //       //         console.log('after workaround: ' + audioPlayer.duration);
-    //       //         audioPlayer.currentTime = 0;
-    //       //       }
-    //       //       console.log('if Infinity or NaN', audioPlayer.duration);
-    //       //     }
-    //       //   }
-    //       // }
-    //       // )
-    //     }
-    //   )
-  }
-
   sendButtonClick() {
     // console.log('Usuário enviou áudio');
     this.websocketService.sendMessageNewAudio(this.msgInputNewAudio, this.loggedUserId)
   }
 
-  getAllAudioMemberPlayersDuration() {
-    // atribuir duration se Infinity para audio player de membros 
-    document.querySelector('#member-player-list')
-      .querySelectorAll('audio')
-      .forEach(
-        audio => {
-          if (audio.duration == Infinity) {
-            audio.classList.add('flagDurationOk')
-            audio.currentTime = 1e101;
-          }
-          console.log(audio.duration);
-        })
-  }
-
-  // retorna true para áudio/mensagem do usuário logado ou se o usuário logado reproduziu/leu o áudio/mensagem dos outros membros 
-  isAudioListened(memberId, listenedBy) {
-    //TODO: reduzir carga de aúdios ou - carregar somente os das equipes selecionadas
-    console.log('>>>>> called isAudioListened')
-    return memberId == this.loggedUserId || _.includes(listenedBy, this.loggedUserId)
-  }
-
-  isTextSeen(audioDuration, memberId, listenedBy) {
-    return audioDuration == 0 && this.isAudioListened(memberId, listenedBy)
-  }
-
-  markOnlyTextAsSeen(audioId, audioDuration, memberId, listenedBy): void {
-    if (audioDuration == 0 && !this.isTextSeen(audioDuration, memberId, listenedBy)) {
+  markOnlyTextAsSeen(audioId, audioDuration, loggedUserListened): void {
+    if (audioDuration == 0 && !loggedUserListened) {
       this.updateAudioListenedOrTextSeen(audioId)
     }
   }
-
   // grava o id do usuário que reproduziu o áudio até o fim
-  markAsListened(audioId, audioDuration, memberId, listenedBy) {
+  markAsListened(audioId, audioDuration, loggedUserListened) {
 
     // TODO: atualizar somente o audio player alvo e manter posição na tela
 
     // envia informação de áudio reproduzido somente se usuário ainda não escutou
     // E somente envia informação se duration não é Infinity
-    if (audioDuration && !this.isAudioListened(memberId, listenedBy)) {
+    if (audioDuration && !loggedUserListened) {
       this.updateAudioListenedOrTextSeen(audioId)
     }
   }
@@ -309,33 +222,6 @@ export class AudioMeetingComponent implements OnInit {
         },
         error: () => alert('Erro ao enviar status de áudio reproduzido/mensagem lida.')
       });
-
-  }
-
-  loggedUserQuoted(transcription) {
-    let quoted = false
-    if (transcription.length > 0) {
-      // searchKeywordsOnTranscript(audio.transcription)
-      // TODO: mover para controller ou outro
-      // TODO: usar palavras chave definidas pelos nomes dos membros da equipe do áudio
-      let userFullName = this.authService.userName
-      let firstName = userFullName.split(' ')[0]
-      let keywords = [firstName, userFullName];
-      keywords.forEach(word => {
-        let found = transcription.toLowerCase().search(word.toLowerCase())
-        if (found >= 0) {
-          quoted = true
-        }
-      });
-    }
-    // a estratégia OnPush melhorou aqui, mas não funcional para contagem
-    // if (quoted) {
-
-    //   console.log('verificou QUOTED')
-    //   this.quotedCount += 1
-    // }
-    console.log('>>>>> called loggedUserQuoted')
-    return quoted
   }
 
   selectToday() {

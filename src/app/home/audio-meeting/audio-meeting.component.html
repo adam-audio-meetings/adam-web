@@ -47,9 +47,8 @@
     <div>
       <ul id="member-player-list" class="list-group">
         <li [class.active]="audio._id === selectedAudioId" id="member-player-{{ i }}" class="list-group-item"
-          *ngFor="let audio of audios$ | async; let i=index; trackBy: memberTrackById"
-          (click)="getMemberTranscription(audio.member._id, audio.member.name, audio.transcription, audio.created_at);
-          activeMemberPlayer(audio._id); markOnlyTextAsSeen(audio._id, audio.duration, audio.member._id, audio.listened_by);">
+          *ngFor="let audio of audios$ | async; let i=index; trackBy: memberTrackById" (click)="getMemberTranscription(audio.member._id, audio.member.name, audio.transcription, audio.created_at);
+          activeMemberPlayer(audio._id); markOnlyTextAsSeen(audio._id, audio.duration, audio.loggedUserListened);">
           <!-- <div class="audio-member-container" -->
           <!-- (click)="getMemberTranscription(audio.member._id, audio.member.name, audio.transcription, audio.created_at)"> -->
 
@@ -68,10 +67,8 @@
               <p class="audio-member-name">{{ audio.member.name | titlecase }}</p>
               <!-- <p class="audio-member-date">{{audio.fileId }}</p> -->
               <p class="audio-member-date">{{ audio.created_at | date : 'HH:mm' }}</p>
-              <!-- <i class="bi bi-check-lg"></i> -->
-              <!-- <i *ngIf="isAudioListened(audio.member._id, audio.listened_by)" class="bi bi-check-circle"></i> -->
-              <!-- <i *ngIf="loggedUserQuoted(audio.transcription)" class="bi bi-chat-quote"></i> -->
-              <!-- <i *ngIf="quotedTest" class="bi bi-chat-quote"></i> -->
+              <i *ngIf="audio.loggedUserListened" class="bi bi-check-circle"></i>
+              <i *ngIf="audio.loggedUserQuoted" class="bi bi-chat-quote"></i>
             </div>
 
 
@@ -84,8 +81,8 @@
                 controlsList="nodownload" type="audio/webm" preload="none"
                 src="http://localhost:3000/audio-in-db/{{ audio.fileId }}"
                 (play)=" getMemberTranscription(audio.member._id, audio.member.name, audio.transcription,
-                audio.created_at); markOnlyTextAsSeen(audio._id, audio.duration, audio.member._id, audio.listened_by); activeMemberPlayer(audio._id);"
-                (ended)="markAsListened(audio._id, audio.duration, audio.member._id, audio.listened_by)"></audio>
+                audio.created_at); markOnlyTextAsSeen(audio._id, audio.duration, audio.loggedUserListened); activeMemberPlayer(audio._id);"
+                (ended)="markAsListened(audio._id, audio.duration, audio.loggedUserListened)"></audio>
               <!-- //TODO: retornar onend e src -->
             </div>
           </div>

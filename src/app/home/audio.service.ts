@@ -4,9 +4,10 @@ import { Observable, of } from 'rxjs';
 import { tap, catchError } from 'rxjs/operators';
 import { MessageService } from '../message.service';
 import { Audio } from './interfaces/audio';
-import { AudioListened } from './interfaces/audioListened';
 import { environment } from 'src/environments/environment';
 import { UtilsService } from '../utils/utils.service';
+import { AuthService } from '../auth/auth.service';
+import * as _ from 'lodash';
 
 @Injectable({
   providedIn: 'root'
@@ -20,11 +21,14 @@ export class AudioService {
     })
   };
 
+  loggedUserId: string
+
   constructor(
     private http: HttpClient,
     private messageService: MessageService,
-    private utils: UtilsService
-  ) { }
+    private utils: UtilsService,
+    private authService: AuthService
+  ) { this.loggedUserId = this.authService.userId; }
 
   private audiosUrl = environment.apiUrl + 'audio-noauth'; // FIXME: alterar para "audios";
 
@@ -66,8 +70,41 @@ export class AudioService {
         tap(x => x.length ?
           this.log('found audios') :
           this.log('not found')),
+        // verifica e inclui info de audio reproduzido e usuário logado citado
+        tap(audios => audios.forEach(audio => {
+          audio.loggedUserListened = this.isAudioListened(audio)
+          audio.loggedUserQuoted = this.isLoggedUserQuoted(audio.transcription)
+          console.log('this.loggedUserId ', this.loggedUserId)
+        }
+
+        )),
         catchError(this.handleError<Audio[]>('searchAudios', []))
       )
+  }
+
+  isAudioListened(audio: Audio) {
+    // console.log('>>>>> called isAudioListened')
+    return audio.member._id == this.loggedUserId || _.includes(audio.listened_by, this.loggedUserId)
+  }
+
+  // isTextSeen(audio: Audio) {
+  //   return audio.duration == 0 && this.isAudioListened(audio)
+  // }
+
+  isLoggedUserQuoted(transcription) {
+    let quoted = false
+    if (transcription.length > 0) {
+      let userFullName = this.authService.userName
+      let firstName = userFullName.split(' ')[0]
+      let keywords = [firstName, userFullName];
+      keywords.forEach(word => {
+        let found = transcription.toLowerCase().search(word.toLowerCase())
+        if (found >= 0) {
+          quoted = true
+        }
+      });
+    }
+    return quoted
   }
 
   updateAudioListened(audio: Audio): Observable<Audio> {

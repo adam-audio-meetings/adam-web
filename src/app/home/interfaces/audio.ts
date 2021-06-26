@@ -9,5 +9,7 @@ export interface Audio {
     duration?: number,
     team?: string,
     member?: string | any,
-    listened_by?: string
+    listened_by?: string,
+    loggedUserQuoted?: boolean,
+    loggedUserListened?: boolean
 }
