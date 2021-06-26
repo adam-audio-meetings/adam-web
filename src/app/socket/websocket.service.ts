@@ -31,9 +31,9 @@ export class WebsocketService {
   }
 
   // EMMITER: Send new audio or message
-  sendMessageNewAudio(teamId: string, userId: string) {
+  sendMessageNewAudio(teamId: string, userId: string, newAudioId: string) {
     //console.log('sendMessage emmiter team room: ', teamId);
-    this.socket.emit('clientMessageNewAudio', { message: teamId, userId: userId });
+    this.socket.emit('clientMessageNewAudio', { message: teamId, userId: userId, audioId: newAudioId });
   }
 
   // EMMITER: Login message
@@ -45,7 +45,6 @@ export class WebsocketService {
   // EMMITER: Logout message
   sendMessageLogout() {
     this.socket.emit('logout', { message: 'logged out' });
-    // this.socket.disconnect()
   }
 
   // EMMITER: Send new audio or message
@@ -57,7 +56,7 @@ export class WebsocketService {
   // HANDLER
   onNewMessage() {
     return new Observable<any>(observer => {
-      let srvMsg: { type: string, text: string, userId: string, msgTime: string }
+      let srvMsg: { type: string, text: string, userId: string, msgTime: string, audioId?: string }
       this.socket.on('serverMessage', srvMsg => {
         console.log('onNewMessage handler');
         // let srvMsg = { type: msg.type, text: msg.text }

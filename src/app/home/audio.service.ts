@@ -8,6 +8,7 @@ import { environment } from 'src/environments/environment';
 import { UtilsService } from '../utils/utils.service';
 import { AuthService } from '../auth/auth.service';
 import * as _ from 'lodash';
+import { WebsocketService } from '../socket/websocket.service';
 
 @Injectable({
   providedIn: 'root'
@@ -23,11 +24,15 @@ export class AudioService {
 
   loggedUserId: string
 
+  // socket.io-client
+  msgInputNewAudio: string = 'upload de audio no servidor';
+
   constructor(
     private http: HttpClient,
     private messageService: MessageService,
     private utils: UtilsService,
-    private authService: AuthService
+    private authService: AuthService,
+    private websocketService: WebsocketService,
   ) { this.loggedUserId = this.authService.userId; }
 
   private audiosUrl = environment.apiUrl + 'audio-noauth'; // FIXME: alterar para "audios";
@@ -74,7 +79,7 @@ export class AudioService {
         tap(audios => audios.forEach(audio => {
           audio.loggedUserListened = this.isAudioListened(audio)
           audio.loggedUserQuoted = this.isLoggedUserQuoted(audio.transcription)
-          console.log('this.loggedUserId ', this.loggedUserId)
+          // console.log('this.loggedUserId ', this.loggedUserId)
         }
 
         )),
@@ -149,7 +154,13 @@ export class AudioService {
     const url = this.audiosUrl + '/upload';
     return this.http.post(url, formData)
       .pipe(
-        tap((newAudio: Audio) => this.log(`added audio id=${newAudio._id}`)),
+        tap(
+          res => {
+            let resModified: { msg: string, audioId: string } | any = res
+            let newAudioId = resModified.audioId
+            this.log(`added audio id=${newAudioId}`)
+            this.websocketService.sendMessageNewAudio(this.msgInputNewAudio, this.loggedUserId, newAudioId)
+          }),
         catchError(this.handleError<Audio>(`createAudio`))
       );
   }

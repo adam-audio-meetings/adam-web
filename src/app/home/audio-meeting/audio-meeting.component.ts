@@ -34,6 +34,7 @@ export class AudioMeetingComponent implements OnInit {
   audios$: Observable<Audio[]>;
   // audios$: Audio[];
   // selectedId: string;
+  audiosIdArray = []
   roles = ROLES;
   roleFilter = "";
   loggedUserId = "";
@@ -183,13 +184,21 @@ export class AudioMeetingComponent implements OnInit {
   getAudios($event?): void {
     let jsDateStringStart = this.utils.dateModelToString(this.selectedDateModel)
     let jsDateStringEnd = this.utils.nextDayModelToString(this.selectedDateModel)
-    this.audios$ = this.audioService.searchAudios(this.selectedTeamId, jsDateStringStart, jsDateStringEnd)
+    this.audios$ = this.audioService.searchAudios(this.selectedTeamId, jsDateStringStart, jsDateStringEnd).pipe(
+
+      tap(audios => {
+        let audiosIdArrayTemp = []
+        audios.forEach(audio => audiosIdArrayTemp.push(audio._id))
+        this.audiosIdArray = audiosIdArrayTemp
+      }),
+      // tap(() => console.log(this.audiosIdArray))
+    )
 
   }
 
   sendButtonClick() {
     // console.log('Usuário enviou áudio');
-    this.websocketService.sendMessageNewAudio(this.msgInputNewAudio, this.loggedUserId)
+    // this.websocketService.sendMessageNewAudio(this.msgInputNewAudio, this.loggedUserId)
   }
 
   markOnlyTextAsSeen(audioId, audioDuration, loggedUserListened): void {
@@ -388,7 +397,11 @@ export class AudioMeetingComponent implements OnInit {
         // console.log('msg.userId: ', msg.userId)
         // console.log('this.loggedUserId: ', this.loggedUserId)
         this.notifier.notify('info', 'Mensagem recebida');
-        // TODO: verificar se foi citado
+
+        // TODO: verificar se foi mencionado na transcrição do áudio ou mensagem
+        // if (this.audiosIdArray.find(id => id == msg.audioId)) {
+        //   this.notifier.notify('info', 'Você foi mencionado na nova mensagem');
+        // }
 
 
       } else if (msg.type == "new-audio-teamId-room" && msg.userId == this.loggedUserId) {
