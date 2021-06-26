@@ -1,4 +1,4 @@
-import { Component, OnInit, NgZone, AfterContentInit, ChangeDetectionStrategy } from '@angular/core';
+import { Component, OnInit, NgZone, ChangeDetectionStrategy, TrackByFunction } from '@angular/core';
 import getBlobDuration from 'get-blob-duration';
 import { fileURLToPath } from 'url';
 import { AudioService } from '../audio.service';
@@ -46,7 +46,7 @@ export class AudioMeetingComponent implements OnInit {
   mainAudioDuration: number;
 
   // member-player selection
-  selectedMemberPlayerId: string = '_';
+  selectedAudioId?: string;
 
   // socket.io-client
   msgInputNewAudio: string = 'upload de audio no servidor';
@@ -119,36 +119,18 @@ export class AudioMeetingComponent implements OnInit {
     this.notifier = notifier;
   }
 
-  // ngAfterContentChecked(): void {
-  //   // console.log('ngAfterContentChecked')
-  //   this.reactiveMemberPlayer()
-  // }
-  // ngAfterContentInit(): void {
-  //   console.log('ngAfterContentInit')
-  //   // this.reactiveMemberPlayer()
-  // }
+  memberTrackById: TrackByFunction<Audio> = (index, audio) =>
+    // console.log('trackById: ', audio._id)
+    // console.log('trackById: ', index)
+    audio._id;
+
 
   activeMemberPlayer(elementId) {
-    document.querySelector('#member-player-list').querySelectorAll('li').forEach(
-      item => item.classList.remove('active')
-    )
-    document.querySelector(`#member-player-${elementId}`).classList.add('active')
-    this.selectedMemberPlayerId = `member-player-${elementId}`
-  }
-
-  reactiveMemberPlayer() {
-    if (this.selectedMemberPlayerId != '_') {
-      console.log('reactiveMemberPlayer: ', this.selectedMemberPlayerId)
-      document.querySelector(`#${this.selectedMemberPlayerId}`).classList.add('active')
-    }
+    this.selectedAudioId = elementId
   }
 
   unselectedMemberPlayer() {
-    if (this.selectedMemberPlayerId != '_') {
-      console.log('Limpa Player selecionado: ', this.selectedMemberPlayerId)
-      document.querySelector(`#${this.selectedMemberPlayerId}`).classList.remove('active')
-    }
-    this.selectedMemberPlayerId = '_'
+    this.selectedAudioId = ''
   }
 
   getOwnTeams(): void {
@@ -202,8 +184,6 @@ export class AudioMeetingComponent implements OnInit {
     let jsDateStringStart = this.utils.dateModelToString(this.selectedDateModel)
     let jsDateStringEnd = this.utils.nextDayModelToString(this.selectedDateModel)
     this.audios$ = this.audioService.searchAudios(this.selectedTeamId, jsDateStringStart, jsDateStringEnd)
-    // TODO: não funcional
-    this.reactiveMemberPlayer()
 
   }
 
@@ -219,11 +199,6 @@ export class AudioMeetingComponent implements OnInit {
     //     },
     //     error => { },
     //     () => {
-
-    //       // if (this.selectedMemberPlayerId) {
-    //       //   console.log('carregou audios; Player selecionado antes: ', this.selectedMemberPlayerId)
-    //       //   document.querySelector(`#${this.selectedMemberPlayerId}`).classList.add('active')
-    //       // }
 
     //       // TODO: documentar e remover
     //       // testes abaixo para duration, mas foi resolvido com persistencia do tempo no upload
@@ -295,6 +270,7 @@ export class AudioMeetingComponent implements OnInit {
   // retorna true para áudio/mensagem do usuário logado ou se o usuário logado reproduziu/leu o áudio/mensagem dos outros membros 
   isAudioListened(memberId, listenedBy) {
     //TODO: reduzir carga de aúdios ou - carregar somente os das equipes selecionadas
+    console.log('>>>>> called isAudioListened')
     return memberId == this.loggedUserId || _.includes(listenedBy, this.loggedUserId)
   }
 
@@ -358,6 +334,7 @@ export class AudioMeetingComponent implements OnInit {
     //   console.log('verificou QUOTED')
     //   this.quotedCount += 1
     // }
+    console.log('>>>>> called loggedUserQuoted')
     return quoted
   }
 
@@ -507,11 +484,6 @@ export class AudioMeetingComponent implements OnInit {
 
   ngOnInit(): void {
 
-    if (this.selectedMemberPlayerId != '_') {
-      console.log('carregou onInit; Player selecionado antes: ', this.selectedMemberPlayerId)
-      document.querySelector(`#${this.selectedMemberPlayerId}`).classList.add('active')
-    }
-
     this.getLoggedUser();
     this.getOwnTeams();
     this.selectToday();
@@ -529,12 +501,12 @@ export class AudioMeetingComponent implements OnInit {
       if (msg.type == "new-audio-teamId-room" && msg.userId != this.loggedUserId) {
         // console.log('msg.userId: ', msg.userId)
         // console.log('this.loggedUserId: ', this.loggedUserId)
-        this.notifier.notify('info', 'Áudio/Mensagem entregue pela equipe');
+        this.notifier.notify('info', 'Mensagem recebida');
         // TODO: verificar se foi citado
 
 
       } else if (msg.type == "new-audio-teamId-room" && msg.userId == this.loggedUserId) {
-        this.notifier.notify('success', 'Entregue com sucesso: Áudio/Mensagem');
+        this.notifier.notify('success', 'Mensagem entregue');
       }
     });
 
