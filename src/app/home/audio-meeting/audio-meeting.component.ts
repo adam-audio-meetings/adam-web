@@ -1,4 +1,4 @@
-import { Component, OnInit, NgZone } from '@angular/core';
+import { Component, OnInit, NgZone, AfterContentInit, ChangeDetectionStrategy } from '@angular/core';
 import getBlobDuration from 'get-blob-duration';
 import { fileURLToPath } from 'url';
 import { AudioService } from '../audio.service';
@@ -23,7 +23,9 @@ import { NotifierService } from 'angular-notifier';
 @Component({
   selector: 'app-audio-meeting',
   templateUrl: './audio-meeting.component.html',
-  styleUrls: ['./audio-meeting.component.css', './audio-meeting.component.scss']
+  styleUrls: ['./audio-meeting.component.css', './audio-meeting.component.scss'],
+  // changeDetection: ChangeDetectionStrategy.OnPush // não torna a parte de audios listados mais rápida. Precisa clicar
+  // https://medium.com/totvsdevelopers/melhore-a-performance-da-sua-aplica%C3%A7%C3%A3o-com-change-detection-strategy-onpush-4259fc1eb59c
 })
 export class AudioMeetingComponent implements OnInit {
 
@@ -93,6 +95,12 @@ export class AudioMeetingComponent implements OnInit {
   datePickerDisabled = false;
   dropdownTeamsDisabled = false;
 
+  // contagens
+  audiosListenedCount = 0;
+  audiosCount = 0;
+  quotedCount = 0;
+  quotedTest = false;
+
   constructor(
     private teamService: TeamService,
     public audioService: AudioService,
@@ -106,9 +114,11 @@ export class AudioMeetingComponent implements OnInit {
     private ngZone: NgZone,
     private utils: UtilsService,
     notifier: NotifierService
+    // private changeDetector: ChangeDetectorRef
   ) {
     this.notifier = notifier;
   }
+
   // ngAfterContentChecked(): void {
   //   // console.log('ngAfterContentChecked')
   //   this.reactiveMemberPlayer()
@@ -342,6 +352,12 @@ export class AudioMeetingComponent implements OnInit {
         }
       });
     }
+    // a estratégia OnPush melhorou aqui, mas não funcional para contagem
+    // if (quoted) {
+
+    //   console.log('verificou QUOTED')
+    //   this.quotedCount += 1
+    // }
     return quoted
   }
 

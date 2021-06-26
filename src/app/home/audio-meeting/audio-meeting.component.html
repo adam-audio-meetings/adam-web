@@ -70,6 +70,7 @@
               <!-- <i class="bi bi-check-lg"></i> -->
               <i *ngIf="isAudioListened(audio.member._id, audio.listened_by)" class="bi bi-check-circle"></i>
               <i *ngIf="loggedUserQuoted(audio.transcription)" class="bi bi-chat-quote"></i>
+              <!-- <i *ngIf="quotedTest" class="bi bi-chat-quote"></i> -->
             </div>
 
 
@@ -97,6 +98,17 @@
   <div class="main-container">
 
     <div class="modeSelection">
+
+      <span class="badge badge-pill badge-info">
+        {{ audiosListenedCount }}
+      </span>
+      <span class="badge badge-pill badge-info">
+        {{ audiosCount }}
+      </span>
+      <span class="badge badge-pill badge-info">
+        {{ quotedCount }}
+      </span>
+
       <div class="btn-group btn-group-sm btn-group-toggle" ngbRadioGroup name="radioBasic" [(ngModel)]="textOnly">
         <label ngbButtonLabel class="btn-outline-secondary" ngbTooltip="Selecione para escrever e enviar uma mensagem"
           placement="left" container="body" [openDelay]="800">
