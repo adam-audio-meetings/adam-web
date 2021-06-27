@@ -75,14 +75,6 @@ export class AudioService {
         tap(x => x.length ?
           this.log('found audios') :
           this.log('not found')),
-        // verifica e inclui info de audio reproduzido e usuário logado citado
-        tap(audios => audios.forEach(audio => {
-          audio.loggedUserListened = this.isAudioListened(audio)
-          audio.loggedUserQuoted = this.isLoggedUserQuoted(audio.transcription)
-          // console.log('this.loggedUserId ', this.loggedUserId)
-        }
-
-        )),
         catchError(this.handleError<Audio[]>('searchAudios', []))
       )
   }

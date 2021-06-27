@@ -33,7 +33,7 @@
             selectedTeamName
             }}</button>
           <div ngbDropdownMenu aria-labelledby="dropdownTeams">
-            <button ngbDropdownItem *ngFor="let team of ownTeams$ | async" (click)="selectedTeamName = team.name;
+            <button ngbDropdownItem *ngFor="let team of ownTeams$" (click)="selectedTeamName = team.name;
                       selectedTeamId = team._id;
                       changeTeam()">
               {{ team.name }}</button>
@@ -45,9 +45,13 @@
     </div>
     <hr class="team-name-division">
     <div>
-      <ul id="member-player-list" class="list-group">
+      <!-- <div *ngFor="let team of ownTeams$">{{ team.name }}</div> -->
+      <!-- <div *ngFor="let audio of audios$">{{ audio.loggedUserListened }}</div> -->
+      <ul *ngIf="ownTeams$" id="member-player-list" class="list-group">
+        <!-- {{ selectedTeamId }} -->
+        <!-- {{ selectedDateModel.day }} -->
         <li [class.active]="audio._id === selectedAudioId" id="member-player-{{ i }}" class="list-group-item"
-          *ngFor="let audio of audios$ | async; let i=index; trackBy: memberTrackById" (click)="getMemberTranscription(audio.member._id, audio.member.name, audio.transcription, audio.created_at);
+          *ngFor="let audio of audios$; let i=index; trackBy: memberTrackById" (click)="getMemberTranscription(audio.member._id, audio.member.name, audio.transcription, audio.created_at);
           activeMemberPlayer(audio._id); markOnlyTextAsSeen(audio._id, audio.duration, audio.loggedUserListened);">
           <!-- <div class="audio-member-container" -->
           <!-- (click)="getMemberTranscription(audio.member._id, audio.member.name, audio.transcription, audio.created_at)"> -->

@@ -19,6 +19,7 @@ import * as _ from 'lodash';
 import { finalize, map, take, takeWhile, tap } from 'rxjs/operators';
 import { resolve } from '@angular/compiler-cli/src/ngtsc/file_system';
 import { NotifierService } from 'angular-notifier';
+import { SocketMessage } from 'src/app/socket/interfaces/socketMessage';
 
 @Component({
   selector: 'app-audio-meeting',
@@ -30,11 +31,12 @@ import { NotifierService } from 'angular-notifier';
 export class AudioMeetingComponent implements OnInit {
 
   private notifier: NotifierService;
-  ownTeams$: Observable<Team[]>;
-  audios$: Observable<Audio[]>;
-  // audios$: Audio[];
+  // ownTeams$: Observable<Team[]>;
+  ownTeams$: Team[];
+  // audios$: Observable<Audio[]>;
+  audios$: Audio[];
   // selectedId: string;
-  audiosIdArray = []
+  audiosIdLoggedUserQuotedArray = []
   roles = ROLES;
   roleFilter = "";
   loggedUserId = "";
@@ -135,9 +137,8 @@ export class AudioMeetingComponent implements OnInit {
   }
 
   getOwnTeams(): void {
-    this.ownTeams$ = this.teamService.getOwnTeams();
-    this.ownTeams$.subscribe(
-      (team) => {
+    this.teamService.getOwnTeams().pipe(
+      tap((team) => {
 
 
         // atribui equipe inicial
@@ -147,7 +148,9 @@ export class AudioMeetingComponent implements OnInit {
         this.enterTeamRoom();
         this.getAudios();
       }
-    );
+      )
+    ).subscribe(teams => this.ownTeams$ = teams);
+
   }
 
   enterTeamRoom() {
@@ -181,18 +184,41 @@ export class AudioMeetingComponent implements OnInit {
     }
   }
 
-  getAudios($event?): void {
+  getAudios(webSocketMessageAtual?: SocketMessage): void {
     let jsDateStringStart = this.utils.dateModelToString(this.selectedDateModel)
     let jsDateStringEnd = this.utils.nextDayModelToString(this.selectedDateModel)
-    this.audios$ = this.audioService.searchAudios(this.selectedTeamId, jsDateStringStart, jsDateStringEnd).pipe(
+    // TODO: testes com audios$ em ngOnInit
+    // this.audios$ = this.audioService.searchAudios(this.selectedTeamId, jsDateStringStart, jsDateStringEnd).pipe(
+    this.audioService.searchAudios(this.selectedTeamId, jsDateStringStart, jsDateStringEnd).pipe(
 
+      // tap(audios => {
+      // let audiosIdArrayTemp = []
+      // audios.forEach(audio => audiosIdArrayTemp.push(audio._id))
+      // this.audiosIdArray = audiosIdArrayTemp
+      // }),
+      // verifica e inclui info de audio reproduzido e usuário logado citado
       tap(audios => {
-        let audiosIdArrayTemp = []
-        audios.forEach(audio => audiosIdArrayTemp.push(audio._id))
-        this.audiosIdArray = audiosIdArrayTemp
-      }),
-      // tap(() => console.log(this.audiosIdArray))
-    )
+        audios.forEach(audio => {
+          audio.loggedUserListened = this.audioService.isAudioListened(audio)
+          audio.loggedUserQuoted = this.audioService.isLoggedUserQuoted(audio.transcription)
+          if (audio.loggedUserQuoted) {
+            this.audiosIdLoggedUserQuotedArray.push(audio._id)
+          }
+        })
+      })
+    ).subscribe({
+      next: (audios) => this.audios$ = audios,
+      complete: () => {
+        console.log(webSocketMessageAtual)
+        console.log(this.audiosIdLoggedUserQuotedArray)
+        if (webSocketMessageAtual && webSocketMessageAtual.type == 'new-audio-teamId-room' && this.audiosIdLoggedUserQuotedArray.findIndex(id => id == webSocketMessageAtual.audioId) >= 0) {
+          // verificar se foi mencionado na transcrição do NOVO áudio ou NOVA mensagem
+          this.notifier.notify('warning', 'Você foi mencionado(a) na nova mensagem')
+        }
+
+        // }
+      }
+    })
 
   }
 
@@ -227,7 +253,8 @@ export class AudioMeetingComponent implements OnInit {
       .subscribe({
         next: () => {
           // console.log(this.msgInputAudioListened);
-          this.websocketService.sendMessageMarkedAsListenedOrSeen(this.msgInputAudioListened);
+          // this.websocketService.sendMessageMarkedAsListenedOrSeen(this.msgInputAudioListened);
+          this.getAudios()
         },
         error: () => alert('Erro ao enviar status de áudio reproduzido/mensagem lida.')
       });
@@ -383,26 +410,22 @@ export class AudioMeetingComponent implements OnInit {
     this.getOwnTeams();
     this.selectToday();
 
+
     // socket.io-client
     this.websocketService.onNewMessage().subscribe(msg => {
       console.log('Recebido do servidor: ', msg);
       // servidor envia mensagem para atualizar lista de audios no cliente
       // conforme o type
-      if (msg.type == "enter-teamId-room" || msg.type == "new-audio-teamId-room" || msg.type == "mark-as-listened-or-seen") {
+      // if (msg.type == "enter-teamId-room" || msg.type == "new-audio-teamId-room" || msg.type == "mark-as-listened-or-seen") {
+      if (msg.type == "enter-teamId-room" || msg.type == "new-audio-teamId-room") {
         // console.log('get audios: ', msg.type)
-        this.getAudios();
+        this.getAudios(msg);
 
       }
       if (msg.type == "new-audio-teamId-room" && msg.userId != this.loggedUserId) {
         // console.log('msg.userId: ', msg.userId)
         // console.log('this.loggedUserId: ', this.loggedUserId)
         this.notifier.notify('info', 'Mensagem recebida');
-
-        // TODO: verificar se foi mencionado na transcrição do áudio ou mensagem
-        // if (this.audiosIdArray.find(id => id == msg.audioId)) {
-        //   this.notifier.notify('info', 'Você foi mencionado na nova mensagem');
-        // }
-
 
       } else if (msg.type == "new-audio-teamId-room" && msg.userId == this.loggedUserId) {
         this.notifier.notify('success', 'Mensagem entregue');

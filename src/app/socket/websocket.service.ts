@@ -1,6 +1,7 @@
 import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
 import { io, Socket } from 'socket.io-client';
+import { SocketMessage } from './interfaces/socketMessage';
 // https://stackoverflow.com/questions/47161589/how-to-use-socket-io-client-in-angular-4
 // Note 2021: Do not install @types/socket.io-client since the types are now included in the socket.io-client (v3) package and thus may cause issues (source).
 @Injectable()
@@ -36,6 +37,11 @@ export class WebsocketService {
     this.socket.emit('clientMessageNewAudio', { message: teamId, userId: userId, audioId: newAudioId });
   }
 
+  // EMMITER: Verify member quoted
+  // sendMessageVerifyQuote(teamId: string, userId: string, newAudioId: string) {
+  //   this.socket.emit('clientMessageVerifyQuote', { message: teamId, userId: userId, audioId: newAudioId });
+  // }
+
   // EMMITER: Login message
   sendMessageLogin() {
     // this.socket.emit('login', { message: 'logged in' });
@@ -47,19 +53,17 @@ export class WebsocketService {
     this.socket.emit('logout', { message: 'logged out' });
   }
 
-  // EMMITER: Send new audio or message
-  sendMessageMarkedAsListenedOrSeen(teamId: string) {
-    //console.log('sendMessage emmiter team room: ', teamId);
-    this.socket.emit('clientMessageMarkedAsListenedOrSeen', { message: 'client marked' });
-  }
+  // // EMMITER: Send 
+  // sendMessageMarkedAsListenedOrSeen(teamId: string) {
+  //   this.socket.emit('clientMessageMarkedAsListenedOrSeen', { message: 'client marked' });
+  // }
 
   // HANDLER
   onNewMessage() {
     return new Observable<any>(observer => {
-      let srvMsg: { type: string, text: string, userId: string, msgTime: string, audioId?: string }
+      let srvMsg: SocketMessage //{ type: string, text: string, userId: string, msgTime: string, audioId?: string }
       this.socket.on('serverMessage', srvMsg => {
         console.log('onNewMessage handler');
-        // let srvMsg = { type: msg.type, text: msg.text }
         observer.next(srvMsg);
       });
     });
