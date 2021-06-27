@@ -202,8 +202,8 @@ export class AudioMeetingComponent implements OnInit {
         this.audiosQuotedCount = 0
         audios.forEach(audio => {
           audio.loggedUserListened = this.audioService.isAudioListened(audio)
-          audio.loggedUserListened ? this.audiosListenedCount += 1 :
-            audio.loggedUserQuoted = this.audioService.isLoggedUserQuoted(audio.transcription)
+          audio.loggedUserListened ? this.audiosListenedCount += 1 : 0
+          audio.loggedUserQuoted = this.audioService.isLoggedUserQuoted(audio.transcription)
           if (audio.loggedUserQuoted) {
             this.audiosIdLoggedUserQuotedArray.push(audio._id)
             this.audiosQuotedCount += 1

@@ -2,49 +2,71 @@
 <!-- <button (click)="sendButtonClick()">Enviar</button> -->
 <div class="page-container">
   <div class="sidebar">
-    <div class="team-date-container">
+    <div class="sidebar-top">
+      <div class="team-date-container">
 
-      <div class="team-date-item">
+        <div class="team-date-item">
 
-        <!-- <span id="meetingAudiosDate">Data</span> -->
-        <form class="form-inline">
-          <div class="form-group">
-            <div class="input-group">
-              <input id="inputDatepickerMeeting" class="form-control" placeholder="yyyy-mm-dd"
-                [(ngModel)]="selectedDateModel" name="dp" (dateSelect)="getAudios($event)" ngbDatepicker
-                #d="ngbDatepicker" [disabled]="datePickerDisabled">
-              <div class="input-group-append">
-                <button id="buttonDatepickerMeeting" class="btn btn-secondary calendar" (click)="d.toggle()"
-                  [disabled]="datePickerDisabled" type="button">
-                  <i class="bi bi-calendar-event"></i>
-                </button>
+          <!-- <span id="meetingAudiosDate">Data</span> -->
+          <form class="form-inline">
+            <div class="form-group">
+              <div class="input-group">
+                <input id="inputDatepickerMeeting" class="form-control" placeholder="yyyy-mm-dd"
+                  [(ngModel)]="selectedDateModel" name="dp" (dateSelect)="getAudios($event)" ngbDatepicker
+                  #d="ngbDatepicker" [disabled]="datePickerDisabled">
+                <div class="input-group-append">
+                  <button id="buttonDatepickerMeeting" class="btn btn-secondary calendar" (click)="d.toggle()"
+                    [disabled]="datePickerDisabled" type="button">
+                    <i class="bi bi-calendar-event"></i>
+                  </button>
+                </div>
               </div>
             </div>
-          </div>
-        </form>
+          </form>
 
-      </div>
+        </div>
 
-      <div class="team-date-item">
+        <div class="team-date-item">
 
-        <!-- <span id="teamName">Equipe</span> -->
-        <div ngbDropdown placement="bottom-right" class="d-inline-block">
-          <button class="btn btn-secondary" id="dropdownTeams" ngbDropdownToggle [disabled]="dropdownTeamsDisabled">{{
-            selectedTeamName
-            }}</button>
-          <div ngbDropdownMenu aria-labelledby="dropdownTeams">
-            <button ngbDropdownItem *ngFor="let team of ownTeams$" (click)="selectedTeamName = team.name;
+          <!-- <span id="teamName">Equipe</span> -->
+          <div ngbDropdown placement="bottom-right" class="d-inline-block">
+            <button class="btn btn-secondary" id="dropdownTeams" ngbDropdownToggle [disabled]="dropdownTeamsDisabled">{{
+              selectedTeamName
+              }}</button>
+            <div ngbDropdownMenu aria-labelledby="dropdownTeams">
+              <button ngbDropdownItem *ngFor="let team of ownTeams$" (click)="selectedTeamName = team.name;
                       selectedTeamId = team._id;
                       changeTeam()">
-              {{ team.name }}</button>
+                {{ team.name }}</button>
+            </div>
           </div>
+        </div>
+
+
+      </div>
+      <hr class="team-name-division">
+      <div class="audio-counts">
+        <div *ngIf="audiosCount == 0; else hasCounts">
+          Nenhuma mensagem nesta equipe
+        </div>
+        <ng-template #hasCounts>
+          <div *ngIf="(audiosCount - audiosListenedCount) > 0; else allListened" class="badge badge-pill badge-danger">
+            {{ audiosCount - audiosListenedCount}} Mensagens não lidas
+          </div>
+          <ng-template #allListened>
+            <div class="badge badge-pill badge-success">
+              Todas mensagens lidas <i class="bi bi-check-circle"></i>
+            </div>
+          </ng-template>
+        </ng-template>
+        <div *ngIf="audiosQuotedCount > 0 && (audiosCount - audiosListenedCount) > 0"
+          class="badge badge-pill badge-warning">
+          {{ audiosQuotedCount }} Você foi mencionado <i class="bi bi-chat-quote"></i>
         </div>
       </div>
 
-
     </div>
-    <hr class="team-name-division">
-    <div>
+    <div class="sidebar-member-players">
       <!-- <div *ngFor="let team of ownTeams$">{{ team.name }}</div> -->
       <!-- <div *ngFor="let audio of audios$">{{ audio.loggedUserListened }}</div> -->
       <ul *ngIf="ownTeams$" id="member-player-list" class="list-group">
@@ -101,16 +123,6 @@
 
     <div class="modeSelection">
 
-      <span class="badge badge-pill badge-success">
-        {{ audiosListenedCount }}
-      </span>
-      <span class="badge badge-pill badge-info">
-        {{ audiosCount }}
-      </span>
-      <span class="badge badge-pill badge-warning">
-        {{ audiosQuotedCount }}
-      </span>
-
       <div class="btn-group btn-group-sm btn-group-toggle" ngbRadioGroup name="radioBasic" [(ngModel)]="textOnly">
         <label ngbButtonLabel class="btn-outline-secondary" ngbTooltip="Selecione para escrever e enviar uma mensagem"
           placement="left" container="body" [openDelay]="800">
@@ -120,7 +132,8 @@
           ngbTooltip="Selecione para gravar áudio e enviar junto com a transcrição" placement="left" container="body"
           [openDelay]="800">
           <input class="modeSelectionInput" ngbButton type="radio" [value]="0"
-            (click)="initAudioAndTextControls()">Áudio + Transcrição
+            (click)="initAudioAndTextControls()">Áudio
+          + Transcrição
         </label>
       </div>
       <notifier-container></notifier-container>
@@ -172,8 +185,9 @@
 
 
       <textarea type="text" name="transcriptName" id="transcriptTextarea" cols="80" rows="7" maxlength="1000"
-        placeholder="Veja e edite aqui a transcrição do seu áudio, ou só envie uma mensagem.
-Altere esta opção na parte superior da página." [(ngModel)]="transcript">
+        placeholder="
+    Veja e edite aqui a transcrição do seu áudio, ou só envie uma mensagem.
+    Altere esta opção na parte superior da página." [(ngModel)]="transcript">
       </textarea>
 
     </div>

@@ -15,7 +15,27 @@
 .sidebar {
     grid-area: sidebar;
     display: grid;
-    background-color: rgb(200, 200, 200);
+    grid-template-areas: 'sidebar-top' 'sidebar-member-players';
+    background-color: #6c6667;
+    align-content: flex-start;
+    overflow-y: hidden;
+
+}
+
+.sidebar-top {
+    height: max-content;
+    grid-area: sidebar-top;
+    display: grid;
+    // background-color: rgb(200, 200, 200);
+    background-color: #6c6667;
+    align-content: flex-start;
+
+}
+
+.sidebar-member-players {
+    grid-area: sidebar-member-players;
+    display: grid;
+    // background-color: rgb(200, 200, 200);
     background-color: #6c6667;
     align-content: flex-start;
     overflow-x: hidden;
@@ -52,6 +72,18 @@
 .team-date-item #dropdownTeams{
     min-width: 130px;
     max-width: 180px;
+}
+
+.audio-counts {
+    display: flex;
+    color: white;
+    justify-content: flex-end;
+    margin-right: 0.8rem;
+}
+
+.audio-counts div {
+    // padding: 0 1rem;
+    margin: 0 0rem 0.7rem 0.5rem;
 }
 
 .main-container {
@@ -97,15 +129,15 @@
 
 /* https://css-tricks.com/almanac/properties/s/scrollbar/ */
 
-.sidebar::-webkit-scrollbar {
+.sidebar-member-players::-webkit-scrollbar {
     width: 0.3em;
 }
 
-.sidebar::-webkit-scrollbar-track {
+.sidebar-member-players::-webkit-scrollbar-track {
     box-shadow: inset 0 0 6px rgba(0, 0, 0, 0.3);
 }
 
-.sidebar::-webkit-scrollbar-thumb {
+.sidebar-member-players::-webkit-scrollbar-thumb {
     background-color: $adam-light;
     outline: 1px solid rgb(63, 63, 63);
 }
