@@ -99,10 +99,9 @@ export class AudioMeetingComponent implements OnInit {
   dropdownTeamsDisabled = false;
 
   // contagens
-  audiosListenedCount = 0;
   audiosCount = 0;
-  quotedCount = 0;
-  quotedTest = false;
+  audiosListenedCount = 0;
+  audiosQuotedCount = 0;
 
   constructor(
     private teamService: TeamService,
@@ -198,12 +197,18 @@ export class AudioMeetingComponent implements OnInit {
       // }),
       // verifica e inclui info de audio reproduzido e usuário logado citado
       tap(audios => {
+        this.audiosCount = 0
+        this.audiosListenedCount = 0
+        this.audiosQuotedCount = 0
         audios.forEach(audio => {
           audio.loggedUserListened = this.audioService.isAudioListened(audio)
-          audio.loggedUserQuoted = this.audioService.isLoggedUserQuoted(audio.transcription)
+          audio.loggedUserListened ? this.audiosListenedCount += 1 :
+            audio.loggedUserQuoted = this.audioService.isLoggedUserQuoted(audio.transcription)
           if (audio.loggedUserQuoted) {
             this.audiosIdLoggedUserQuotedArray.push(audio._id)
+            this.audiosQuotedCount += 1
           }
+          this.audiosCount += 1
         })
       })
     ).subscribe({
