@@ -30,7 +30,7 @@ import { SocketMessage } from 'src/app/socket/interfaces/socketMessage';
 })
 export class AudioMeetingComponent implements OnInit {
 
-  private notifier: NotifierService;
+  // private notifier: NotifierService;
   // ownTeams$: Observable<Team[]>;
   ownTeams$: Team[];
   // audios$: Observable<Audio[]>;
@@ -115,10 +115,10 @@ export class AudioMeetingComponent implements OnInit {
     private dateAdapter: NgbDateAdapter<Date>,
     private ngZone: NgZone,
     private utils: UtilsService,
-    notifier: NotifierService
+    private notifier: NotifierService
     // private changeDetector: ChangeDetectorRef
   ) {
-    this.notifier = notifier;
+    // this.notifier = notifier;
   }
 
   memberTrackById: TrackByFunction<Audio> = (index, audio) =>
