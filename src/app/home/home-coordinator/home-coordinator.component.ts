@@ -67,12 +67,15 @@ export class HomeCoordinatorComponent implements OnInit, OnDestroy {
   backgroundColor = 'transparent'
 
   chartMembersByTeams = {
-    title: 'Membros por Equipe',
+    // title: 'Membros por Equipe',
     type: 'PieChart',
     data: [],
     chartColumns: ['Equipe', 'Qtde Integrantes'],
     options: {
-      pieHole: 0.4,
+      fontSize: 15,
+      fontName: this.fontName,
+      backgroundColor: this.backgroundColor,
+      pieHole: 0.8,
       pieSliceTextStyle: {
         color: 'black',
       },
@@ -86,34 +89,38 @@ export class HomeCoordinatorComponent implements OnInit, OnDestroy {
   audioByTeamsToday = [];
 
   chartAudiosByTeamsToday = {
-    title: 'Envio de Áudios: Hoje',
+    // title: 'Envio de Áudios: Hoje',
     type: 'PieChart',
     data: [],
     chartColumns: ['Entregues', 'Faltantes'],
     dynamicResize: true,
     options: {
+      legend: 'bottom',
       fontSize: this.fontSize,
       fontName: this.fontName,
+      backgroundColor: this.backgroundColor,
       pieHole: 0.8,
-      pieSliceText: 'none',
+      // pieSliceText: 'none',
       pieSliceTextStyle: {
         color: '#919191',
       },
-      legend: 'label',
-
       sliceVisibilityThreshold: 0,
-      colors: [],
-      backgroundColor: this.backgroundColor,
+      colors: ['#17a2b8', '#c1c1c1']
     }
   };
 
   chartAudiosByTeams = {
-    title: 'Envio de Áudios: Todo o Período',
+    // title: 'Envio de Áudios: Todo o Período',
     type: 'AreaChart',
     data: [],
     chartColumns: ['Data', 'Membros com 1+ envios', 'Total de Membros'],
     options: {
-      colors: this.colors,
+      legend: 'top',
+      fontSize: this.fontSize,
+      fontName: this.fontName,
+      backgroundColor: this.backgroundColor,
+      colors: ['#17a2b8', '#c1c1c1'],
+      intervals: 'none',
     }
   };
 
@@ -163,7 +170,6 @@ export class HomeCoordinatorComponent implements OnInit, OnDestroy {
     // if (this.selectedTeamId != this.selectedAllTeamsId) {
     //   this.updateChartAudiosByTeamsTodayFilter();
     //   this.updateChartAudiosByTeamsFilter();
-
     // }
   }
 
@@ -213,8 +219,8 @@ export class HomeCoordinatorComponent implements OnInit, OnDestroy {
             if (cols == 2) {
               audioByTeamsByDateTemp.push(['Entregue', _.size(_.groupBy(group, 'audioMemberId'))])
               audioByTeamsByDateTemp.push(['Faltante', membersByTeamsCount - _.size(_.groupBy(group, 'audioMemberId'))])
-              chart.options.colors = ['#17a2b8', '#c1c1c1']
-              // chart.options.pieSliceText = 'none'
+              // chart.options.colors = ['#17a2b8', '#c1c1c1']
+              chart.options.pieSliceText = 'none'
             } else {
               // formato: [ data, distinct_sent_audios_count, members_count_by_team]
               audioByTeamsByDateTemp.push([group[0].audioCreatedAt, _.size(_.groupBy(group, 'audioMemberId')), membersByTeamsCount])
@@ -226,8 +232,8 @@ export class HomeCoordinatorComponent implements OnInit, OnDestroy {
               let membersByTeamsCount = _.filter(this.membersByTeamsSummary, { id: id })[0].count
               audioByTeamsByDateTemp.push(['Entregue', 0])
               audioByTeamsByDateTemp.push(['Faltante', membersByTeamsCount])
-              chart.options.colors = ['#c1c1c1', '#17a2b8']
-              // chart.options.pieSliceText = 'none'
+              // chart.options.colors = ['#c1c1c1', '#17a2b8']
+              chart.options.pieSliceText = 'none'
             } else {
               // formato: [ data, distinct_sent_audios_count, members_count_by_team]
               audioByTeamsByDateTemp = [[this.utils.todayString(), 0, _.filter(this.membersByTeamsSummary, { id: id })[0].count]]

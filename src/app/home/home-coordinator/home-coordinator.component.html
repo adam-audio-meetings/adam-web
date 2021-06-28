@@ -54,11 +54,14 @@
 
       <!-- GRÁFICO: membros por equipe -->
       <div class="container-item">
+        <h5>Membros por Equipe</h5>
         <div *ngIf="chartMembersByTeams.data.length; else spinnerBlock">
-          <google-chart [title]="chartMembersByTeams.title" [type]="chartMembersByTeams.type"
-            [data]="chartMembersByTeams.data" [columns]="chartMembersByTeams.chartColumns"
-            [options]="chartMembersByTeams.options">
-          </google-chart>
+          <div class="chart">
+            <google-chart style="width: 450px;" [title]="chartMembersByTeams.title" [type]="chartMembersByTeams.type"
+              [data]="chartMembersByTeams.data" [columns]="chartMembersByTeams.chartColumns"
+              [options]="chartMembersByTeams.options">
+            </google-chart>
+          </div>
         </div>
       </div>
 
@@ -69,14 +72,15 @@
 
       <!-- GRÁFICO: áudios hoje -->
       <div class="container-item" *ngIf="chartAudiosByTeamsToday.data.length; else spinnerBlock">
-
+        <h5>Envio de Áudios: Hoje</h5>
         <!-- <div *ngIf="chartAudiosByTeamsToday.data.length; else spinnerBlock"> -->
-        <google-chart style="width: 450px;" [title]="chartAudiosByTeamsToday.title"
-          [type]="chartAudiosByTeamsToday.type" [data]="chartAudiosByTeamsToday.data"
-          [columns]="chartAudiosByTeamsToday.chartColumns" [formatters]="formatter"
-          [options]="chartAudiosByTeamsToday.options" [dynamicResize]="true">
-        </google-chart>
-        <!-- </div> -->
+        <div class="chart">
+          <google-chart style="width: 450px;" [title]="chartAudiosByTeamsToday.title"
+            [type]="chartAudiosByTeamsToday.type" [data]="chartAudiosByTeamsToday.data"
+            [columns]="chartAudiosByTeamsToday.chartColumns" [formatters]="formatter"
+            [options]="chartAudiosByTeamsToday.options" [dynamicResize]="true">
+          </google-chart>
+        </div>
         <!-- <h3>
           {{ audiosSentToday }} / {{ membersCountToday }}
         </h3> -->
@@ -86,8 +90,9 @@
       <!-- <div class="container-item" *ngIf="(formatters$ | async) as formatter"> -->
 
       <div class="container-item" *ngIf="chartAudiosByTeams.data.length; else spinnerBlock">
-        <google-chart [title]="chartAudiosByTeams.title" [type]="chartAudiosByTeams.type"
-          [data]="chartAudiosByTeams.data" [columns]="chartAudiosByTeams.chartColumns"
+        <h5>Envio de Áudios: Todo o Período</h5>
+        <google-chart style="width: 800px; height: 350px;" [title]="chartAudiosByTeams.title"
+          [type]="chartAudiosByTeams.type" [data]="chartAudiosByTeams.data" [columns]="chartAudiosByTeams.chartColumns"
           [options]="chartAudiosByTeams.options" [formatters]="formatter" [dynamicResize]="true">
         </google-chart>
       </div>
