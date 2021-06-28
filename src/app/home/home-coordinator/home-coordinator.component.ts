@@ -158,7 +158,7 @@ export class HomeCoordinatorComponent implements OnInit, OnDestroy {
         //complete
         () => {
           this.updateCharts();
-          console.log(this.teamsIds)
+          // console.log(this.teamsIds)
         }
       )
   }

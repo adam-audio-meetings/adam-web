@@ -98,10 +98,11 @@ export class AuthService {
     this.http.post<any>(this.url, credentials, this.httpOptions)
       .subscribe({
         next: res => {
-          // console.log('Login Authorized');
-          this.setSession(res),
-            //this.startSessionCounter();
-            this.isLoggedIn = true;
+          console.log('Login Authorized');
+          this.setSession(res)
+          console.log(res)
+          //this.startSessionCounter();
+          this.isLoggedIn = true;
           //Define rotas Home conforme user role
           this.setHomePage(`/home/${this.userRole}`);
 
@@ -112,6 +113,8 @@ export class AuthService {
             this.router.navigate([this.redirectUrl]);
           }
           this.log('userRole: ' + this.userRole);
+          this.log('userId: ' + this.userId);
+          this.log('userUsername: ' + this.userUsername);
           this.log('redirect: ' + this.redirectUrl);
 
 
@@ -141,6 +144,9 @@ export class AuthService {
     localStorage.removeItem('token');
     localStorage.removeItem('expiresIn');
     this.userRole = '';
+    this.userId = '';
+    this.userUsername = '';
+    this.userName = '';
     this.setHomePage('');
   }
 

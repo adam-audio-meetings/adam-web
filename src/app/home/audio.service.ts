@@ -22,8 +22,6 @@ export class AudioService {
     })
   };
 
-  loggedUserId: string
-
   // socket.io-client
   msgInputNewAudio: string = 'upload de audio no servidor';
 
@@ -33,7 +31,7 @@ export class AudioService {
     private utils: UtilsService,
     private authService: AuthService,
     private websocketService: WebsocketService,
-  ) { this.loggedUserId = this.authService.userId; }
+  ) { }
 
   private audiosUrl = environment.apiUrl + 'audio-noauth'; // FIXME: alterar para "audios";
 
@@ -81,7 +79,7 @@ export class AudioService {
 
   isAudioListened(audio: Audio) {
     // console.log('>>>>> called isAudioListened')
-    return audio.member._id == this.loggedUserId || _.includes(audio.listened_by, this.loggedUserId)
+    return audio.member._id == this.authService.userId || _.includes(audio.listened_by, this.authService.userId)
   }
 
   // isTextSeen(audio: Audio) {
@@ -151,7 +149,7 @@ export class AudioService {
             let resModified: { msg: string, audioId: string } | any = res
             let newAudioId = resModified.audioId
             this.log(`added audio id=${newAudioId}`)
-            this.websocketService.sendMessageNewAudio(this.msgInputNewAudio, this.loggedUserId, newAudioId)
+            this.websocketService.sendMessageNewAudio(this.msgInputNewAudio, this.authService.userId, newAudioId)
           }),
         catchError(this.handleError<Audio>(`createAudio`))
       );
