@@ -20,6 +20,7 @@ import { finalize, map, take, takeWhile, tap } from 'rxjs/operators';
 import { resolve } from '@angular/compiler-cli/src/ngtsc/file_system';
 import { NotifierService } from 'angular-notifier';
 import { SocketMessage } from 'src/app/socket/interfaces/socketMessage';
+import { environment } from 'src/environments/environment';
 
 @Component({
   selector: 'app-audio-meeting',
@@ -30,6 +31,7 @@ import { SocketMessage } from 'src/app/socket/interfaces/socketMessage';
 })
 export class AudioMeetingComponent implements OnInit {
 
+  apiUrl = environment.apiUrl
   // private notifier: NotifierService;
   // ownTeams$: Observable<Team[]>;
   ownTeams$: Team[];

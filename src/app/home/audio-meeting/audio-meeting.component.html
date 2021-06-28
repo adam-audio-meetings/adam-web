@@ -105,7 +105,7 @@
             <div *ngIf="audio.duration!=0" class="audio-member-player">
               <audio id="audio-member-player{{ audio._id }}" controls class="audio-member-controls"
                 controlsList="nodownload" type="audio/webm" preload="none"
-                src="http://localhost:3000/audio-in-db/{{ audio.fileId }}"
+                src="{{ apiUrl }}audio-in-db/{{ audio.fileId }}"
                 (play)=" getMemberTranscription(audio.member._id, audio.member.name, audio.transcription,
                 audio.created_at); markOnlyTextAsSeen(audio._id, audio.duration, audio.loggedUserListened); activeMemberPlayer(audio._id);"
                 (ended)="markAsListened(audio._id, audio.duration, audio.loggedUserListened)"></audio>
