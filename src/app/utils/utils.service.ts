@@ -14,7 +14,7 @@ export class UtilsService {
     // return format: 'MM/DD/YYYY'
     // para uso em navegadores
     let date = dateModel;
-    return date.month + "/" + date.day + "/" + date.year;
+    return this.dateStringToAPIFormat(date.month + "/" + date.day + "/" + date.year)
   }
 
   dateStringToAPIFormat(dateString) {
@@ -31,12 +31,12 @@ export class UtilsService {
     let jsDateStart = new Date(jsDateStringStart);
     var jsDateEnd = new Date(jsDateStart.getTime() + 86400000); // + 1 day in ms
     // Date em js: mês começa do 0
-    return (jsDateEnd.getMonth() + 1) + "-" + jsDateEnd.getDate() + "-" + jsDateEnd.getFullYear();
+    return this.dateStringToAPIFormat((jsDateEnd.getMonth() + 1) + "-" + jsDateEnd.getDate() + "-" + jsDateEnd.getFullYear());
   }
 
   todayString() {
     let jsDateToday = new Date();
-    return (jsDateToday.getMonth() + 1) + "-" + jsDateToday.getDate() + "-" + jsDateToday.getFullYear();
+    return this.dateStringToAPIFormat((jsDateToday.getMonth() + 1) + "-" + jsDateToday.getDate() + "-" + jsDateToday.getFullYear());
 
   }
 
@@ -44,7 +44,7 @@ export class UtilsService {
     let jsDateToday = new Date();
     var jsDateEnd = new Date(jsDateToday.getTime() + 86400000); // + 1 day in ms
     // Date em js: mês começa do 0
-    return (jsDateEnd.getMonth() + 1) + "-" + jsDateEnd.getDate() + "-" + jsDateEnd.getFullYear();
+    return this.dateStringToAPIFormat((jsDateEnd.getMonth() + 1) + "-" + jsDateEnd.getDate() + "-" + jsDateEnd.getFullYear());
   }
 
 }

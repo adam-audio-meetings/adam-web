@@ -15,7 +15,7 @@ import { UtilsService } from 'src/app/utils/utils.service';
 @Component({
   selector: 'app-home-coordinator',
   templateUrl: './home-coordinator.component.html',
-  styleUrls: ['./home-coordinator.component.css']
+  styleUrls: ['./home-coordinator.component.scss']
 })
 export class HomeCoordinatorComponent implements OnInit, OnDestroy {
 
@@ -56,6 +56,9 @@ export class HomeCoordinatorComponent implements OnInit, OnDestroy {
   selectedTeamId: string;
   selectedTeamName: string;
 
+  selectedAllTeamsId: string = '0';
+  selectedAllTeamsName: string = 'Todas as Equipes'
+
   // inicializa google chart parameters
   colors = ['#FA7059', '#17a2b8', '#80FA82', '#FAEA5B', '#DFA4FA']
   // colors = ['#FA7059', '#4395FA', '#80FA82', '#FAEA5B', '#DFA4FA']
@@ -91,7 +94,7 @@ export class HomeCoordinatorComponent implements OnInit, OnDestroy {
     options: {
       fontSize: this.fontSize,
       fontName: this.fontName,
-      pieHole: 0.4,
+      pieHole: 0.8,
       pieSliceText: 'none',
       pieSliceTextStyle: {
         color: '#919191',
@@ -105,10 +108,10 @@ export class HomeCoordinatorComponent implements OnInit, OnDestroy {
   };
 
   chartAudiosByTeams = {
-    title: 'Envio de Áudios: Período',
+    title: 'Envio de Áudios: Todo o Período',
     type: 'AreaChart',
     data: [],
-    chartColumns: ['Data', 'Participantes', 'Qtde Integrantes'],
+    chartColumns: ['Data', 'Membros com 1+ envios', 'Total de Membros'],
     options: {
       colors: this.colors,
     }
@@ -124,8 +127,8 @@ export class HomeCoordinatorComponent implements OnInit, OnDestroy {
       .subscribe(
         (teams) => {
           // inicializa seletor de equipes
-          this.selectedTeamName = teams[0].name;
-          this.selectedTeamId = teams[0]._id;
+          // this.selectedTeamName = teams[0].name;
+          // this.selectedTeamId = teams[0]._id;
           // console.log(teams)
           this.totalTeams = _.size(teams);
           _.forEach(teams,
@@ -133,7 +136,7 @@ export class HomeCoordinatorComponent implements OnInit, OnDestroy {
               // total count members by team
               //// usando tamanho de matriz específico para PieChart (2 colunas) 
               this.membersByTeams.push([team.name, _.size(team.members)])
-              //// objeto com id e demias dados de somatório para outros gráficos
+              //// objeto com id e demais dados de somatório para outros gráficos
               this.membersByTeamsSummary.push({ id: team._id, name: team.name, count: _.size(team.members) })
 
               // total members
@@ -148,6 +151,7 @@ export class HomeCoordinatorComponent implements OnInit, OnDestroy {
         //complete
         () => {
           this.updateCharts();
+          console.log(this.teamsIds)
         }
       )
   }
@@ -156,8 +160,11 @@ export class HomeCoordinatorComponent implements OnInit, OnDestroy {
     this.updateChartMembersByTeams();
 
     // inicializa gráficos com áudios da primeira equipe do coordenador
-    this.updateChartAudiosByTeamsTodayFilter();
-    this.updateChartAudiosByTeamsFilter();
+    // if (this.selectedTeamId != this.selectedAllTeamsId) {
+    //   this.updateChartAudiosByTeamsTodayFilter();
+    //   this.updateChartAudiosByTeamsFilter();
+
+    // }
   }
 
   updateChartMembersByTeams() {
@@ -167,7 +174,7 @@ export class HomeCoordinatorComponent implements OnInit, OnDestroy {
   getAudiosByTeam(chart, cols, id, startDateString?, endDateString?) {
 
     //TODO: passar definição de datas iniciais para audioService.searchAudios
-    // date string format: 'DD-MM-YYYY'
+    // date string format: 'MM-DD-YYYY'
     if (!startDateString) {
       startDateString = this.utils.todayString()
       // startDateString = '3-5-2021'
@@ -207,7 +214,7 @@ export class HomeCoordinatorComponent implements OnInit, OnDestroy {
               audioByTeamsByDateTemp.push(['Entregue', _.size(_.groupBy(group, 'audioMemberId'))])
               audioByTeamsByDateTemp.push(['Faltante', membersByTeamsCount - _.size(_.groupBy(group, 'audioMemberId'))])
               chart.options.colors = ['#17a2b8', '#c1c1c1']
-              chart.options.pieSliceText = 'none'
+              // chart.options.pieSliceText = 'none'
             } else {
               // formato: [ data, distinct_sent_audios_count, members_count_by_team]
               audioByTeamsByDateTemp.push([group[0].audioCreatedAt, _.size(_.groupBy(group, 'audioMemberId')), membersByTeamsCount])
@@ -220,7 +227,7 @@ export class HomeCoordinatorComponent implements OnInit, OnDestroy {
               audioByTeamsByDateTemp.push(['Entregue', 0])
               audioByTeamsByDateTemp.push(['Faltante', membersByTeamsCount])
               chart.options.colors = ['#c1c1c1', '#17a2b8']
-              chart.options.pieSliceText = 'none'
+              // chart.options.pieSliceText = 'none'
             } else {
               // formato: [ data, distinct_sent_audios_count, members_count_by_team]
               audioByTeamsByDateTemp = [[this.utils.todayString(), 0, _.filter(this.membersByTeamsSummary, { id: id })[0].count]]
@@ -245,12 +252,14 @@ export class HomeCoordinatorComponent implements OnInit, OnDestroy {
   }
 
   updateChartAudiosByTeamsFilter() {
-    this.getAudiosByTeam(this.chartAudiosByTeams, 3, this.selectedTeamId, '5-1-2021');
+    this.getAudiosByTeam(this.chartAudiosByTeams, 3, this.selectedTeamId, '5/1/2021');
   }
 
   ngOnInit(): void {
 
     this.teams$ = this.teamService.getOwnTeams();
+    this.selectedTeamName = this.selectedAllTeamsName;
+    this.selectedTeamId = this.selectedAllTeamsId;
 
     this.getTeamsSummary();
 

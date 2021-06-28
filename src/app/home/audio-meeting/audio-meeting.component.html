@@ -51,17 +51,17 @@
         </div>
         <ng-template #hasCounts>
           <div *ngIf="(audiosCount - audiosListenedCount) > 0; else allListened" class="badge badge-pill badge-danger">
-            {{ audiosCount - audiosListenedCount}} Mensagens não lidas
+            {{ audiosCount - audiosListenedCount}} não lida(s)
           </div>
           <ng-template #allListened>
             <div class="badge badge-pill badge-success">
-              Todas mensagens lidas <i class="bi bi-check-circle"></i>
+              Todas lidas <i class="bi bi-check-circle"></i>
             </div>
           </ng-template>
         </ng-template>
         <div *ngIf="audiosQuotedCount > 0 && (audiosCount - audiosListenedCount) > 0"
           class="badge badge-pill badge-warning">
-          {{ audiosQuotedCount }} Você foi mencionado <i class="bi bi-chat-quote"></i>
+          {{ audiosQuotedCount }} menciona(m) você <i class="bi bi-chat-quote"></i>
         </div>
       </div>
 

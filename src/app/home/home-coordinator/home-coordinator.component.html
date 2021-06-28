@@ -1,13 +1,33 @@
 <div class="page-container">
   <div class="page-container-item">
-    <h2 class="ml-3 pt-4">Dashboard</h2>
-    <div class="container-coordinator">
+    <h4 class="ml-3 pt-4">Dashboard</h4>
+
+    <!-- SELECT EQUIPES -->
+    <div id="divDropdownTeams" ngbDropdown placement="bottom-left" class="d-inline-block">
+      <button class="btn btn-secondary" id="dropdownTeams" ngbDropdownToggle>{{ selectedTeamName }}</button>
+      <div ngbDropdownMenu aria-labelledby="dropdownTeams">
+        <button ngbDropdownItem
+          (click)="selectedTeamName = selectedAllTeamsName ; selectedTeamId=selectedAllTeamsId ;">{{
+          selectedAllTeamsName }}</button>
+        <button ngbDropdownItem *ngFor="let team of teams$ | async" (click)="selectedTeamName = team.name;
+                  selectedTeamId = team._id;
+                  updateChartAudiosByTeamsTodayFilter();
+                  updateChartAudiosByTeamsFilter();
+                  ">
+          {{ team.name }}</button>
+      </div>
+    </div>
+
+    <!-- <div class="container-coordinator"> -->
+
+    <!-- TODAS AS EQUIPES -->
+    <div class="divAllTeams" *ngIf="selectedTeamId == selectedAllTeamsId">
 
       <!-- TABELA: membros por equipe -->
       <div class="container-item">
         <div *ngIf="(teams$ | async) as teams">
 
-          <button type="button" routerLink="/teams" routerLinkActive="active" class="btn btn-primary btn-lg mb-2"
+          <button type="button" routerLink="/teams" routerLinkActive="active" class="btn btn-primary mb-2"
             ngbTooltip="Gerenciar Equipes" [openDelay]="1000">
             <i class="bi bi-gear"></i> Equipes ({{ totalTeams }})
           </button>
@@ -42,17 +62,10 @@
         </div>
       </div>
 
-      <div ngbDropdown placement="bottom-left" class="d-inline-block">
-        <button class="btn btn-secondary" id="dropdownTeams" ngbDropdownToggle>{{ selectedTeamName }}</button>
-        <div ngbDropdownMenu aria-labelledby="dropdownTeams">
-          <button ngbDropdownItem *ngFor="let team of teams$ | async" (click)="selectedTeamName = team.name;
-                    selectedTeamId = team._id;
-                    updateChartAudiosByTeamsTodayFilter();
-                    updateChartAudiosByTeamsFilter();
-                    ">
-            {{ team.name }}</button>
-        </div>
-      </div>
+    </div>
+
+    <!-- EQUIPE SELECIONADA -->
+    <div class="divSelectedTeam" *ngIf="selectedTeamId != selectedAllTeamsId">
 
       <!-- GRÁFICO: áudios hoje -->
       <div class="container-item" *ngIf="chartAudiosByTeamsToday.data.length; else spinnerBlock">
@@ -61,7 +74,7 @@
         <google-chart style="width: 450px;" [title]="chartAudiosByTeamsToday.title"
           [type]="chartAudiosByTeamsToday.type" [data]="chartAudiosByTeamsToday.data"
           [columns]="chartAudiosByTeamsToday.chartColumns" [formatters]="formatter"
-          [options]="chartAudiosByTeamsToday.options" [dynamicResize]="false">
+          [options]="chartAudiosByTeamsToday.options" [dynamicResize]="true">
         </google-chart>
         <!-- </div> -->
         <!-- <h3>
@@ -70,15 +83,15 @@
       </div>
 
       <!-- GRÁFICO: áudios por data -->
-      <div class="container-item" *ngIf="(formatters$ | async) as formatter">
+      <!-- <div class="container-item" *ngIf="(formatters$ | async) as formatter"> -->
 
-        <div *ngIf="chartAudiosByTeams.data.length; else spinnerBlock">
-          <google-chart [title]="chartAudiosByTeams.title" [type]="chartAudiosByTeams.type"
-            [data]="chartAudiosByTeams.data" [columns]="chartAudiosByTeams.chartColumns"
-            [options]="chartAudiosByTeams.options" [formatters]="formatter">
-          </google-chart>
-        </div>
+      <div class="container-item" *ngIf="chartAudiosByTeams.data.length; else spinnerBlock">
+        <google-chart [title]="chartAudiosByTeams.title" [type]="chartAudiosByTeams.type"
+          [data]="chartAudiosByTeams.data" [columns]="chartAudiosByTeams.chartColumns"
+          [options]="chartAudiosByTeams.options" [formatters]="formatter" [dynamicResize]="true">
+        </google-chart>
       </div>
+      <!-- </div> -->
 
 
 
@@ -88,21 +101,25 @@
             [data]="chartAudiosByTeams.data" [columns]="chartAudiosByTeams.chartColumns" [formatters]="formatter">
           </google-chart>
         </div>
-      </div> -->
+        </div> -->
 
       <!-- <div class="container-item" *ngIf="teams$; else spinnerBlock">
         {{ membersByTeams[0] }}
-      </div> -->
+        </div> -->
 
-      <ng-template #spinnerBlock>
-        <div class="d-flex justify-content-center">
-          <div class="spinner-border text-info" role="status">
-            <span class="sr-only">Loading...</span>
-          </div>
-        </div>
-      </ng-template>
+
 
     </div>
+
+
+    <ng-template #spinnerBlock>
+      <div class="d-flex justify-content-center">
+        <div class="spinner-border text-info" role="status">
+          <span class="sr-only">Loading...</span>
+        </div>
+      </div>
+    </ng-template>
+    <!-- </div> -->
     <!-- <button type="button" routerLink="/teams/available" routerLinkActive="active" class="btn btn-secondary btn-lg m-5">
       Equipes de outros coordenadores
     </button> -->
