@@ -4,10 +4,8 @@
 
 export const environment = {
   production: false,
-  // apiUrl: "http://localhost:3000/api/",
-  // serverUrl: "http://localhost:3000/",
-  apiUrl: "http://adam-api1.herokuapp.com/api/",
-  serverUrl: "http://adam-api1.herokuapp.com/",
+  apiUrl: "http://localhost:3000/api/",
+  serverUrl: "http://localhost:3000/",
   // firebase: {
   //   apiKey: "AIzaSyCVNwq3A4pvqFqslPoovXf9HKyp7O2Cdjc",
   //   authDomain: "adam-65287.firebaseapp.com",

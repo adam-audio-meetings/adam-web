@@ -10,7 +10,7 @@ export class WebsocketService {
 
   private socket: Socket;
   private socketUrl = environment.serverUrl;
-  // private socketUrl = 'http://localhost:3000/'; //FIXME: pegar por .ENV 
+  // private socketUrl = 'http://localhost:3000/'; 
 
   constructor() {
     this.socket = io(this.socketUrl, { autoConnect: false });

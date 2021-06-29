@@ -1,7 +1,7 @@
 export const environment = {
   production: true,
-  apiUrl: "http://adam-api1.herokuapp.com/api/",
-  serverUrl: "http://adam-api1.herokuapp.com/",
+  apiUrl: "https://adam-api1.herokuapp.com/api/",
+  serverUrl: "https://adam-api1.herokuapp.com/",
   // firebase: {
   //   apiKey: "AIzaSyCVNwq3A4pvqFqslPoovXf9HKyp7O2Cdjc",
   //   authDomain: "adam-65287.firebaseapp.com",
