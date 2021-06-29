@@ -115,6 +115,7 @@
 
 .list-group-item.active {
     background-color: rgb(212, 212, 212);
+    color: #666666;
 }
 
 .blink_me {
@@ -174,10 +175,13 @@
     width: 60px;
     border-radius: 50%;
     box-shadow: 1px 1px 1px #b5b5b5;
-    background-color: rgb(169, 209, 255);
+    background-color: rgb(175, 175, 175);
     font-size: 1.5rem;
     justify-content: center;
     align-items: center;
+    position: absolute;
+    top: 20px;
+    left: 20px;
     
 }
 
@@ -187,27 +191,62 @@
 }
 
 .audio-member-info {
-    grid-area: info;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
+    // grid-area: info;
+    // display: flex;
+    // flex-direction: column;
+    // justify-content: flex-start;
+    // align-items: flex-start;
+    /* width: 170px; */
+    // flex-wrap: wrap;
+}
+
+.audio-member-checks {
+// position: absolute;
+//     top: 10px;
+//     right: 30px;
+    padding-left: 0.2rem;
+}
+
+#check-listened {
+    position: absolute;
+    top: 10px;
+    right: 20px;
+    padding-left: 0.2rem;
+    color:#28a745
+}
+
+#check-quoted {
+    position: absolute;
+    top: 10px;
+    right: 40px;
+    padding-left: 0.2rem;
+    color: #877b11
 }
 
 .audio-member-player {
     grid-area: player;
     // justify-self: flex-end;
+    position: absolute;
+    bottom: 10px;
+    left: 100px;
 }
 
 .audio-member-name {
     font-weight: bold;
     color: #6c6667;
     font-size: 0.9rem;
+    position: absolute;
+    top: 10px;
+    left: 100px;
 }
 
 .audio-member-date {
     font-weight: lighter;
     color: #6c6667;
     font-size: 0.75rem;
+    position: absolute;
+    top: 30px;
+    left: 100px;
 }
 
 .main-controls-button {
