@@ -91,7 +91,8 @@
     display: grid;
     /* grid-template-columns: 1fr; */
     grid-template-rows: max-content 1fr 1fr max-content;
-    background-color: rgb(238, 238, 238);
+    // background-color: rgb(238, 238, 238);
+    background-color: #d0d0d0;
     /* flex-direction: column;*/
     /* justify-content: center; */
     align-items: center;
@@ -101,11 +102,16 @@
 }
 
 .list-group-item {
-    background-color: #e5e5e5;
+    // background-color: #e5e5e5;
+    background-color: #f1f3f4;
     height: 100px;
     display: flex;
     align-items: center;
     justify-content: space-around;
+    border-top-width: 0;
+    border-radius: 0;
+    border: 0px solid rgba(0, 0, 0, 0.125);
+    border-bottom: 1px solid #17a3b883;
 }
 
 .list-group-item:hover {
@@ -175,7 +181,8 @@
     width: 60px;
     border-radius: 50%;
     box-shadow: 1px 1px 1px #b5b5b5;
-    background-color: rgb(175, 175, 175);
+    // background-color: rgb(175, 175, 175);
+    background-color: #ffdab6;
     font-size: 1.5rem;
     justify-content: center;
     align-items: center;
@@ -267,10 +274,10 @@
     display: grid;
     grid-area: mainPlayer;
     justify-items: center;
-    background-color: rgb(233, 233, 233);
+    // background-color: rgb(233, 233, 233);
     border-radius: .25rem;
     padding: 1rem;
-    box-shadow: 5px 5px 5px #d1d1d1;
+    // box-shadow: 5px 5px 5px #d1d1d1;
 }
 
 .transcriptArea {

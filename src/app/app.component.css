@@ -9,7 +9,8 @@
   width: 40px;
   border-radius: 50%;
   box-shadow: 1px 1px 1px #b5b5b5;
-  background-color: rgb(175, 175, 175);
+  /* background-color: rgb(175, 175, 175); */
+  background-color: #ffdab6;
   font-size: 1.5rem;
   justify-content: center;
   align-items: center;
