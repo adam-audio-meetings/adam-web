@@ -51,17 +51,19 @@
         </div>
         <ng-template #hasCounts>
           <div *ngIf="(audiosCount - audiosListenedCount) > 0; else allListened" class="badge badge-pill badge-danger">
-            {{ audiosCount - audiosListenedCount}} não lida(s)
+            {{ (audiosCount - audiosListenedCount) > 1 ? (audiosCount - audiosListenedCount) + notSeenPlural :
+            (audiosCount - audiosListenedCount) + notSeenSingular }}
           </div>
           <ng-template #allListened>
             <div class="badge badge-pill badge-success">
-              Todas lidas <i class="bi bi-check-circle"></i>
+              Todas lidas <i class="bi bi-check-lg"></i>
             </div>
           </ng-template>
         </ng-template>
         <div *ngIf="audiosQuotedCount > 0 && (audiosCount - audiosListenedCount) > 0"
           class="badge badge-pill badge-warning">
-          {{ audiosQuotedCount }} cita(m) você <i class="bi bi-chat-quote"></i>
+          {{ audiosQuotedCount > 1 ? audiosQuotedCount + quotedPlural : audiosQuotedCount + quotedSingular}}
+          <i class="bi bi-chat-quote-fill"></i>
         </div>
       </div>
 
@@ -78,13 +80,13 @@
           <!-- <div class="audio-member-container" -->
           <!-- (click)="getMemberTranscription(audio.member._id, audio.member.name, audio.transcription, audio.created_at)"> -->
 
-          <!-- <div class="audio-member-avatar">
-            <img src="../../../assets/img/avatar/member0.png" alt="">
-          </div> -->
-
-          <div class="audio-member-avatar-alternative">
-            <div>{{ audio.member.name[0] }}</div>
+          <div class="audio-member-avatar">
+            <img src="../../../assets/img/avatar/{{ audio.member.username }}.png" alt="">
           </div>
+
+          <!-- <div class="audio-member-avatar-alternative">
+            <div>{{ audio.member.name[0] }}</div>
+          </div> -->
 
           <div>
 
@@ -96,8 +98,8 @@
 
             </div>
             <div class="audio-member-checks">
-              <i id='check-listened' *ngIf="audio.loggedUserListened" class="bi bi-check-circle"></i>
-              <i id='check-quoted' *ngIf="audio.loggedUserQuoted" class="bi bi-chat-quote"></i>
+              <i id='check-listened' *ngIf="audio.loggedUserListened" class="bi bi-check-lg"></i>
+              <i id='check-quoted' *ngIf="audio.loggedUserQuoted" class="bi bi-chat-quote-fill"></i>
             </div>
 
 

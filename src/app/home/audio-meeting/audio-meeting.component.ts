@@ -103,7 +103,11 @@ export class AudioMeetingComponent implements OnInit {
   // contagens
   audiosCount = 0;
   audiosListenedCount = 0;
-  audiosQuotedCount = 0;
+  audiosQuotedCount = 0
+  quotedSingular = ' cita você'
+  quotedPlural = ' citam você'
+  notSeenSingular = ' não lida'
+  notSeenPlural = ' não lidas'
 
   constructor(
     private teamService: TeamService,
@@ -212,6 +216,7 @@ export class AudioMeetingComponent implements OnInit {
           }
           this.audiosCount += 1
         })
+
       })
     ).subscribe({
       next: (audios) => this.audios$ = audios,
